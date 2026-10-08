@@ -1,1768 +1,531 @@
-PS C:\WINDOWS\system32> Get-ChildItem "HKLM:\SOFTWARE\Seagull Scientific","HKCU:\SOFTWARE\Seagull Scientific" -Recurse -ErrorAction SilentlyContinue |
->> ForEach-Object {
->>     $p = Get-ItemProperty $_.PSPath -ErrorAction SilentlyContinue
->>     foreach ($x in $p.PSObject.Properties) {
->>         if ([string]$x.Value -match '(?i)(DELLG5|Tentakle|BarTender|SQL|MSSQL|localdb|server|database)') {
->>             [PSCustomObject]@{
->>                 Path  = $_.PSPath
->>                 Name  = $x.Name
->>                 Value = $x.Value
->>             }
->>         }
->>     }
->> } |
->> Format-List
-
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Automation\Database
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Automation\Database
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Automation\Database
-Name  : PSChildName
-Value : Database
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-Name  : Last Execution Directory
-Value : E:\BarTender 2022
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-Name  : PSChildName
-Value : BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Fonts
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Fonts
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Fonts
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\General
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\General
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\General
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Licensing\11.3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Licensing\11.3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Licensing\11.3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Licensing
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Logging
-Name  : Directory
-Value : C:\Users\Public\Documents\BarTender\Log\
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Logging
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Logging
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Logging
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\PrinterSettings
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\PrinterSettings
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\PrinterSettings
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Samples
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Samples
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\Samples
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\SAP
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\SAP
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\SAP
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\System
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\System
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender\System
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Drivers\BarTender Settings\S
-        creen Font Mapping
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Drivers\BarTender Settings\S
-        creen Font Mapping
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Drivers\BarTender Settings\S
-        creen Font Mapping
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Drivers\BarTender Settings
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Drivers\Network\@DELLG5
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Drivers\Network\@DELLG5
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\Drivers\Network\@DELLG5
-Name  : PSChildName
-Value : @DELLG5
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Seagull Scientific\{49A39D20-9244-4ECA-AB40-E22
-        5DD54BBAB}
-Name  : APPDIR
-Value : E:\BarTender 2022\
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Bartend
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Bartend
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Bartend
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Controls\New
-         Document Wizard\Laser
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Controls\New
-         Document Wizard\Laser
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Controls\New
-         Document Wizard\Laser
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Controls\New
-         Document Wizard
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Controls\New
-         Document Wizard\Roll
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Controls\New
-         Document Wizard\Roll
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Controls\New
-         Document Wizard\Roll
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Controls\New
-         Document Wizard
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Ba
-        rcodeBrowser
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Ba
-        rcodeBrowser
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Ba
-        rcodeBrowser
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\In
-        sert Symbol (Bar Code)
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\In
-        sert Symbol (Bar Code)
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\In
-        sert Symbol (Bar Code)
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Me
-        ssage Setup\Grid Widths
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Me
-        ssage Setup\Grid Widths
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Me
-        ssage Setup\Grid Widths
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Me
-        ssage Setup
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Me
-        ssage Setup Dialog
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Me
-        ssage Setup Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Me
-        ssage Setup Dialog
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pa
-        ge Setup
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pa
-        ge Setup
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pa
-        ge Setup
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pr
-        int Quantity Dialog
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pr
-        int Quantity Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pr
-        int Quantity Dialog
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pr
-        inter Name Dialog
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pr
-        inter Name Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pr
-        inter Name Dialog
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pr
-        operty Page Dialog
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pr
-        operty Page Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Pr
-        operty Page Dialog
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Su
-        b String Font Dialog
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Su
-        b String Font Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Su
-        b String Font Dialog
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Su
-        ppression
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Su
-        ppression
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Su
-        ppression
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Te
-        xt Page
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Te
-        xt Page
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Te
-        xt Page
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Wh
-        en to Print
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Wh
-        en to Print
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions\Wh
-        en to Print
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Dialog Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-1
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-1
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-10
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-10
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-10
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-11
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-11
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-11
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-12
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-12
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-12
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-13
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-13
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-13
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-14
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-14
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-14
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-15
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-15
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-15
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-2
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-2
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-2
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-4
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-4
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-4
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-5
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-5
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-5
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-6
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-6
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-6
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-7
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-7
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-7
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-8
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-8
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-8
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-9
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-9
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Pane-9
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Summary
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Summary
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1\Summary
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\DockingPaneLayouts\
-        11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item1
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item1
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item2
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item2
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item2
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item4
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item4
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns\Item4
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\Columns
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\GroupSummary
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\GroupSummary
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\GroupSummary
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\OptionsView
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\OptionsView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData\OptionsView
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Controls\R-ea
-        bb51ae-00000000-a505df1b\ViewData
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions\920
-        405F9-7A5F-4B99-9E7A-6A08A27019DE
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions\920
-        405F9-7A5F-4B99-9E7A-6A08A27019DE
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions\920
-        405F9-7A5F-4B99-9E7A-6A08A27019DE
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions\96F
-        AC8AF-76A4-486E-9C31-5B455631D518
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions\96F
-        AC8AF-76A4-486E-9C31-5B455631D518
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions\96F
-        AC8AF-76A4-486E-9C31-5B455631D518
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions\E12
-        1B1A6-36E4-44EE-A0A2-3CFCB8BE4D04
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions\E12
-        1B1A6-36E4-44EE-A0A2-3CFCB8BE4D04
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions\E12
-        1B1A6-36E4-44EE-A0A2-3CFCB8BE4D04
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Forms\Positions
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Preferences
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Preferences
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Preferences
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recent Barcode List
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recent Barcode List
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recent Barcode List
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recent File List
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recent File List
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recent File List
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #493
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #493
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #493
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #494
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #494
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #494
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #495
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #495
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #495
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #496
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #496
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #496
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #497
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #497
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s\Color #497
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Recently Used Color
-        s
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Scale Command
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Scale Command
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Scale Command
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Status Bar
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Status Bar
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Status Bar
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar1
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar1
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar2
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar2
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar2
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar4
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar4
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar4
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar5
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar5
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar5
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar6
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar6
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Bar6
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Controls
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Controls
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Controls
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-DockBar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-DockBar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-DockBar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-DockBar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-DockBar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-DockBar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Options
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Options
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Options
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Summary
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Summary
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView\-Summary
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\F
-        ormatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Bar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Bar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Bar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Bar1
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Bar1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Bar1
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Controls
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Controls
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Controls
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-DockBar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-DockBar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-DockBar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-DockBar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-DockBar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-DockBar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Options
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Options
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Options
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Summary
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Summary
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview\-Summary
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        rintPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar1
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar1
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar2
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar2
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar2
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar4
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar4
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar4
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar5
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar5
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar5
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar6
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar6
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Bar6
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Controls
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Controls
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Controls
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-DockBar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-DockBar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-DockBar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-DockBar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-DockBar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-DockBar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Options
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Options
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Options
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Summary
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Summary
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView\-Summary
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.0 v10\P
-        romptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar1
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar1
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar2
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar2
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar2
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar4
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar4
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar4
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar5
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar5
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar5
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar6
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar6
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Bar6
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Controls
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Controls
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Controls
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-DockBar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-DockBar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-DockBar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-DockBar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-DockBar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-DockBar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Options
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Options
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Options
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Summary
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Summary
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView\-Summary
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Fo
-        rmatView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Bar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Bar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Bar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Bar1
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Bar1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Bar1
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Controls
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Controls
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Controls
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-DockBar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-DockBar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-DockBar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-DockBar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-DockBar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-DockBar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Options
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Options
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Options
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Summary
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Summary
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview\-Summary
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        intPreview
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar1
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar1
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar2
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar2
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar2
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar4
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar4
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar4
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar5
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar5
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar5
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar6
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar6
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Bar6
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Controls
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Controls
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Controls
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-DockBar0
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-DockBar0
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-DockBar0
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-DockBar3
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-DockBar3
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-DockBar3
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Options
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Options
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Options
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Summary
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Summary
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView\-Summary
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\ToolBars\11.1 v1\Pr
-        omptView
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-000
-Name  : SelectedItem
-Value : C:\Users\Tentakle\Documents\BarTender\Components
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-000
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-000
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-000
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-001
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-001
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-001
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-005
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-005
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-005
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-008
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-008
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1\Fol
-        der-008
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\BarTender\Toolbox 11.0 v1
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\11
-        99307537
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\11
-        99307537
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\11
-        99307537
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\16
-        912637
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\16
-        912637
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\16
-        912637
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\21
-        84201706
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\21
-        84201706
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\21
-        84201706
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\25
-        15247756
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\25
-        15247756
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\25
-        15247756
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\28
-        42982043
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\28
-        42982043
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\28
-        42982043
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\32
-        02352866
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\32
-        02352866
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\32
-        02352866
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\33
-        1312757
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\33
-        1312757
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\33
-        1312757
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\35
-        06475594
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\35
-        06475594
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\35
-        06475594
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\56
-        86758
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\56
-        86758
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog\56
-        86758
-Name  : PSParentPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Database Connection Dialog
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\DriverWizard\DriverWizard
-Name  : InstallDirectory
-Value : C:\Users\Tentakle\Desktop\Seagull\2022.2
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Paths\B
-        arTender Documents
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Paths\B
-        arTender Documents
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Paths\B
-        arTender Documents
-Name  : PSChildName
-Value : BarTender Documents
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Paths\D
-        atabase Files: Укажите файл Microsoft Excel...
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Paths\D
-        atabase Files: Укажите файл Microsoft Excel...
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Paths\D
-        atabase Files: Укажите файл Microsoft Excel...
-Name  : PSChildName
-Value : Database Files: Укажите файл Microsoft Excel...
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Paths\P
-        ictures
-Name  : Last Directory
-Value : C:\Users\Tentakle\Documents\
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Paths\P
-        ictures
-Name  : Recent Files
-Value : {F:\магазин\LOGO.bmp, F:\магазин\QR code VK.png, C:\Users\Tentakle\Documents\бот.png, C:\Users\Tentakle\Documen
-        ts\гель.png}
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Views\B
-        arTender Documents
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Views\B
-        arTender Documents
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Views\B
-        arTender Documents
-Name  : PSChildName
-Value : BarTender Documents
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Views\D
-        atabase Files: Укажите файл Microsoft Excel...
-Name  : PSPath
-Value : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Views\D
-        atabase Files: Укажите файл Microsoft Excel...
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\Librarian\File Dialog\Views\D
-        atabase Files: Укажите файл Microsoft Excel...
-Name  : PSChildName
-Value : Database Files: Укажите файл Microsoft Excel...
-
-Path  : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\SOFTWARE\Seagull Scientific\System\DbWizard\MRU
-Name  : SQL Server Name
-Value : {DELLG5\BarTender~^~Windows~^~}
-
-
-
+PS C:\WINDOWS\system32> $bytes=[IO.File]::ReadAllBytes("E:\BarTender 2022\BtSystem.DatabaseWizard.dll"); [Text.Encoding]::ASCII.GetString($bytes) -split "`0" | Where-Object { $_ -match "Registry|Seagull|System|Database|BarTender|SQL|LocalDB|Connection" } | Sort-Object -Unique
+ System.Windows.Forms.ImageLayout
+ System.Windows.Forms.RightToLeft
+
+DBNamePage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.0.1.0, Culture=neutral, Pubm_tblSelectDbsSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_DbNameToolTipuSystem.Windows.Forms.ToolTip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089m_lblNewDatabase
+m_tblNewDbsSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c5619m_tblSelectDbuSystem.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+m_rbCreatetableLayoutPanel2ySystem.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+m_rbSchematableLayoutPanel2ySystem.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891
+m_tblNewDbtableLayoutPanel2~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutram_tblSelectDbtableLayoutPanel2~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892m_textNewDbName
+m_tblNewDbuSystem.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891tableLayoutPanel2m_panelContent~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890@
+
+%{IDS_SYSTEM_DATABASE_WIZARD_FULLNAME}FrmSDSetupWizardSeagull.Framework.Controls.FrameworkForm, Seagull.Framework, Version=11.0.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7   m_btnBack
+m_tlpButtonstSystem.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+m_btnCancel
+m_tlpButtonstSystem.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892      m_btnNext
+m_tlpButtonstSystem.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891
+m_lblStatusm_statusLayoutPanelsSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891m_panelButtons$this~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+m_progressm_statusLayoutPanelxSystem.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+m_separator$this?Seagull.BtSystem.Wizard.LogDb.UCHorizontalSeparator, BtSystem.DatabaseWizard, Version=11.0.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc71m_statusLayoutPanelm_panelButtons~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891
+m_tlpButtonsm_panelButtons~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890D
+
+BaseActionPage?Seagull.BtSystem.Wizard.LogDb.BaseWizardPage, BtSystem.DatabaseWizard, Version=11.0.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7
+m_lblTitle
+m_panelTitlesSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+m_panelTitle$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892ucHorizontalSeparator1$this?Seagull.BtSystem.Wizard.LogDb.UCHorizontalSeparator, BtSystem.DatabaseWizard, Version=11.0.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc71A
+
+FrmProgressBarrSystem.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089m_cancelButtonm_tableLayoutPaneltSystem.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_panelm_tableLayoutPanelsSystem.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891
+m_progressm_panelySystem.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089m_promptm_panelsSystem.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891m_tableLayoutPanel$this~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_timersSystem.Windows.Forms.Timer, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089B
+
+System.Drawing.FontStyle
+
+UpgradePage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.0.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7
+lblNoUpgradetableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890lblSelectUpgradetableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0894
+m_chkBackuptableLayoutPanel1vSystem.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892
+m_lblUpgradetableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0893
+m_lblWarningtableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0897m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+m_picWarningtableLayoutPanel1xSystem.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, Pm_rbNoUpgradetableLayoutPanel1ySystem.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891
+m_rbUpgradetableLayoutPanel1ySystem.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0895tableLayoutPanel1m_panelContent~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890@
+
+Windows AuthenticationSQL Server AuthenticationC
+
+SelectDBPage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.1.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7  _tlpMain5m_panelContent~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+lblSelectDB     _tlpMain5sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891
+m_btnAvailDB    _tlpMain5tSystem.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0893m_lbxAvailableDB _tlpMain5uSystem.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0894m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_rbExistingDB  _tlpMain5ySystem.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892    m_rbNewDB       _tlpMain5ySystem.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+!&Backup the {IDS_SYSTEM_DATABASE}@
+!System.Windows.Forms.AnchorStyles
+!System.Windows.Forms.AutoSizeMode
+"System.Windows.Forms.FlowDirection
+#&Create a New {IDS_SYSTEM_DATABASE}
+$?? 2009-2023 Seagull Scientific, LLC
+&&Use an Existing {IDS_SYSTEM_DATABASE}@
+&Available Databases:H
+&Create a new databaseA
+&Customize connection settings@
+-&Exit without upgrading {IDS_SYSTEM_DATABASE}@
+&SQL Express Installation File:@
+&System.Windows.Forms.FormStartPosition
+&Test Connection...
+(System.Windows.Forms.TableLayoutSettings
+*C&reate the tables in an existing databaseF
+,&Upgrade {IDS_SYSTEM_DATABASE} (Recommended)F
+????ystem.Drawing.GraphicsUnit
+?<?xml version="1.0" encoding="utf-16"?><TableLayoutSettings><Controls><Control Name="flowLayoutPanel1" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /><Control Name="m_btnTestConnection" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /><Control Name="m_btnBrowse" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /><Control Name="lblPasswd" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /><Control Name="m_txtPwd" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /><Control Name="m_cbxAuth" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /><Control Name="m_txtLoginName" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /><Control Name="lblServer" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /><Control Name="m_cbxServer" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /><Control Name="lblAuth" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /></Controls><Columns Styles="AutoSize,0,Percent,100,AutoSize,0" /><Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /></TableLayoutSettings>
+C
+?<?xml version="1.0" encoding="utf-16"?><TableLayoutSettings><Controls><Control Name="lblInstallSqlExpress" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /><Control Name="m_btnBrowseSqlExpressFile" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /><Control Name="m_txtSqlExpressFile" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /></Controls><Columns Styles="Percent,100,AutoSize,0" /><Rows Styles="AutoSize,0,AutoSize,0" /></TableLayoutSettings>
+B
+?<?xml version="1.0" encoding="utf-16"?><TableLayoutSettings><Controls><Control Name="m_lblNewDatabase" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /><Control Name="m_textNewDbName" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /></Controls><Columns Styles="Percent,100" /><Rows Styles="AutoSize,0,AutoSize,0" /></TableLayoutSettings>
+B
+?SQL Express is a free database engine available from Microsoft. In order to install it, you must first download it from Microsoft by clicking here.
+
+Do not run, open, or execute the downloaded file. Instead, in the field below, please specify location of the downloaded file.F
+?The {IDS_SYSTEM_DATABASE_WIZARD_NAME} will run when you click Setup.
+
+If you want to review or change any of your settings, click Back.
+
+Or, click Cancel to exit the wizard.
+?The {IDS_SYSTEM_DATABASE} becomes larger as more information is logged. By enabling Database Maintenance, your oldest logged information will get archived on a repeatable schedule to make more room and optimize performance. The default setting archives information older than 30 days. The maintenance schedule and type of information to archive can be customized using the Setup button.
+
+@
+?The {IDS_SYSTEM_DATABASE} you selected is an older version. The {IDS_SYSTEM_DATABASE_WIZARD_NAME} can upgrade your database to the latest version. (Always backup your {IDS_SYSTEM_DATABASE} before performing an upgrade.)@
+?The default {IDS_SYSTEM_DATABASE} uses Microsoft SQL Server Express, which is free but has a 10 GB database size limit.
+
+If you want multiple computers to share a centralized database, or if you have a single computer logging a high volume of print jobs, you may want to use your own database server.E
+?The user "{0}" does not have sufficient permissions to configure a {IDS_SYSTEM_DATABASE}. To connect to an existing {IDS_SYSTEM_DATABASE}, you will need to use an account with the following permissions:
+
+CONNECT, SELECT, INSERT, UPDATE, DELETE, EXECUTE
+
+To create a new {IDS_SYSTEM_DATABASE}, the account must also have the CREATE DATABASE permission, or access to an empty database in which to create the required tables.
+]Choosing this option will prevent new copies of {IDS_BARTENDER} from writing to the database.@
+_opSystems
+_SqlKeywords
+_sqlServers
+`A????System.Drawing.FontStyle
+<AllowRemoteSqlConnections>k__BackingField
+<CreateNewDatabase>k__BackingField
+<DatabaseExists>k__BackingField
+<DatabaseServerConnected>k__BackingField
+<DatabaseServerLoginError>k__BackingField
+<ExistingDatabaseName>k__BackingField
+<InstallNewSqlInstance>k__BackingField
+<NeedDelayedConnectionFailedMessage>k__BackingField
+<NewDatabaseName>k__BackingField
+<SchemaDatabaseName>k__BackingField
+<SqlAuthenticationType>k__BackingField
+<SqlInstallAttempted>k__BackingField
+<SqlInstallerExists>k__BackingField
+<SqlInstallerPath>k__BackingField
+<SqlInstallerVersionMajor>k__BackingField
+<SqlInstallerVersionMinor>k__BackingField
+<SqlInstallSuccess>k__BackingField
+<SqlInstanceInstalled>k__BackingField
+<SqlInstanceUpgrade>k__BackingField
+<SQLServerMRUList>k__BackingField
+<SQLUninstallGUID32bit>k__BackingField
+0&Enter a name for the new {IDS_SYSTEM_DATABASE}:@
+0(Microsoft SQL Server Express will be installed)@
+0i1
+0       UUS10U
+240802235959Z0y10?U8DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA10
+0       UUS10U
+Washington10Bellevue1 0U
+Seagull *?H??tific Inc.1 0USeagull Scientific Inc.0??0
+1&Allow Other Machines to Connect To This DatabaseF
+3System.Resources.Tools.StronglyTypedResourceBuilde16.0.0.0
+4&Enable Automatic Database Maintenance (Recommended)E
+9Create &local {IDS_SYSTEM_DATABASE} with default settings
+A????System.Drawing.FontStyle
+AddOrUpdateSQLServerMRU
+aPlease wait while the wizard sets up your database and connection. This may take several minutes.E
+BarTender 2022
+BarTenderLicenseInfo
+bSpecifyDatabase
+BtSystem.DataAccess
+BtSystem.DatabaseWizard
+BtSystem.DatabaseWizard
+BtSystem.DatabaseWizard.dll
+BtSystem.Interfaces
+C:\BTbld\BarTender\Release\11.3\DataServices\DBWizard\obj\x64\Release\BtSystem.DatabaseWizard.pdb
+CaptureSqlInstallLog
+CleanupConnection
+cnsBtSystemPrompt
+cnsDatabasePrompt
+cnsSQLInstallerPrompt
+ConfigureSystemService
+CreateConnection
+CreateDatabase
+Creating Database...E
+cSelect this option to allow other PCs to remotely connect to this new copy of SQL Express database.A
+databaseName
+DatabaseNameValidator
+DatabaseUpgradeRequired
+DbConnection
+DbConnectionStringBuilder
+DetectSQLExpressInstanceInstalled
+doesDatabaseExist
+DownloadSQLExpress
+EnumerateDatabases
+ESqlAuthenticationType
+EThis option upgrades the {IDS_SYSTEM_DATABASE} to the latest version.@
+FileSystemInfo
+FindDatabase
+fSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3afSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3aPAD_2q???R?␦?E??@?
+fSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3afSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3azSystem.Windows.Forms.AnchorStyles, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089zSystem.Windows.Forms.AutoSizeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PA??Y?`Z%d??8??X)??CD2??N3?<6??b??????|V|?␦?E?'??@??N???r?/??????J?R?m?L??????␦???;?V??"XG?"?#?8?$;ex'M?p*0L?+??l1o?r1ahx1??>??tA.NNB?C?B???B"z?F??FoJ?O*?IS?WS???V?](^??wb?J!rGr??
+fSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a?System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089zSystem.Windows.Forms.AutoSizeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089wSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PADPA^?????E?,?[???g?@?.?IS???8??|I???????T?T??nW??sc?0??<6?m1h?]???????o???I???*???b???????j?ro?␦?E???i???%?S??b~??|??#?>U+???k?
+?+???/??5??@?K?U??N???o????@??r??Qp??!??nI???F???m???/~???????,?$D?i.Y??d????
+Q?
+?J???]???L?????????␦???;?5-)?;!??2&?#D'?\F'???(O?␦)?~$)_?)K?k*M?p*?l"-?i2-?#?7???7?t?7??4:?C?B???B%?I??zL??Uo-+Z?](^l??`?/Xa??d?9?k??k?%?l_a?l%?m?m+n$mo??n?
+fSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3avSystem.Windows.Forms.LinkArea, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089wSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PAD??K??8??('???#??<6??A~??b??????????????????(????Q???!??Z???@??r???x?????
+fSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3awSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PA?6??A???U??????
+fSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3azSystem.Windows.Forms.AnchorStyles, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089wSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PADPADP?e??2???????<#??.????????8???W????P??Z?<6?<C??`???b??????h???5F??␦?E?     ??u?V???5??@??%??)???0??r??C
+?AI
+?J??L???Y?5???␦???;?K?k*M?p*?d?-f??0Y??0??e1?C?B???BX$?H?Q?I[??I(hpNK"[iH.@j:??l]
+?l?{2t.7t At???u'?>xf?{??{???{?}?V1~?
+fSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3awSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3agSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089ySystem.Windows.Forms.RightToLeft, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089rSystem.Drawing.ContentAlignment, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3aySystem.Windows.Forms.ImageLayout, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PADP????W???lo???w!?F???????E??H?c???o?Q%???@z?????%0\???g??4<??>=?␦?E??e??????/F~??@??F?2s??[L??y
+?t??L????7???ej?1? ?&?*&??.??C??C?B???B?Z?J&7?J???J(??J?
+XO?mY??dSJ?vo
+get_AllowRemoteSqlConnections
+get_BssDatabase
+get_BssSystemDbIsSetup
+get_ConnectionStr
+get_ConnectionString
+get_CreateDBSqlFile
+get_CreateNewDatabase
+get_Database_Setup
+get_DatabaseExists
+get_DatabasePath
+get_DatabaseServerConnected
+get_DatabaseServerLoginError
+get_DataServiceConnection
+get_EmptyDatabaseCount
+get_ExistingDatabaseName
+get_FinalDatabaseName
+get_HasSelectDatabase
+get_IDS_BACKING_UP_DATABASE
+get_IDS_BARTENDER
+get_IDS_BTSYSTEM
+get_IDS_CONNECTION_STRING
+get_IDS_CREATESQL_FUNCTIONS
+get_IDS_CREATESQL_INITIALIZE_TABLES
+get_IDS_CREATESQL_PHYSICAL_FILE
+get_IDS_CREATESQL_STORED_PROCEDURES
+get_IDS_CREATESQL_TABLES
+get_IDS_CREATESQL_VIEWS
+get_IDS_DATABASE_DOES_NOT_EXIST
+get_IDS_DATABASE_SCHEMA_CREATED
+get_IDS_DATABASE_SCHEMA_NOT_CREATED
+get_IDS_DATABASE_SCRIPT_COMPLETED
+get_IDS_DATABASE_VERSION_IS_NEWER
+get_IDS_EXECUTESQLSCRIPT
+get_IDS_FOUND_DATABASES_IN_DATABASES
+get_IDS_NOSQLSERVERREGISTRY
+get_IDS_REMOTE_DATABASE_EDITION_CHECK
+get_IDS_SEARCHING_EXISTING_DATABASE
+get_IDS_SETTING_UP_SERVICE_DATABASE
+get_IDS_SHOWING_SQL_INSTALLATION_FAILURE
+get_IDS_SPECIFIED_DATABASE
+get_IDS_SPECIFIED_DATABASE_IS_NON_DATABASE
+get_IDS_SQL_DATABASE
+get_IDS_SQL_EXPRESS_FILTER
+get_IDS_SQL_EXPRESS_FILTER_WINDOWS8
+get_IDS_SQL_EXPRESS_HAS_BEEN_INSTALLED
+get_IDS_SQL_EXPRESS_PROMPT
+get_IDS_SQL_INSTALL_FAIL
+get_IDS_SQLEXPRESS_INSTALLER
+get_IDS_SQLEXPRS
+get_IDS_SYSTEM_DATABASE
+get_IDS_SYSTEM_DATABASE_WIZARD_FULLNAME
+get_IDS_SYSTEM_DATABASE_WIZARD_NAME
+get_IDS_SYSTEM_DATABASE_WIZARD_TITLE
+get_IDS_USING_DATABASE_SCRIPT_FROM
+get_IDS_VERIFYING_SPECIFIED_DATABASE
+get_IDS_WIZARD_CONNECTION_TYPE
+get_IDS_WIZARD_DATABASE
+get_IncludeCopyOfBarTenderDocument
+get_InstallNewSqlInstance
+get_Is64BitOperatingSystem
+get_IsDefaultSQLInstance32bit
+get_IsSQLServer2008OrGreater
+get_IsSQLServer2008R2OrGreater
+get_IsSQLServer2012OrGreater
+get_IsSQLServer2014OrGreater
+get_NeedDelayedConnectionFailedMessage
+get_NewDatabaseName
+get_SchemaDatabaseName
+get_SqlAuthenticationType
+get_SqlInstallAttempted
+get_SqlInstallerExists
+get_SqlInstallerPath
+get_SqlInstallerVersionMajor
+get_SqlInstallerVersionMinor
+get_SqlInstallSuccess
+get_SqlInstanceInstalled
+get_SqlInstances
+get_SqlInstanceUpgrade
+get_SQLServerMRUList
+get_SQLUninstallGUID32bit
+get_SystemDbIsSetup
+get_SystemDirectory
+get_UpgradeDBSqlFile
+GetBtCompatibleDatabases
+GetConnectionString
+GetEmptyDatabases
+GetNewDatabaseName
+gSystem.Drawing.SizeF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3afSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3afSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3aSystem.Windows.Forms.FormStartPosition, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089wSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089uSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089zSystem.Windows.Forms.AnchorStyles, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089zSystem.Windows.Forms.AutoSizeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PADP V\???_???????????????N?Z???oh??dD?4????????C?Ez?C?O?}?6??7???␦???
+}?7????k???7??>??b3??=9?????? L?%0\???g?)d????????K?␦?E?m????????????'z??j????F?n{?????????ZO???*?C????@?@??`?????I?W????d?????}h??
+??1??7?C[L??i-[?1d@
+!?sl??L???q?{(??!?%?\?(3??-W??/??!0??10???1\9?1hr?9???>?C?B???B??MF??VFIYF?HXQ?:?S?
+?T???Vd??JbWgB?Wa??Wr:wXX7YO?mY\?GZ?*_aX?5d?o/g??h)??j??FjW?Hj?}uk???k???kg?k}??p*?s??ix\?nx???x^??x?␦z??F}^R}?
+gSystem.Drawing.SizeF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3afSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3azSystem.Windows.Forms.AnchorStyles, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089uSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3awSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PADPT??????
+N??t???
+hSystem.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3aPADPAD$7???l]???????????C???????? ?7?P????????????b?-ES?\oz????o????l(?X(\??^??x????????
+??i-??E????????RP1???R?.??]O-=??Ao???6?????&L??,l??0??Y80"?E?CM
+Mu??M?Z?T?:ka*-?c???d???f??3o??qf)?v???x??}1?h~|?~?
+InitializeSqlServerInstallerPath
+INSTALL_SQL_EXPRESS
+IsLocalSQLServer
+ISqlSearcher
+isRemoteDatabase
+IsValidDatabaseName
+IsValidSqlChar
+lblInstallSqlExpress
+lblSQLExpress
+LoadSQLServerMRUs
+LocalSqlInstanceExists
+lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet
+m_bBssDatabaseSetup
+m_bHasSelectDatabase
+m_bssDatabase
+m_btnBrowseSqlExpressFile
+m_btnBrowseSqlExpressFile_Click
+m_btnTestConnection
+m_connection
+m_createDBSqlFile
+m_databasePath
+m_lblNewDatabase
+m_lnkDownloadSqlExpress
+m_lnkDownloadSqlExpress_LinkClicked
+m_sConnection
+m_sConnectionStr
+m_sEmptyDatabase
+m_showSeagullMessage
+m_sNewDatabase
+m_sqlInstances
+m_txtSqlExpressFile
+m_upgradeDBSqlFile
+MaintenancePage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.0.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7lblDBMaintenancem_panelContentsSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891m_btnSetupMaintenancetableLayoutPanel1tSystem.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891m_chkEnableMaintenancetableLayoutPanel1vSystem.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890tableLayoutPanel1m_panelContent~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890@
+MsSqlSearcher
+NSpecify whether to use an existing {IDS_SYSTEM_DATABASE}, or create a new one.G
+OConfigures the SQL instance to allow other machines to connect to the database.KSpecify SQL authentication method.
+
+Defaults to Windows if not specified.␦Backing up database {0}...Backup of database {0} failed.*Backup of database {0} failed. Reason: {1}0Successfully backed up database {0} to file: {1}IBackup of database {0} failed to complete in a reasonable amount of time.,Apply wizard settings for a remote computer.Creating $(dbname) functions...)Initializing $(dbname) database tables...-Creating Physical $(dbname) database files...'Creating $(dbname) stored Procedures...%Creating $(dbname) database tables...$Creating $(dbname) database views...$Enable default maintenance settings.~This option upgrades the {IDS_SYSTEM_DATABASE} to the latest version. Older versions of {IDS_BARTENDER} will continue to work.Option   [options](Where [options] is any of the following:.Specify the location of SQL Express Installer.~Installing the Microsoft SQL Express instance failed. Please consult with your system administrator to help solve the problem.(Version {Version})-Beginning configuration of print job logging./Could not connect to the {0} on computer '{1}'.HSpecify the SQL database name.
+
+Defaults to {DBName} if not specifiedDetails:Disabling print job logging.1Disabling print job logging reprint data options.
+nabling print job logging.0Enabling print job logging reprint data options.*Ending configuration of print job logging.$Error configuring print job logging.XThe upgrade file name:{0} is invalid. It should be of the form: UpgradeDB_m.m_to_n.n.sql(Loading print job logging configuration.1Logs the wizard actions and errors to a log file.No change: {0}-Cannot find SQL script upgrade files in: {0}.Specify the SQL password.0Print??job??logging??config??file??found: '{0}'.HPrint??job??logging??config??file??not found: '{0}'. It will be created.(Print job logging is currently disabled.'Print job logging is currently enabled.'Saving print job logging configuration.hThe {IDS_SYSTEM_DATABASE_WIZARD_NAME} encountered an error while creating or connecting to the database.?The {IDS_LABEL_MANAGEMENT_SUITE} installed on this computer is now configured to access the {IDS_SYSTEM_DATABASE}.
+
+To change {IDS_SYSTEM_DATABASE} settings, select {IDS_SYSTEM_DB_SETUP_SHORTNAME} from the {IDS_BARTENDER} folder of the Windows Start menu.8Runs the wizard in silent mode without user interaction.&Specify the wizard action type to use.+Upgrading database from version {0} to {1}.BUpgrade SQL script files are missing between versions {0} and {1}.dAn upgrade SQL script file starting with the current version {0} of the database could not be found.␦Upgrade existing database.rUpgrade SQL script files do not exist to upgrade the database to version {0}. The highest possible version is {1}.Upgrading database {0}...␦Specify the SQL user name.?A {IDS_SYSTEM_DATABASE} is the central data storage for the {IDS_LABEL_MANAGEMENT_SUITE}. It is required to use most of the features in the {IDS_AUTOMATION} and {IDS_ENTERPRISE} editions.
+
+This wizard can be used to set up a new database, or connect to an existing one.YSpecify the SQL server name to use.
+
+Defaults to localhost\{Instance} if not specified.@
+operatingSystem
+ParseBssConnectionString
+PerformDatabaseBackup
+PrepareConnection
+QSystem.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+ReadyToSetupPage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.0.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbclblReadym_panelContentsSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890@
+Registry
+RegistryHive
+RegistryKey
+RegistryPath
+RegistryUtility
+RegistryView
+RemoteDatabasesSupported
+rWarning: After this upgrade, older versions of {IDS_BARTENDER} will no longer be able to connect to this database.B
+SaveSQLServerMRUs
+␦Se&lect an empty database:E
+Seagull Scientific, LLC
+Seagull.BtSystem
+Seagull.BtSystem.Client
+Seagull.BtSystem.DataAccess.SqlClient
+Seagull.BtSystem.Network
+Seagull.BtSystem.Support
+Seagull.BtSystem.Support.Properties
+Seagull.BtSystem.UI
+Seagull.BtSystem.UI.Properties
+Seagull.BtSystem.Wizard.LogDb
+Seagull.BtSystem.Wizard.LogDb.BaseActionPage.resources
+Seagull.BtSystem.Wizard.LogDb.BaseWizardPage.resources
+Seagull.BtSystem.Wizard.LogDb.Common
+Seagull.BtSystem.Wizard.LogDb.DBNamePage.resources
+Seagull.BtSystem.Wizard.LogDb.FrmProgressBar.resources
+Seagull.BtSystem.Wizard.LogDb.FrmSDSetupWizard.resources
+Seagull.BtSystem.Wizard.LogDb.IWizardController.get_ClientRectangle
+Seagull.BtSystem.Wizard.LogDb.IWizardPage.get_Name
+Seagull.BtSystem.Wizard.LogDb.IWizardPage.set_Name
+Seagull.BtSystem.Wizard.LogDb.MaintenancePage.resources
+Seagull.BtSystem.Wizard.LogDb.MessagePage.resources
+Seagull.BtSystem.Wizard.LogDb.Pages
+Seagull.BtSystem.Wizard.LogDb.Pages.PrintJobLoggingPage.resources
+Seagull.BtSystem.Wizard.LogDb.Properties.Resources.resources
+Seagull.BtSystem.Wizard.LogDb.ReadyToSetupPage.resources
+Seagull.BtSystem.Wizard.LogDb.SelectDBPage.resources
+Seagull.BtSystem.Wizard.LogDb.SetupProgressPage.resources
+Seagull.BtSystem.Wizard.LogDb.SQLConnectOrInstallPage.resources
+Seagull.BtSystem.Wizard.LogDb.SQLDownloadPage.resources
+Seagull.BtSystem.Wizard.LogDb.SQLInstallInstancePage.resources
+Seagull.BtSystem.Wizard.LogDb.SQLSelectServerPage.resources
+Seagull.BtSystem.Wizard.LogDb.Steps
+Seagull.BtSystem.Wizard.LogDb.UCHorizontalSeparator.resources
+Seagull.BtSystem.Wizard.LogDb.UnpriviligedUserPage.resources
+Seagull.BtSystem.Wizard.LogDb.UpgradePage.resources
+Seagull.BtSystem.Wizard.LogDb.WelcomePage.resources
+Seagull.Framework
+Seagull.Framework.Controls
+Seagull.Framework.OS
+Seagull.Framework.Utility
+Seagull.License
+Seagull.Services.SecuritySettings.Client
+Seagull.Services.SecuritySettings.Contracts
+SeagullMessageException
+'Select or enter connection information:F
+ServerStatelessConnection
+set_AllowRemoteSqlConnections
+set_BssDatabase
+set_BssSystemDbIsSetup
+set_ConnectionString
+set_CreateNewDatabase
+set_DatabaseExists
+set_DatabaseServerConnected
+set_DatabaseServerLoginError
+set_DataServiceConnection
+set_ExistingDatabaseName
+set_HasSelectDatabase
+set_IncludeCopyOfBarTenderDocument
+set_InstallNewSqlInstance
+set_NeedDelayedConnectionFailedMessage
+set_NewDatabaseName
+set_SchemaDatabaseName
+set_SqlAuthenticationType
+set_SqlInstallAttempted
+set_SqlInstallerExists
+set_SqlInstallerPath
+set_SqlInstallerVersionMajor
+set_SqlInstallerVersionMinor
+set_SqlInstallSuccess
+set_SqlInstanceInstalled
+set_SqlInstanceUpgrade
+set_SQLServerMRUList
+set_SQLUninstallGUID32bit
+set_SystemDbIsSetup
+SetConnectionString
+SetupProgressPage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.0.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7
+lblCreateDBtableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892
+m_lblSetUptableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890
+m_pbCreateDBtableLayoutPanel1ySystem.Windows.Forms.ProgressBar, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0893
+m_picSetupDbtableLayoutPanel1xSystem.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, Pm_txtCreateDBtableLayoutPanel1uSystem.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0894tableLayoutPanel1m_panelContent~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890@
+SQL_AUTHENTICATION
+SqlCharValidator
+SqlClassifier
+SQLConnectOrInstall
+SQLConnectOrInstallPage
+SQLConnectOrInstallPage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.0.4.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7m_lblDistributiontableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_lblInstallHinttableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0893m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_rbExistingInstancetableLayoutPanel1ySystem.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892m_rbNewInstancetableLayoutPanel1ySystem.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891tableLayoutPanel1m_panelContent~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890@
+SQLConnectOrInstallStep
+SQLDownload
+SQLDownloadPage
+SQLDownloadPage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.1.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7lblInstallSqlExpresstableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_btnBrowseSqlExpressFiletableLayoutPanel1tSystem.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891m_lnkDownloadSqlExpressm_panelContentwSystem.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_txtSqlExpressFiletableLayoutPanel1uSystem.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892tableLayoutPanel1m_panelContent~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890@
+SQLDownloadStep
+SqlDSNameHelper
+SQLEXPRESS_EXE
+SQLEXPRESS_EXE64
+SQLInstallFail
+SQLInstallFailStep
+SQLInstallInstance
+SQLInstallInstancePage
+SQLInstallInstancePage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.0.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7
+lblInstNametableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKlblSQLExpressm_panelContentsSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089lblSharetableLayoutPanel2sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891m_chkAllowRemotetableLayoutPanel2vSystem.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_txtInstanceNametableLayoutPanel1uSystem.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891tableLayoutPanel1tableLayoutPanel2~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890tableLayoutPanel2m_panelContent~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890@
+SQLInstallInstanceStep
+sqlMajorVersion
+SqlMaximus
+SqlNameValidator
+SQLScriptBlock
+SQLScriptExecutor
+SQLScriptParser
+SQLsearcher
+SQLSelectServer
+SQLSelectServerPage
+SQLSelectServerPage?Seagull.BtSystem.Wizard.LogDb.BaseActionPage, BtSystem.DatabaseWizard, Version=11.1.1.0, Culture=neutral, PublicKeyToken=109ff779a1b4cbc7flowLayoutPanel1tableLayoutPanel1}System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890lblAuthtableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0899
+lblConnInfom_panelContentsSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089lblLoginflowLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890      lblPasswdtableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0893 lblServertableLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0897lblUserflowLayoutPanel1sSystem.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891
+m_btnBrowsetableLayoutPanel1tSystem.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0892m_btnTestConnectiontableLayoutPanel1tSystem.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0891    m_cbxAuthtableLayoutPanel1vSystem.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0895
+m_cbxServertableLayoutPanel1vSystem.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0898m_panelContent$thissSystem.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890m_txtLoginNametableLayoutPanel1uSystem.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089m_txtPwdtableLayoutPanel1uSystem.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0894tableLayoutPanel1m_panelContent~System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e0890@
+SQLSelectServerStep
+sqlServer
+SqlServer2005
+SQLServer2005Version
+SqlServer2008
+SqlServer2008R2
+SqlServer2008R2SP2
+SQLServer2008R2VersionMinor
+SQLServer2008Version
+SqlServer2012
+SqlServer2012SP1
+SQLServer2012Version
+SqlServer2014
+SQLServer2014Version
+SqlServerHelper
+SQLServerInstallerPath
+SQLServerKey
+SQLServerNotFound
+SqlServerProductManager
+SqlServerRequirements
+sqlServerVersion
+SqlServerVersions
+StartSqlInstanceSearch
+sThis new instance of Microsoft SQL Express needs a name. You can keep the name suggested below or choose your own. A
+StopRemoveOldDefaultSQLInstance
+System.CodeDom.Compiler
+System.Collections
+System.Collections.Generic
+System.ComponentModel
+System.Configuration
+System.Data
+System.Data.Common
+System.Diagnostics
+System.Drawing
+System.Drawing.Bitmap
+System.Drawing.ContentAlignment
+System.Drawing.Font
+ystem.Drawing.GraphicsUnit
+System.Drawing.Point
+System.Drawing.Size
+System.Drawing.SizeF
+System.Globalization
+System.IO
+System.Management
+System.Net
+System.Reflection
+System.Resources
+System.Runtime.CompilerServices
+System.Runtime.InteropServices
+System.Runtime.Versioning
+System.Security
+System.Security.Claims
+System.Security.Principal
+System.ServiceProcess
+System.Text
+System.Text.RegularExpressions
+System.Threading
+System.Windows.Forms
+System.Windows.Forms.DockStyle
+System.Windows.Forms.FlatStyle
+System.Windows.Forms.ImeMode
+System.Windows.Forms.LinkArea
+System.Windows.Forms.Padding
+'System.Windows.Forms.PictureBoxSizeMode
+SystemColors
+SystemDbPrintJobLoggingConfigModel
+SystemFonts
+TestDatabaseConnection
+TestSqlPrerequisites
+UpgradeDatabase
+ValidateDatabase
+WSystem.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+wSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3afSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3afSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089uSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089wSystem.Windows.Forms.FlatStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089rSystem.Drawing.ContentAlignment, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3aPADPADP?/???.???mGb??????
+????K?n???
+ ??s??A??????Z?????'.Q??I??Q???T?hfA??!M?Q???y?r?~??V
+????P????????!??????????/???! /?␦?E?]??4=??@?+?I???
+wSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3agSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3azSystem.Windows.Forms.AnchorStyles, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089zSystem.Windows.Forms.AutoSizeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PA?4??7???X???[???D???m???????????%{??5?.???V??????u?????????3
+zSystem.Windows.Forms.AnchorStyles, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3awSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089zSystem.Windows.Forms.AutoSizeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089PADPtd???8??z?q??.???5?.?????<6??b?????J??L??????␦,/~?G*?????;?l????
+ _?0(hT?(?P?(K?k*M?p*??7+K"B+??C+.??+`??,?,n??,??,[??1,?m8?%F9???@?C?B???Bm?!E?w?E??~I|?I?@?J???J??J`q?L?:?M???O?V?P???R??Xi?XaF?X???[?d4\?](^"`d^2yc   ?Yi6Xei?
+zSystem.Windows.Forms.AnchorStyles, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089zSystem.Windows.Forms.AutoSizeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089{System.Windows.Forms.FlowDirection, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089gSystem.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.Padding, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089fSystem.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3afSystem.Drawing.Font, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3auSystem.Windows.Forms.ImeMode, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089wSystem.Windows.Forms.DockStyle, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089?System.Windows.Forms.TableLayoutSettings, S??p???(?????????????? ?+??n3?u???8??K????5??:?I????2??:?]?!??m%???,???U?4=_????<6?a?C?z␦`?%?=??b??????_?m?Cz???
 PS C:\WINDOWS\system32>
