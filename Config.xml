@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<DataService xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="1">
+  <Database SaveRequestedPreviews="false">
+    <ConnectionString>
+      <EncryptedData Type="http://www.w3.org/2001/04/xmlenc#Element">
+        <CipherData>
+          <CipherValue>i/5zwaBNrd4yRv7s4LhS9Lr3ypEnNotb15mZ1obQTIKNKYWJ/YoehbTUPrGVcALavWxbI0ugVZbU9KDVKC/pUP01ptt0IxEV9Yl+PEw3dioU41lBy+xq8Quc0659tY2YYwsRaUK0hOF22VHF3hZyN9eytu39XjBDpNETW70ZPlewHyg86k2lid+MAydlKo9R+shmaoxd4R1RloJmSOaDsWqcUweEa7c4jNFDO4kHFIs=</CipherValue>
+        </CipherData>
+      </EncryptedData>
+    </ConnectionString>
+    <Cache StopIfFreeDiskSpaceLessThan="1000">true</Cache>
+    <Messages>
+      <EventLogMessage Level="Error" />
+      <DbMessage Level="Warning" />
+    </Messages>
+    <IntegrationMessages LogIntegrationMessagesToDb="true" LogIntegrationMessagesIncludeVariables="true" LogIntegrationMessagesFailedTriggerOnly="false">
+      <ActionMessagesSettings LogActionMessagesToDb="true" LogActionMessagesIncludeVariables="true" LogActionMessagesFailedTriggerOnly="false" />
+    </IntegrationMessages>
+    <Version />
+  </Database>
+  <Settings>
+    <ServerPort>7371</ServerPort>
+    <ClientPort>7372</ClientPort>
+    <UseImpersonatedAccountForReprint>false</UseImpersonatedAccountForReprint>
+    <UseImpersonatedAccountForPreview>false</UseImpersonatedAccountForPreview>
+    <ServiceName>BarTender System Service</ServiceName>
+    <ServiceVersion>2022 R5</ServiceVersion>
+    <ServiceAccount>NT AUTHORITY\СИСТЕМА</ServiceAccount>
+    <SystemDbIsSetup>true</SystemDbIsSetup>
+    <IgnoreStatusPrinters>
+      <Printer ModelName="Microsoft XPS Document Writer" />
+      <Printer ModelName="Microsoft Office Document Image Writer Driver" />
+      <Printer ModelName="Send To Microsoft OneNote Driver" />
+    </IgnoreStatusPrinters>
+  </Settings>
+  <Maintenance Enable="true">
+    <Tasks>
+      <Task Type="BackupAndDelete" PeriodUnit="Days" OlderThan="15" Name="Заархивировать и удалить записи">
+        <ArchiveFile>C:\ProgramData\Seagull\System\Database\Backup\Backup.bak</ArchiveFile>
+        <ArchiveFileSerialized>true</ArchiveFileSerialized>
+        <Schedule Frequency="Daily" Time="2007-07-07T00:01:00" />
+        <Messages>
+          <EventLogMessage Level="Error" />
+          <DbMessage Level="Info" />
+        </Messages>
+      </Task>
+    </Tasks>
+  </Maintenance>
+</DataService>
