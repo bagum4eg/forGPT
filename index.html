@@ -6,724 +6,1133 @@
   </head>
   <body>
 	<per>
-		PS C:\WINDOWS\system32> Get-ChildItem "E:\BarTender 2022" -Filter *.dll | ForEach-Object { try { $a=[Reflection.Assembly]::LoadFrom($_.FullName); $a.GetTypes() | ForEach-Object { $_.GetMethods([Reflection.BindingFlags]"Public,NonPublic,Static,Instance") | Where-Object { $_.Name -match "DataServiceConnection|BssSystemDbIsSetup|GetConnectionString|ConnectionStr" } | ForEach-Object { "$($_.DeclaringType.FullName) :: $($_.Name) :: $($_.ToString())" } } } catch {} } | Sort-Object -Unique
-		ADODB._Connection :: get_ConnectionString :: System.String get_ConnectionString()
-		ADODB._Connection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		ADODB.Connection15 :: get_ConnectionString :: System.String get_ConnectionString()
-		ADODB.Connection15 :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		dcp200f.kAH :: get_ConnectionString :: System.String get_ConnectionString()
-		dcp200f.kAH :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		dcp200f.kAV :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		DevExpress.Data.Entity.ConnectionStringInfo :: get_RunTimeConnectionString :: System.String get_RunTimeConnectionString()
-		DevExpress.Data.Entity.ConnectionStringInfo :: set_RunTimeConnectionString :: Void set_RunTimeConnectionString(System.String)
-		DevExpress.Data.Entity.IConnectionStringInfo :: get_RunTimeConnectionString :: System.String get_RunTimeConnectionString()
-		DevExpress.Data.Entity.IConnectionStringsProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Data.Entity.IConnectionStringsProvider :: GetConnectionStringInfo :: DevExpress.Data.Entity.IConnectionStringInfo GetConnectionStringInfo(System.String)
-		DevExpress.Data.Native.VS2005ConnectionStringHelper :: GetDataConnectionString :: System.String GetDataConnectionString(System.Object)
-		DevExpress.Data.Native.VS2005ConnectionStringHelper :: GetPatchedConnectionString :: System.String GetPatchedConnectionString(System.ComponentModel.Design.IDesignerHost, System.String)
-		DevExpress.Data.Native.VS2005ConnectionStringHelper :: PatchConnectionString :: Void PatchConnectionString(System.Object)
-		DevExpress.Data.Native.VS2005ConnectionStringHelper :: SetDataConnectionString :: Void SetDataConnectionString(System.Object, System.String)
-		DevExpress.Data.Native.VS2005ConnectionStringHelper :: ShouldPatchConnectionString :: Boolean ShouldPatchConnectionString(System.Object)
-		DevExpress.DataAccess.ConnectionParameters.CustomStringConnectionParameters :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.DataAccess.ConnectionParameters.CustomStringConnectionParameters :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.DataAccess.DataConnectionBase :: CreateConnectionString :: System.String CreateConnectionString()
-		DevExpress.DataAccess.DataConnectionBase :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.DataAccess.DataConnectionBase :: get_ConnectionStringSerializable :: System.String get_ConnectionStringSerializable()
-		DevExpress.DataAccess.DataConnectionBase :: get_HasConnectionString :: Boolean get_HasConnectionString()
-		DevExpress.DataAccess.DataConnectionBase :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.DataAccess.DataConnectionBase :: set_ConnectionStringSerializable :: Void set_ConnectionStringSerializable(System.String)
-		DevExpress.DataAccess.DataConnectionBase :: ShouldSerializeConnectionStringSerializable :: Boolean ShouldSerializeConnectionStringSerializable()
-		DevExpress.DataAccess.DefaultConnectionStringProvider :: AssignConnectionStrings :: Void AssignConnectionStrings(System.Collections.Generic.IDictionary`2[System.String,System.String])
-		DevExpress.DataAccess.DefaultConnectionStringProvider :: AssignConnectionStrings :: Void AssignConnectionStrings(System.Func`1[System.Collections.Generic.IDictionary`2[System.String,System.String]])
-		DevExpress.DataAccess.DefaultConnectionStringProvider+<>c__DisplayClass0_0 :: <AssignConnectionStrings>b__0 :: System.Collections.Generic.IDictionary`2[System.String,System.String] <AssignConnectionStrings>b__0()
-		DevExpress.DataAccess.DefaultConnectionStringProvider+<>c__DisplayClass1_0 :: <AssignConnectionStrings>b__0 :: DevExpress.Data.Entity.IConnectionStringsProvider <AssignConnectionStrings>b__0()
-		DevExpress.DataAccess.EntityFramework.EFConnectionParameters :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.DataAccess.EntityFramework.EFConnectionParameters :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		DevExpress.DataAccess.EntityFramework.EFConnectionParameters :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.DataAccess.EntityFramework.EFConnectionParameters :: set_ConnectionStringName :: Void set_ConnectionStringName(System.String)
-		DevExpress.DataAccess.EntityFramework.EFDataConnection :: CreateConnectionString :: System.String CreateConnectionString()
-		DevExpress.DataAccess.EntityFramework.EFDataConnection :: DevExpress.DataAccess.Wizard.Model.IDataConnection.CreateConnectionString :: System.String DevExpress.DataAccess.Wizard.Model.IDataConnection.CreateConnectionString(Boolean)
-		DevExpress.DataAccess.EntityFramework.EFDataConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.DataAccess.EntityFramework.EFDataConnection :: get_ConnectionStringsProvider :: DevExpress.Data.Entity.IConnectionStringsProvider get_ConnectionStringsProvider()
-		DevExpress.DataAccess.EntityFramework.EFDataConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.DataAccess.EntityFramework.EFDataConnection :: set_ConnectionStringsProvider :: Void set_ConnectionStringsProvider(DevExpress.Data.Entity.IConnectionStringsProvider)
-		DevExpress.DataAccess.EntityFramework.EFDataSource :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.DataAccess.EntityFramework.EFDataSource :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		DevExpress.DataAccess.EntityFramework.EFDataSource :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.DataAccess.EntityFramework.EFDataSource :: set_ConnectionStringName :: Void set_ConnectionStringName(System.String)
-		DevExpress.DataAccess.Json.JsonDataConnection :: CreateConnectionString :: System.String CreateConnectionString()
-		DevExpress.DataAccess.Json.JsonDataConnection :: CreateConnectionString :: System.String CreateConnectionString(Boolean)
-		DevExpress.DataAccess.Native.AppConfigHelper :: AddXpoProviderToConnectionString :: System.String AddXpoProviderToConnectionString(System.String, System.String)
-		DevExpress.DataAccess.Native.AppConfigHelper :: ConnectionStrings :: DevExpress.Data.Entity.IConnectionStringInfo[] ConnectionStrings()
-		DevExpress.DataAccess.Native.AppConfigHelper :: CreateSqlConnectionFromConnectionString :: DevExpress.DataAccess.Sql.SqlDataConnection CreateSqlConnectionFromConnectionString(DevExpress.DataAccess.Sql.SqlDataSource, DevExpress.Data.Entity.IConnectionStringsProvider, System.String)
-		DevExpress.DataAccess.Native.EntityFramework.DataAccessEntityFrameworkModel :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.DataAccess.Native.EntityFramework.DataAccessEntityFrameworkModel :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.DataAccess.Native.EntityFramework.EFDataConnectionTypeConverter :: GetObscuredConnectionString :: System.String GetObscuredConnectionString(DevExpress.DataAccess.EntityFramework.EFDataConnection)
-		DevExpress.DataAccess.Native.EntityFramework.RuntimeDescendantBuilder :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.DataAccess.Native.InMemoryConnectionStringProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.DataAccess.Native.InMemoryConnectionStringProvider :: GetConnectionStringInfo :: DevExpress.Data.Entity.IConnectionStringInfo GetConnectionStringInfo(System.String)
-		DevExpress.DataAccess.Native.Json.JsonSourceConfigurationHelper :: CreateJsonConnectionString :: System.String CreateJsonConnectionString(DevExpress.DataAccess.Json.JsonSourceBase)
-		DevExpress.DataAccess.Native.Json.JsonSourceConfigurationHelper :: ParseJsonConnectionString :: DevExpress.DataAccess.Json.JsonSourceBase ParseJsonConnectionString(System.String)
-		DevExpress.DataAccess.Native.Json.JsonSourceConfigurationHelper :: TryParseJsonConnectionString :: Boolean TryParseJsonConnectionString(System.String, DevExpress.DataAccess.Json.JsonSourceBase ByRef)
-		DevExpress.DataAccess.Native.RuntimeConnectionStringsProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.DataAccess.Native.RuntimeConnectionStringsProvider :: GetConnectionStringInfo :: DevExpress.Data.Entity.IConnectionStringInfo GetConnectionStringInfo(System.String)
-		DevExpress.DataAccess.Native.RuntimeConnectionStringsProvider :: GetConnectionStringInfos :: DevExpress.Data.Entity.IConnectionStringInfo[] GetConnectionStringInfos()
-		DevExpress.DataAccess.Native.RuntimeConnectionStringsProvider+<>c__DisplayClass12_0 :: <GetConnectionStringInfo>b__0 :: Boolean <GetConnectionStringInfo>b__0(System.Configuration.ConnectionStringSettings)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessAdvantageConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessAdvantageProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessAsaConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String, System.String)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessAsaProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessBigQueryConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessBigQueryConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String, System.String)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessBigQueryProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessFirebirdConnectionProvider :: GetConnectionStringWithClientLibrary :: System.String GetConnectionStringWithClientLibrary(System.String, System.String, System.String, System.String)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessFirebirdProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessMSSqlProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessMySqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String, System.String, DevExpress.DataAccess.ConnectionParameters.MySqlSslMode)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessMySqlProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessPostgreSqlProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessTeradataConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessTeradataConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String, Int32)
-		DevExpress.DataAccess.Native.Sql.ConnectionProviders.DataAccessTeradataProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseAccess2007ConnectionString :: DevExpress.DataAccess.ConnectionParameters.Access2007ConnectionParameters ParseAccess2007ConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseAccess97ConnectionString :: DevExpress.DataAccess.ConnectionParameters.Access97ConnectionParameters ParseAccess97ConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseAdvantageConnectionString :: DevExpress.DataAccess.ConnectionParameters.AdvantageConnectionParameters ParseAdvantageConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseAsaConnectionString :: DevExpress.DataAccess.ConnectionParameters.AsaConnectionParameters ParseAsaConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseAseConnectionString :: DevExpress.DataAccess.ConnectionParameters.AseConnectionParameters ParseAseConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseDB2ConnectionString :: DevExpress.DataAccess.ConnectionParameters.DB2ConnectionParameters ParseDB2ConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseFirebirdConnectionString :: DevExpress.DataAccess.ConnectionParameters.FireBirdConnectionParameters ParseFirebirdConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseMSSqlServerCEConnectionString :: DevExpress.DataAccess.ConnectionParameters.MsSqlCEConnectionParameters ParseMSSqlServerCEConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseMSSqlServerConnectionString :: DevExpress.DataAccess.ConnectionParameters.MsSqlConnectionParameters ParseMSSqlServerConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseMySqlConnectionString :: DevExpress.DataAccess.ConnectionParameters.MySqlConnectionParameters ParseMySqlConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseOracleConnectionString :: DevExpress.DataAccess.ConnectionParameters.OracleConnectionParameters ParseOracleConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParsePervasiveConnectionString :: DevExpress.DataAccess.ConnectionParameters.PervasiveSqlConnectionParameters ParsePervasiveConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParsePostgresConnectionString :: DevExpress.DataAccess.ConnectionParameters.PostgreSqlConnectionParameters ParsePostgresConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseSQLiteConnectionString :: DevExpress.DataAccess.ConnectionParameters.SQLiteConnectionParameters ParseSQLiteConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseTeradataConnectionString :: DevExpress.DataAccess.ConnectionParameters.TeradataConnectionParameters ParseTeradataConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseTestConnectionString :: DevExpress.DataAccess.Native.Utils.TestConnectionParameters ParseTestConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseVistaDB5ConnectionString :: DevExpress.DataAccess.ConnectionParameters.VistaDBConnectionParameters ParseVistaDB5ConnectionString()
-		DevExpress.DataAccess.Native.Sql.ConnectionStringParser+ConnectionStringModel :: ParseVistaDBConnectionString :: DevExpress.DataAccess.ConnectionParameters.VistaDBConnectionParameters ParseVistaDBConnectionString()
-		DevExpress.DataAccess.Native.Sql.DataConnectionHelper :: ClearConnectionString :: System.String ClearConnectionString(System.String)
-		DevExpress.DataAccess.Native.Sql.DataConnectionHelper :: IsAcceptableSqlConnectionString :: Boolean IsAcceptableSqlConnectionString(System.String)
-		DevExpress.DataAccess.Native.Sql.DataConnectionHelper :: ObscureConnectionString :: System.String ObscureConnectionString(System.String)
-		DevExpress.DataAccess.Native.Utils.TestProviderFactory :: CreateConnectionByConnectionString :: DevExpress.DataAccess.Sql.SqlDataConnection CreateConnectionByConnectionString(Boolean)
-		DevExpress.DataAccess.Native.Utils.TestProviderFactory :: CreateConnectionByConnectionString :: DevExpress.DataAccess.Sql.SqlDataConnection CreateConnectionByConnectionString(Boolean, System.Func`2[System.String,DevExpress.DataAccess.Sql.SqlDataConnection])
-		DevExpress.DataAccess.Native.Utils.TestProviderFactory :: CreateConnectionByConnectionString :: DevExpress.DataAccess.Sql.SqlDataConnection CreateConnectionByConnectionString(System.String, Boolean, System.Func`2[System.String,DevExpress.DataAccess.Sql.SqlDataConnection])
-		DevExpress.DataAccess.Native.Utils.TestProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.DataAccess.Native.Utils.TestProviderFactory+<>c :: <CreateConnectionByConnectionString>b__16_0 :: DevExpress.DataAccess.Sql.SqlDataConnection <CreateConnectionByConnectionString>b__16_0(System.String)
-		DevExpress.DataAccess.Native.Web.DataSourceParameters :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.DataAccess.Native.Web.DataSourceParameters :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.DataAccess.Native.Web.SqlDataSourceWizardServiceContext :: get_ConnectionStringsProvider :: DevExpress.DataAccess.Web.IDataSourceWizardConnectionStringsProvider get_ConnectionStringsProvider()
-		DevExpress.DataAccess.Native.Web.SqlDataSourceWizardServiceContext :: set_ConnectionStringsProvider :: Void set_ConnectionStringsProvider(DevExpress.DataAccess.Web.IDataSourceWizardConnectionStringsProvider)
-		DevExpress.DataAccess.Sql.SqlDataConnection :: CreateConnectionString :: System.String CreateConnectionString()
-		DevExpress.DataAccess.Sql.SqlDataConnection :: CreateConnectionString :: System.String CreateConnectionString(Boolean)
-		DevExpress.DataAccess.Sql.SqlDataConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.DataAccess.Sql.SqlDataConnection :: get_ConnectionStringSerializable :: System.String get_ConnectionStringSerializable()
-		DevExpress.DataAccess.Sql.SqlDataConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.DataAccess.Sql.SqlDataConnection :: set_ConnectionStringSerializable :: Void set_ConnectionStringSerializable(System.String)
-		DevExpress.DataAccess.SqlDataSourceCreatedInfo :: get_CustomConnectionString :: Boolean get_CustomConnectionString()
-		DevExpress.DataAccess.SqlDataSourceCreatedInfo :: set_CustomConnectionString :: Void set_CustomConnectionString(Boolean)
-		DevExpress.DataAccess.Wizard.DataSourceWizardClient`1 :: get_ConnectionStringsProvider :: DevExpress.Data.Entity.IConnectionStringsProvider get_ConnectionStringsProvider()
-		DevExpress.DataAccess.Wizard.DataSourceWizardClientBase :: get_ConnectionStringsProvider :: DevExpress.Data.Entity.IConnectionStringsProvider get_ConnectionStringsProvider()
-		DevExpress.DataAccess.Wizard.DataSourceWizardClientBase :: set_ConnectionStringsProvider :: Void set_ConnectionStringsProvider(DevExpress.Data.Entity.IConnectionStringsProvider)
-		DevExpress.DataAccess.Wizard.Model.DataSourceModel :: DevExpress.DataAccess.Wizard.Model.IEFDataSourceModel.get_ConnectionStringLocation :: DevExpress.Data.Entity.DataConnectionLocation DevExpress.DataAccess.Wizard.Model.IEFDataSourceModel.get_ConnectionStringLocation()
-		DevExpress.DataAccess.Wizard.Model.DataSourceModel :: DevExpress.DataAccess.Wizard.Model.IEFDataSourceModel.set_ConnectionStringLocation :: Void DevExpress.DataAccess.Wizard.Model.IEFDataSourceModel.set_ConnectionStringLocation(DevExpress.Data.Entity.DataConnectionLocation)
-		DevExpress.DataAccess.Wizard.Model.EFDataSourceModel :: get_ConnectionStringLocation :: DevExpress.Data.Entity.DataConnectionLocation get_ConnectionStringLocation()
-		DevExpress.DataAccess.Wizard.Model.EFDataSourceModel :: set_ConnectionStringLocation :: Void set_ConnectionStringLocation(DevExpress.Data.Entity.DataConnectionLocation)
-		DevExpress.DataAccess.Wizard.Model.IDataConnection :: CreateConnectionString :: System.String CreateConnectionString()
-		DevExpress.DataAccess.Wizard.Model.IDataConnection :: CreateConnectionString :: System.String CreateConnectionString(Boolean)
-		DevExpress.DataAccess.Wizard.Model.IEFDataSourceModel :: get_ConnectionStringLocation :: DevExpress.Data.Entity.DataConnectionLocation get_ConnectionStringLocation()
-		DevExpress.DataAccess.Wizard.Model.IEFDataSourceModel :: set_ConnectionStringLocation :: Void set_ConnectionStringLocation(DevExpress.Data.Entity.DataConnectionLocation)
-		DevExpress.DataAccess.Wizard.Presenters.ChooseEFConnectionStringPage`1 :: ApplySelectedConnectionString :: Void ApplySelectedConnectionString()
-		DevExpress.DataAccess.Wizard.Presenters.ChooseEFConnectionStringPage`1 :: get_ConnectionStringsProvider :: DevExpress.Data.Entity.IConnectionStringsProvider get_ConnectionStringsProvider()
-		DevExpress.DataAccess.Wizard.Presenters.ChooseEFConnectionStringPage`1 :: set_ConnectionStringsProvider :: Void set_ConnectionStringsProvider(DevExpress.Data.Entity.IConnectionStringsProvider)
-		DevExpress.DataAccess.Wizard.Presenters.ChooseEFConnectionStringPage`1+ConnectionStringNamedItemWrapper :: get_RunTimeConnectionString :: System.String get_RunTimeConnectionString()
-		DevExpress.DataAccess.Wizard.Presenters.ChooseEFContextPage`1 :: get_ConnectionStringsProvider :: DevExpress.Data.Entity.IConnectionStringsProvider get_ConnectionStringsProvider()
-		DevExpress.DataAccess.Wizard.Presenters.ChooseEFContextPage`1 :: set_ConnectionStringsProvider :: Void set_ConnectionStringsProvider(DevExpress.Data.Entity.IConnectionStringsProvider)
-		DevExpress.DataAccess.Wizard.Views.IConfigureEFConnectionStringPageView :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.DataAccess.Wizard.Views.IConfigureEFConnectionStringPageView :: get_ShouldSaveConnectionString :: Boolean get_ShouldSaveConnectionString()
-		DevExpress.DataAccess.Wizard.Views.IConfigureEFConnectionStringPageView :: get_UseDefaultConnectionString :: Boolean get_UseDefaultConnectionString()
-		DevExpress.DataAccess.Wizard.Views.IConfigureEFConnectionStringPageView :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.DataAccess.Wizard.Views.IConfigureEFConnectionStringPageView :: set_ShouldSaveConnectionString :: Void set_ShouldSaveConnectionString(Boolean)
-		DevExpress.DataAccess.Wizard.Views.IConfigureEFConnectionStringPageView :: set_UseDefaultConnectionString :: Void set_UseDefaultConnectionString(Boolean)
-		DevExpress.DataAccess.Wizard.Views.ISaveConnectionPageView :: get_ShouldSaveConnectionString :: Boolean get_ShouldSaveConnectionString()
-		DevExpress.DataAccess.Wizard.Views.ISaveConnectionPageView :: set_ShouldSaveConnectionString :: Void set_ShouldSaveConnectionString(Boolean)
-		DevExpress.Entity.Model.DescendantBuilding.DefaultDescendantBuilder :: GetCeProviderConnectionString :: System.String GetCeProviderConnectionString(System.String)
-		DevExpress.Entity.Model.DescendantBuilding.EF60DbDescendantBuilderBase :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Entity.Model.DescendantBuilding.LocalDbDescendantBuilder :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Entity.Model.DescendantBuilding.SqlCeDescendantBuilder :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Entity.Model.DescendantBuilding.SqlExpressDescendantBuilder :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Internal.DbEngineDetector :: PatchAppConfigConnectionStringsAndDefaultConnectionFactory :: Void PatchAppConfigConnectionStringsAndDefaultConnectionFactory()
-		DevExpress.Internal.DbEngineDetector :: PatchConnectionString :: System.String PatchConnectionString(System.String, Boolean)
-		DevExpress.Internal.DbEngineDetector :: PatchConnectionStringsAndConfigureEntityFrameworkDefaultConnectionFactory :: Boolean PatchConnectionStringsAndConfigureEntityFrameworkDefaultConnectionFactory()
-		DevExpress.Internal.DbEngineDetector :: SelectConnectionStringName :: System.String SelectConnectionStringName(System.String, System.String)
-		DevExpress.Internal.DbEngineDetector+ConnectionStringAndDefaultConnectionFactoryPatcherConfigSystem :: CreateConnectionStringsSection :: System.Configuration.ConnectionStringsSection CreateConnectionStringsSection()
-		DevExpress.Internal.DbEngineDetector+ConnectionStringAndDefaultConnectionFactoryPatcherConfigSystem :: get_ConnectionStringSection :: System.Configuration.ConnectionStringsSection get_ConnectionStringSection()
-		DevExpress.Office.DataSourceObjectProperties :: add_UdlConnectionStringChanged :: Void add_UdlConnectionStringChanged(System.EventHandler)
-		DevExpress.Office.DataSourceObjectProperties :: get_UdlConnectionString :: System.String get_UdlConnectionString()
-		DevExpress.Office.DataSourceObjectProperties :: RaiseUdlConnectionStringChanged :: Void RaiseUdlConnectionStringChanged()
-		DevExpress.Office.DataSourceObjectProperties :: remove_UdlConnectionStringChanged :: Void remove_UdlConnectionStringChanged(System.EventHandler)
-		DevExpress.Office.DataSourceObjectProperties :: set_UdlConnectionString :: Void set_UdlConnectionString(System.String)
-		DevExpress.Office.MailMergeProperties :: add_ConnectionStringChanged :: Void add_ConnectionStringChanged(System.EventHandler)
-		DevExpress.Office.MailMergeProperties :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.Office.MailMergeProperties :: RaiseConnectionStringChanged :: Void RaiseConnectionStringChanged()
-		DevExpress.Office.MailMergeProperties :: remove_ConnectionStringChanged :: Void remove_ConnectionStringChanged(System.EventHandler)
-		DevExpress.Office.MailMergeProperties :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.ReportServer.ServiceModel.DataContracts.DataModelDto :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.ReportServer.ServiceModel.DataContracts.DataModelDto :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.Utils.Design.DataAccess.OLAPDataAccessMetadataAttribute :: get_OLAPConnectionStringProperty :: System.String get_OLAPConnectionStringProperty()
-		DevExpress.Utils.Design.DataAccess.OLAPDataAccessMetadataAttribute :: set_OLAPConnectionStringProperty :: Void set_OLAPConnectionStringProperty(System.String)
-		DevExpress.Xpf.Core.DataSources.PivotOlapDataSource :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.Xpf.Core.DataSources.PivotOlapDataSource :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.Xpf.Core.DataSources.PivotOlapDataSource :: UpdateConnectionString :: Void UpdateConnectionString()
-		DevExpress.Xpo.DB.Access2007ProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.Access97ProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.AccessConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.AccessConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.AccessConnectionProvider :: GetConnectionStringACE :: System.String GetConnectionStringACE(System.String, System.String)
-		DevExpress.Xpo.DB.AccessConnectionProviderMultiUserThreadSafe :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.AccessConnectionProviderMultiUserThreadSafe :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.AdvantageConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.AdvantageConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String)
-		DevExpress.Xpo.DB.AdvantageConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.AdvantageProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.AsaConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.AsaConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.AsaProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.AseConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, Int32, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.AseConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.AseProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.ConnectionProviderSql :: EscapeConnectionStringArgument :: System.String EscapeConnectionStringArgument(System.String)
-		DevExpress.Xpo.DB.ConnectionProviderSql :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.Xpo.DB.DataSetDataStore :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.DataSetDataStore :: GetConnectionString :: System.String GetConnectionString(System.String, Boolean)
-		DevExpress.Xpo.DB.DataSetProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.DB2ConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, Int32, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.DB2ConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.DB2ProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.DroneDataStore :: GetConnectionString :: System.String GetConnectionString()
-		DevExpress.Xpo.DB.FirebirdConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, Int32, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.FirebirdConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.FirebirdConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.FirebirdConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String, DevExpress.Xpo.DB.FirebirdServerType, System.String)
-		DevExpress.Xpo.DB.FirebirdConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.FirebirdProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.Helpers.ConnectionStringParser :: GetConnectionString :: System.String GetConnectionString()
-		DevExpress.Xpo.DB.InMemoryDataStore :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.InMemoryDataStore :: GetConnectionString :: System.String GetConnectionString(System.String, Boolean)
-		DevExpress.Xpo.DB.InMemoryDataStore :: GetConnectionStringInMemory :: System.String GetConnectionStringInMemory(Boolean)
-		DevExpress.Xpo.DB.InMemoryProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.MSSqlCEConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.MSSqlCEConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlCEProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, Int32, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, Int32, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionString2005CacheRoot :: System.String GetConnectionString2005CacheRoot(System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionString2005CacheRoot :: System.String GetConnectionString2005CacheRoot(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionString2005WithCache :: System.String GetConnectionString2005WithCache(System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionString2005WithCache :: System.String GetConnectionString2005WithCache(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringForType :: System.String GetConnectionStringForType(System.String, System.String, Int32, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringForType :: System.String GetConnectionStringForType(System.String, System.String, Int32, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringForType :: System.String GetConnectionStringForType(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringForType :: System.String GetConnectionStringForType(System.String, System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringForTypeWithAttach :: System.String GetConnectionStringForTypeWithAttach(System.String, System.String, System.String, Boolean)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringForTypeWithAttach :: System.String GetConnectionStringForTypeWithAttach(System.String, System.String, System.String, System.String, System.String, Boolean)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringForTypeWithAttachForLocalDB :: System.String GetConnectionStringForTypeWithAttachForLocalDB(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringWithAttach :: System.String GetConnectionStringWithAttach(System.String, System.String, Boolean)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringWithAttach :: System.String GetConnectionStringWithAttach(System.String, System.String, System.String, System.String, Boolean)
-		DevExpress.Xpo.DB.MSSqlConnectionProvider :: GetConnectionStringWithAttachForLocalDB :: System.String GetConnectionStringWithAttachForLocalDB(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MSSqlProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.MSSqlProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.String, Int32, System.String, System.String)
-		DevExpress.Xpo.DB.MySqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, Int32, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MySqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.MySqlProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.NexusDBConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, Int32, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.NexusDBConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.NexusDBProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.ODPConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.ODPManagedConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.ODPManagedProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.OracleConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String)
-		DevExpress.Xpo.DB.OracleProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.PervasiveProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.PervasiveSqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.PervasiveSqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.PostgreSqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, Int32, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.PostgreSqlConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String, System.String, System.String)
-		DevExpress.Xpo.DB.PostgreSqlProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.ProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.SQLiteConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.SQLiteConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String)
-		DevExpress.Xpo.DB.SQLiteProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.VistaDB5ConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.VistaDB5ConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String)
-		DevExpress.Xpo.DB.VistaDB5ProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.VistaDB6ConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.VistaDB6ConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String)
-		DevExpress.Xpo.DB.VistaDB6ProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.DB.VistaDBConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String)
-		DevExpress.Xpo.DB.VistaDBConnectionProvider :: GetConnectionString :: System.String GetConnectionString(System.String, System.String)
-		DevExpress.Xpo.DB.VistaDBProviderFactory :: GetConnectionString :: System.String GetConnectionString(System.Collections.Generic.Dictionary`2[System.String,System.String])
-		DevExpress.Xpo.Session :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.Xpo.Session :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.Xpo.Session :: ShouldSerializeConnectionString :: Boolean ShouldSerializeConnectionString()
-		DevExpress.Xpo.XPObjectSource :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.Xpo.XPObjectSource :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		DevExpress.Xpo.XPObjectSource :: get_ConnectionStringsProvider :: DevExpress.Data.Entity.IConnectionStringsProvider get_ConnectionStringsProvider()
-		DevExpress.Xpo.XPObjectSource :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.Xpo.XPObjectSource :: set_ConnectionStringName :: Void set_ConnectionStringName(System.String)
-		DevExpress.Xpo.XPObjectSource :: set_ConnectionStringsProvider :: Void set_ConnectionStringsProvider(DevExpress.Data.Entity.IConnectionStringsProvider)
-		DevExpress.Xpo.XpoDefault :: ClearPoolConnectionString :: System.String ClearPoolConnectionString(System.String)
-		DevExpress.Xpo.XpoDefault :: ConnectionStringRemovePassword :: System.String ConnectionStringRemovePassword(DevExpress.Xpo.DB.Helpers.ConnectionStringParser)
-		DevExpress.Xpo.XpoDefault :: ConnectionStringRemovePassword :: System.String ConnectionStringRemovePassword(System.String)
-		DevExpress.Xpo.XpoDefault :: get_ActiveConnectionString :: System.String get_ActiveConnectionString()
-		DevExpress.Xpo.XpoDefault :: get_ConnectionString :: System.String get_ConnectionString()
-		DevExpress.Xpo.XpoDefault :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		DevExpress.XtraRichEdit.Import.Rtf.MailMergeDestination :: OnConnectionStringKeyword :: Void OnConnectionStringKeyword(DevExpress.XtraRichEdit.Import.Rtf.RtfImporter, Int32, Boolean)
-		DevExpress.XtraRichEdit.Import.Rtf.MailMergeDestination+<>c__DisplayClass2_0 :: <OnConnectionStringKeyword>b__0 :: Void <OnConnectionStringKeyword>b__0(System.String)
-		dmp210i.yls :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		dmp210i.yyi :: get_ConnectionString :: System.String get_ConnectionString()
-		dmp210i.yyi :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		FirebirdSql.Data.Common.ConnectionString :: get_NormalizedConnectionString :: System.String get_NormalizedConnectionString()
-		FirebirdSql.Data.Common.ConnectionString+<>c :: <get_NormalizedConnectionString>b__108_0 :: System.String <get_NormalizedConnectionString>b__108_0(System.Collections.Generic.KeyValuePair`2[System.String,System.Object])
-		FirebirdSql.Data.Common.ConnectionString+<>c :: <get_NormalizedConnectionString>b__108_1 :: Boolean <get_NormalizedConnectionString>b__108_1(System.Collections.Generic.KeyValuePair`2[System.String,System.Object])
-		FirebirdSql.Data.Common.ConnectionString+<>c :: <get_NormalizedConnectionString>b__108_2 :: System.String <get_NormalizedConnectionString>b__108_2(System.Collections.Generic.KeyValuePair`2[System.String,System.Object])
-		FirebirdSql.Data.FirebirdClient.FbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		FirebirdSql.Data.FirebirdClient.FbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		FirebirdSql.Data.FirebirdClient.FirebirdClientFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		FirebirdSql.Data.Services.FbService :: get_ConnectionString :: System.String get_ConnectionString()
-		FirebirdSql.Data.Services.FbService :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		fx200f.cyn :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		fx200f.cyS :: get_ConnectionString :: System.String get_ConnectionString()
-		fx200f.cyS :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		IBM.Data.DB2.ADP :: NoConnectionString :: System.Exception NoConnectionString()
-		IBM.Data.DB2.DB2Connection :: ConnectionStringContainsKeyword :: Boolean ConnectionStringContainsKeyword(System.String)
-		IBM.Data.DB2.DB2Connection :: get_ConnectionString :: System.String get_ConnectionString()
-		IBM.Data.DB2.DB2Connection :: RemoveConnectionStringPassword :: System.String RemoveConnectionStringPassword(System.String, Boolean)
-		IBM.Data.DB2.DB2Connection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		IBM.Data.DB2.DB2Connection :: SetConnectionString :: Void SetConnectionString(IBM.Data.DB2.DB2Connection)
-		IBM.Data.DB2.DB2ConnPool :: DecryptConnectionStringPassword :: System.String DecryptConnectionStringPassword(System.String)
-		IBM.Data.DB2.DB2ConnPool :: EncryptConnectionStringPassword :: System.String EncryptConnectionStringPassword(System.String)
-		IBM.Data.DB2.DB2ConnPool :: ReplaceConnectionStringParms :: System.String ReplaceConnectionStringParms(IBM.Data.DB2.DB2Connection, System.String, DB2ConnSettings ByRef, DB2ConnSettingsInternal ByRef, Boolean, Boolean)
-		IBM.Data.DB2.DB2ConnPool :: WaitRemoteConnectionString :: Int32 WaitRemoteConnectionString(System.String ByRef)
-		IBM.Data.DB2.DB2Factory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		IBM.Data.DB2.ODC :: ConnectionStringTooLong :: System.Exception ConnectionStringTooLong()
-		MimeKit.Cryptography.SqliteCertificateDatabase+SQLiteAssembly :: get_ConnectionStringBuilderType :: System.Type get_ConnectionStringBuilderType()
-		MimeKit.Cryptography.SqliteCertificateDatabase+SQLiteAssembly :: get_ConnectionStringProperty :: System.Reflection.PropertyInfo get_ConnectionStringProperty()
-		MimeKit.Cryptography.SqliteCertificateDatabase+SQLiteAssembly :: set_ConnectionStringBuilderType :: Void set_ConnectionStringBuilderType(System.Type)
-		MimeKit.Cryptography.SqliteCertificateDatabase+SQLiteAssembly :: set_ConnectionStringProperty :: Void set_ConnectionStringProperty(System.Reflection.PropertyInfo)
-		NLog.Targets.DatabaseCommandInfo :: get_ConnectionString :: NLog.Layouts.Layout get_ConnectionString()
-		NLog.Targets.DatabaseCommandInfo :: set_ConnectionString :: Void set_ConnectionString(NLog.Layouts.Layout)
-		NLog.Targets.DatabaseTarget :: BuildConnectionString :: System.String BuildConnectionString(NLog.LogEventInfo)
-		NLog.Targets.DatabaseTarget :: get_ConnectionString :: NLog.Layouts.Layout get_ConnectionString()
-		NLog.Targets.DatabaseTarget :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		NLog.Targets.DatabaseTarget :: get_ConnectionStringsSettings :: System.Configuration.ConnectionStringSettingsCollection get_ConnectionStringsSettings()
-		NLog.Targets.DatabaseTarget :: get_InstallConnectionString :: NLog.Layouts.Layout get_InstallConnectionString()
-		NLog.Targets.DatabaseTarget :: set_ConnectionString :: Void set_ConnectionString(NLog.Layouts.Layout)
-		NLog.Targets.DatabaseTarget :: set_ConnectionStringName :: Void set_ConnectionStringName(System.String)
-		NLog.Targets.DatabaseTarget :: set_ConnectionStringsSettings :: Void set_ConnectionStringsSettings(System.Configuration.ConnectionStringSettingsCollection)
-		NLog.Targets.DatabaseTarget :: set_InstallConnectionString :: Void set_InstallConnectionString(NLog.Layouts.Layout)
-		Oracle.ManagedDataAccess.Client.OracleClientFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		Oracle.ManagedDataAccess.Client.OracleConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Oracle.ManagedDataAccess.Client.OracleConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		OracleInternal.ConnectionPool.PoolManager`3 :: get_ConnectionString :: Oracle.ManagedDataAccess.Client.ConnectionString get_ConnectionString()
-		OracleInternal.ConnectionPool.PoolManager`3[[OracleInternal.ConnectionPool.OraclePoolManager, Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342],[OracleInternal.ConnectionPool.OraclePool, Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342],[OracleInternal.ServiceObjects.OracleConnectionImpl, Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342]] :: get_ConnectionString :: Oracle.ManagedDataAccess.Client.ConnectionString get_ConnectionString()
-		OracleInternal.Network.AddressResolution :: ResolveConnectionString :: OracleInternal.Network.ConnectionOption ResolveConnectionString()
-		rlo210s.TYs :: get_ConnectionString :: System.String get_ConnectionString()
-		rlo210s.TYs :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		rlo210s.TYW :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		rno200R.iME :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		rno200R.iMl :: get_ConnectionString :: System.String get_ConnectionString()
-		rno200R.iMl :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		rxo210x.FGz :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		rxo210x.FiV :: get_ConnectionString :: System.String get_ConnectionString()
-		rxo210x.FiV :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Administration.Module.Databases.ViewModels.NamedConnectionViewModel :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Administration.Module.Databases.ViewModels.NamedConnectionViewModel :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.BarTender.SystemDatabase.SystemDatabaseConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.BarTender.SystemDatabase.SystemDatabaseConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.BtSystem.Client.Reader.ReprintExecutor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.BtSystem.Client.Reader.SystemDatabaseConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.BtSystem.Client.Reader.SystemDatabaseConnection :: GetConnectionString :: System.String GetConnectionString()
-		Seagull.BtSystem.Client.Reader.SystemDatabaseConnection :: GetManualConnectionString :: System.String GetManualConnectionString()
-		Seagull.BtSystem.Client.Reader.SystemDatabaseConnection :: GetSystemDatabaseConnectionString :: System.String GetSystemDatabaseConnectionString()
-		Seagull.BtSystem.Client.Reader.SystemDatabaseConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.BtSystem.Client.ServerStatelessConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.BtSystem.Client.ServerStatelessConnection :: GetConnectionString :: System.String GetConnectionString(Seagull.BtSystem.Client.ServerStatelessConnection)
-		Seagull.BtSystem.Client.ServerStatelessConnection :: GetConnectionString :: System.String GetConnectionString(Seagull.BtSystem.Client.ServerStatelessConnection, System.Nullable`1[System.Boolean] ByRef)
-		Seagull.BtSystem.Client.ServerStatelessConnection :: GetConnectionString :: System.String GetConnectionString(System.Nullable`1[System.Boolean] ByRef)
-		Seagull.BtSystem.Client.ServiceClientHelper :: get_ConnectionStr :: System.String get_ConnectionStr()
-		Seagull.BtSystem.Client.ServiceClientHelper :: get_DataServiceConnection :: Seagull.BtSystem.Client.ServerStatelessConnection get_DataServiceConnection()
-		Seagull.BtSystem.Client.ServiceClientHelper :: GetConnectionString :: System.String GetConnectionString()
-		Seagull.BtSystem.Client.ServiceClientHelper :: set_ConnectionStr :: Void set_ConnectionStr(System.String)
-		Seagull.BtSystem.Client.ServiceClientHelper :: set_DataServiceConnection :: Void set_DataServiceConnection(Seagull.BtSystem.Client.ServerStatelessConnection)
-		Seagull.BtSystem.Client.ServiceClientHelper :: SetConnectionString :: Boolean SetConnectionString(System.String)
-		Seagull.BtSystem.DataAccess.DbProviderProperties :: ConnectionStringForDatabase :: System.String ConnectionStringForDatabase(System.String)
-		Seagull.BtSystem.DataAccess.DbProviderProperties :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.BtSystem.DataAccess.DbProviderProperties :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.BtSystem.DataAccess.EntityFactory :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.BtSystem.DataServiceDatabase :: get_ConnectionString :: Seagull.BtSystem.DataServiceDatabaseConnectionString get_ConnectionString()
-		Seagull.BtSystem.DataServiceDatabase :: set_ConnectionString :: Void set_ConnectionString(Seagull.BtSystem.DataServiceDatabaseConnectionString)
-		Seagull.BtSystem.Wizard.LogDb.BackupHelper :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.BtSystem.Wizard.LogDb.BackupHelper :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.BtSystem.Wizard.LogDb.SQLScriptExecutor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.BtSystem.Wizard.LogDb.SQLScriptExecutor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.BtSystem.Wizard.LogDb.UpgradeHelper :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.BtSystem.Wizard.LogDb.WizardConfiguration :: get_BssSystemDbIsSetup :: Boolean get_BssSystemDbIsSetup()
-		Seagull.BtSystem.Wizard.LogDb.WizardConfiguration :: GetConnectionString :: System.String GetConnectionString(Boolean)
-		Seagull.BtSystem.Wizard.LogDb.WizardConfiguration :: ParseBssConnectionString :: Boolean ParseBssConnectionString(System.String)
-		Seagull.BtSystem.Wizard.LogDb.WizardConfiguration :: set_BssSystemDbIsSetup :: Void set_BssSystemDbIsSetup(Boolean)
-		Seagull.Data.AccessCDataDbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.AccessCDataDbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.DataAccess.DbSchemaProviderOleDb :: GetConnectionPropertyValueFromConnectionString :: System.Object GetConnectionPropertyValueFromConnectionString(System.String, System.String)
-		Seagull.Data.Configuration.DataAccess.DbSchemaProviderOleDb :: IsPasswordAvailableInConnectionString :: Boolean IsPasswordAvailableInConnectionString(ADODB.Connection)
-		Seagull.Data.Configuration.Interfaces.IDatabaseConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Interfaces.IDatabaseConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.AccessCDataConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.AccessCDataConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.ACEorJetConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.ACEorJetConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.AzureSqlConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.AzureSqlConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.ConnectionDescriptorBase :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.ConnectionDescriptorBase :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.Connections.QuickBooksOnlineConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.Connections.QuickBooksOnlineConnectionDescriptor :: get_ConnectionStringBuilder :: System.Data.CData.QuickBooksOnline.QuickBooksOnlineConnectionStringBuilder get_ConnectionStringBuilder()
-		Seagull.Data.Configuration.Model.Connections.QuickBooksOnlineConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.Connections.SAPHANAConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.Connections.SAPHANAConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.DataBuilderConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.DataBuilderConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.DB2ConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.DB2ConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.ExcelCDataConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.ExcelCDataConnectionDescriptor :: InitializeTableHeadersFromConnectionString :: Void InitializeTableHeadersFromConnectionString(System.Collections.Generic.List`1[Seagull.Data.Configuration.Model.TableDescriptor])
-		Seagull.Data.Configuration.Model.ExcelCDataConnectionDescriptor :: InitializeTableOrientationsFromConnectionString :: Void InitializeTableOrientationsFromConnectionString(System.Collections.Generic.List`1[Seagull.Data.Configuration.Model.TableDescriptor])
-		Seagull.Data.Configuration.Model.ExcelCDataConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.ExcelConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.ExcelConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.ExcelOnlineConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.ExcelOnlineConnectionDescriptor :: get_ConnectionStringBuilder :: System.Data.CData.ExcelOnline.ExcelOnlineConnectionStringBuilder get_ConnectionStringBuilder()
-		Seagull.Data.Configuration.Model.ExcelOnlineConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.FirebirdConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.FirebirdConnectionDescriptor :: get_ConnectionStringBuilder :: Seagull.Data.FirebirdConnectionStringBuilder get_ConnectionStringBuilder()
-		Seagull.Data.Configuration.Model.FirebirdConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.GoogleSheetsConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.GoogleSheetsConnectionDescriptor :: get_ConnectionStringBuilder :: System.Data.CData.GoogleSheets.GoogleSheetsConnectionStringBuilder get_ConnectionStringBuilder()
-		Seagull.Data.Configuration.Model.GoogleSheetsConnectionDescriptor :: InitializeTableOrientationsFromConnectionString :: Void InitializeTableOrientationsFromConnectionString(System.Collections.Generic.List`1[Seagull.Data.Configuration.Model.TableDescriptor])
-		Seagull.Data.Configuration.Model.GoogleSheetsConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.InformixConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.InformixConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.JsonConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.JsonConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.MySQLConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.MySQLConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.ODBCConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.OleDbBaseConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.OleDbBaseConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.OracleConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.OracleConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.PostgreSQLConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.PostgreSQLConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.RecordSetContainer :: get_CompositeConnectionString :: System.String get_CompositeConnectionString()
-		Seagull.Data.Configuration.Model.RecordSetContainer+<>c :: <get_CompositeConnectionString>b__41_0 :: System.String <get_CompositeConnectionString>b__41_0(Seagull.Data.Configuration.Model.RecordSetDescriptor)
-		Seagull.Data.Configuration.Model.SAPIDocFileConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.SAPIDocFileConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.SqlServerConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.SqlServerConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.TextFileConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.TextFileConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Model.XMLFileConnectionDescriptor :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Model.XMLFileConnectionDescriptor :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Utility.DatabaseSetupDialogSettingsStorage :: GetConnectionStringKey :: System.String GetConnectionStringKey(Seagull.Data.Configuration.Model.RecordSetDescriptor)
-		Seagull.Data.Configuration.Wizard.ViewModels.BaseEmbeddedSampleDataPageViewModel`1 :: get_ConnectionStringEmbeddedSampleData :: System.String get_ConnectionStringEmbeddedSampleData()
-		Seagull.Data.Configuration.Wizard.ViewModels.BaseEmbeddedSampleDataPageViewModel`1 :: set_ConnectionStringEmbeddedSampleData :: Void set_ConnectionStringEmbeddedSampleData(System.String)
-		Seagull.Data.Configuration.Wizard.ViewModels.ConnectionNameViewModel :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Configuration.Wizard.ViewModels.ConnectionNameViewModel :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.Configuration.Wizard.ViewModels.JsonEmbeddedSampleDataPageViewModel :: get_ConnectionStringEmbeddedSampleData :: System.String get_ConnectionStringEmbeddedSampleData()
-		Seagull.Data.Configuration.Wizard.ViewModels.JsonEmbeddedSampleDataPageViewModel :: set_ConnectionStringEmbeddedSampleData :: Void set_ConnectionStringEmbeddedSampleData(System.String)
-		Seagull.Data.Configuration.Wizard.ViewModels.OleDbSelectionPageViewModel+ProviderInfo :: get_NameForConnectionString :: System.String get_NameForConnectionString()
-		Seagull.Data.Configuration.Wizard.ViewModels.OleDbSelectionPageViewModel+ProviderInfo :: set_NameForConnectionString :: Void set_NameForConnectionString(System.String)
-		Seagull.Data.Configuration.Wizard.ViewModels.TextEmbeddedSampleDataPageViewModel :: get_ConnectionStringEmbeddedSampleData :: System.String get_ConnectionStringEmbeddedSampleData()
-		Seagull.Data.Configuration.Wizard.ViewModels.TextEmbeddedSampleDataPageViewModel :: set_ConnectionStringEmbeddedSampleData :: Void set_ConnectionStringEmbeddedSampleData(System.String)
-		Seagull.Data.Configuration.Wizard.ViewModels.XMLEmbeddedSampleDataPageViewModel :: get_ConnectionStringEmbeddedSampleData :: System.String get_ConnectionStringEmbeddedSampleData()
-		Seagull.Data.Configuration.Wizard.ViewModels.XMLEmbeddedSampleDataPageViewModel :: set_ConnectionStringEmbeddedSampleData :: Void set_ConnectionStringEmbeddedSampleData(System.String)
-		Seagull.Data.Core.AccessCDataUtility :: GetAccessCDataConnectionString :: System.String GetAccessCDataConnectionString(System.String)
-		Seagull.Data.Core.DataAccess.AccessDatabase :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DataAccess.Database :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.Database :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.Database :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DataAccess.Database :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String, Boolean)
-		Seagull.Data.Core.DataAccess.ExcelCDataDatabase :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.ExcelCDataDatabase :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.ExcelDatabase :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.ExcelDatabase :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.ExcelDatabase :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DataAccess.ExcelOnlineDatabase :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.ExcelOnlineDatabase :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.ExcelOnlineDatabase :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DataAccess.GoogleSheetsDatabase :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.GoogleSheetsDatabase :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.GoogleSheetsDatabase :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DataAccess.ODBCDatabase :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.ODBCDatabase :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.OleDbBaseDatabase :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.OleDbBaseDatabase :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.OleDbBaseDatabase :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DataAccess.QuickBooksOnlineDatabase :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.QuickBooksOnlineDatabase :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.QuickBooksOnlineDatabase :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DataAccess.SqlServerDatabase :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DataAccess.TextBaseDatabase :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.TextBaseDatabase :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.TextBaseDatabase :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DataAccess.UDLDatabase :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DataAccess.UDLDatabase :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Core.DataAccess.UDLDatabase :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(System.String, System.String)
-		Seagull.Data.Core.DatabaseUtility :: DoesConnectionStringContainCredentials :: Boolean DoesConnectionStringContainCredentials(Seagull.Data.Core.ConnectionType, System.String)
-		Seagull.Data.Core.DatabaseUtility :: GetConnectionStringWithEncryptedCredentials :: Boolean GetConnectionStringWithEncryptedCredentials(Seagull.Data.Core.ConnectionType, System.String ByRef, System.String ByRef)
-		Seagull.Data.Core.DatabaseUtility :: GetConnectionStringWithoutCredentials :: System.String GetConnectionStringWithoutCredentials(Seagull.Data.Core.ConnectionType, System.String)
-		Seagull.Data.Core.DatabaseUtility :: GetConnectionStringWithUsernameAndPassword :: System.String GetConnectionStringWithUsernameAndPassword(Seagull.Data.Core.ConnectionType, System.String, System.String)
-		Seagull.Data.Core.DatabaseUtility :: GetODBCDataSourceNameFromConnectionString :: System.String GetODBCDataSourceNameFromConnectionString(System.String)
-		Seagull.Data.Core.ExcelCDataUtility :: GetExcelCDataConnectionString :: System.String GetExcelCDataConnectionString(System.String)
-		Seagull.Data.Core.ExcelCDataUtility :: GetExcelCDataConnectionStringWithRowScanTypeDetection :: System.String GetExcelCDataConnectionStringWithRowScanTypeDetection(System.String)
-		Seagull.Data.Core.OAuthUtility :: GetConnectionStringWithEmptyOAuthSettingsLocation :: System.String GetConnectionStringWithEmptyOAuthSettingsLocation(System.Data.Common.DbConnectionStringBuilder)
-		Seagull.Data.DatabaseRecordSet :: get_ConnectionStringWithoutCredentials :: System.String get_ConnectionStringWithoutCredentials()
-		Seagull.Data.DatabaseRecordSet :: set_ConnectionStringWithoutCredentials :: Void set_ConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Databases.DatabaseInterface :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.Databases.DatabaseInterface :: get_ConnectionStringWithoutCredentials :: System.String get_ConnectionStringWithoutCredentials()
-		Seagull.Data.Databases.DatabaseInterface :: set_ConnectionStringWithoutCredentials :: Void set_ConnectionStringWithoutCredentials(System.String)
-		Seagull.Data.Databases.FirebirdDatabaseInterface :: GetFirebirdConnectionStringForPrompt :: System.String GetFirebirdConnectionStringForPrompt(System.String)
-		Seagull.Data.DataBuilder.ADOProvider.DataBuilderClientFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		Seagull.Data.DataBuilder.ADOProvider.DataBuilderDbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.DataBuilder.ADOProvider.DataBuilderDbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.DataBuilder.ADOProvider.DataBuilderDbConnectionStringBuilder :: get_ConnectionStringErrorCode :: DataBuilderDbConnectionStringErrorCode get_ConnectionStringErrorCode()
-		Seagull.Data.DataBuilder.ADOProvider.DataBuilderDbConnectionStringBuilder :: IsConnectionStringValid :: Boolean IsConnectionStringValid()
-		Seagull.Data.DataBuilder.ADOProvider.DataBuilderDbConnectionStringBuilder :: set_ConnectionStringErrorCode :: Void set_ConnectionStringErrorCode(DataBuilderDbConnectionStringErrorCode)
-		Seagull.Data.DataBuilder.Properties.Resources :: get_ConnectionStringInvalidErrorText :: System.String get_ConnectionStringInvalidErrorText()
-		Seagull.Data.DataBuilder.SqlServer.SqlLocalServer :: InternalConnectionString :: System.String InternalConnectionString(System.String, System.String, Boolean)
-		Seagull.Data.ExcelCDataDbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.ExcelCDataDbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.FirebirdConnectionStringBuilder :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.FirebirdConnectionStringBuilder :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.JsonDatabaseClient.JsonClientFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		Seagull.Data.JsonDatabaseClient.JsonDbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.JsonDatabaseClient.JsonDbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.JsonDatabaseClient.JsonDbConnectionStringBuilder :: get_ConnectionStringErrorCode :: JsonDbConnectionStringErrorCode get_ConnectionStringErrorCode()
-		Seagull.Data.JsonDatabaseClient.JsonDbConnectionStringBuilder :: IsConnectionStringValid :: Boolean IsConnectionStringValid()
-		Seagull.Data.JsonDatabaseClient.JsonDbConnectionStringBuilder :: set_ConnectionStringErrorCode :: Void set_ConnectionStringErrorCode(JsonDbConnectionStringErrorCode)
-		Seagull.Data.JsonDatabaseClient.Properties.Resources :: get_ConnectionStringError :: System.String get_ConnectionStringError()
-		Seagull.Data.MySQLCDataDbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.MySQLCDataDbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.SAPIDocFileClient.Properties.Resources :: get_ConnectionStringEmpty :: System.String get_ConnectionStringEmpty()
-		Seagull.Data.SAPIDocFileClient.Properties.Resources :: get_ConnectionStringError :: System.String get_ConnectionStringError()
-		Seagull.Data.SAPIDocFileClient.SAPIDocFileClientFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		Seagull.Data.SAPIDocFileClient.SAPIDocFileDbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.SAPIDocFileClient.SAPIDocFileDbConnection :: get_ConnectionStringErrorCode :: SAPIDocFileDbConnectionStringErrorCode get_ConnectionStringErrorCode()
-		Seagull.Data.SAPIDocFileClient.SAPIDocFileDbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.SAPIDocFileClient.SAPIDocFileDbConnection :: set_ConnectionStringErrorCode :: Void set_ConnectionStringErrorCode(SAPIDocFileDbConnectionStringErrorCode)
-		Seagull.Data.SAPIDocFileClient.SAPIDocFileDbConnectionStringBuilder :: get_ConnectionStringErrorCode :: SAPIDocFileDbConnectionStringErrorCode get_ConnectionStringErrorCode()
-		Seagull.Data.SAPIDocFileClient.SAPIDocFileDbConnectionStringBuilder :: IsConnectionStringValid :: Boolean IsConnectionStringValid()
-		Seagull.Data.SAPIDocFileClient.SAPIDocFileDbConnectionStringBuilder :: set_ConnectionStringErrorCode :: Void set_ConnectionStringErrorCode(SAPIDocFileDbConnectionStringErrorCode)
-		Seagull.Data.SAPIDocFileClient.SAPIDocProviderParametersStringBuilder :: IsConnectionStringValid :: Boolean IsConnectionStringValid()
-		Seagull.Data.TextFileClient.Properties.Resources :: get_ConnectionStringError :: System.String get_ConnectionStringError()
-		Seagull.Data.TextFileClient.TextFileClientFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		Seagull.Data.TextFileClient.TextFileDbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.TextFileClient.TextFileDbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.TextFileClient.TextFileDbConnectionStringBuilder :: get_ConnectionStringErrorCode :: TextFileDbConnectionStringErrorCode get_ConnectionStringErrorCode()
-		Seagull.Data.TextFileClient.TextFileDbConnectionStringBuilder :: IsConnectionStringValid :: Boolean IsConnectionStringValid()
-		Seagull.Data.TextFileClient.TextFileDbConnectionStringBuilder :: set_ConnectionStringErrorCode :: Void set_ConnectionStringErrorCode(TextFileDbConnectionStringErrorCode)
-		Seagull.Data.XMLFileClient.Properties.Resources :: get_ConnectionStringError :: System.String get_ConnectionStringError()
-		Seagull.Data.XMLFileClient.XMLFileClientFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		Seagull.Data.XMLFileClient.XMLFileDbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.XMLFileClient.XMLFileDbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Data.XMLFileClient.XMLFileDbConnectionStringBuilder :: get_ConnectionStringErrorCode :: XMLFileDbConnectionStringErrorCode get_ConnectionStringErrorCode()
-		Seagull.Data.XMLFileClient.XMLFileDbConnectionStringBuilder :: IsConnectionStringValid :: Boolean IsConnectionStringValid()
-		Seagull.Data.XMLFileClient.XMLFileDbConnectionStringBuilder :: set_ConnectionStringErrorCode :: Void set_ConnectionStringErrorCode(XMLFileDbConnectionStringErrorCode)
-		Seagull.Data.XMLFileClient.XMLProviderParametersStringBuilder :: get_ConnectionStringErrorCode :: XMLProviderParameterStringErrorCode get_ConnectionStringErrorCode()
-		Seagull.Data.XMLFileClient.XMLProviderParametersStringBuilder :: set_ConnectionStringErrorCode :: Void set_ConnectionStringErrorCode(XMLProviderParameterStringErrorCode)
-		Seagull.Data.XmlSerialization.DatabaseConnectionData :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Data.XmlSerialization.DatabaseConnectionData :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.DataViewer.BarTender.ReprintJob :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.DataViewer.Viewer :: IsValidConnectionString :: Boolean IsValidConnectionString(System.String)
-		Seagull.Email.DataAccess.DataServiceDatabase :: get_ConnectionString :: Seagull.Email.DataAccess.DataServiceDatabaseConnectionString get_ConnectionString()
-		Seagull.Email.DataAccess.DataServiceDatabase :: set_ConnectionString :: Void set_ConnectionString(Seagull.Email.DataAccess.DataServiceDatabaseConnectionString)
-		Seagull.Email.DataAccess.DBProvider :: GetConnectionString :: System.String GetConnectionString()
-		Seagull.Librarian.Core.DataAccess.VaultProvider :: GetConnectionString :: System.String GetConnectionString()
-		Seagull.Librarian.Core.DataAccess.VaultProvider :: GetDebugConnectionString :: Void GetDebugConnectionString()
-		Seagull.Librarian.Core.DataServiceDatabase :: get_ConnectionString :: Seagull.Librarian.Core.DataServiceDatabaseConnectionString get_ConnectionString()
-		Seagull.Librarian.Core.DataServiceDatabase :: set_ConnectionString :: Void set_ConnectionString(Seagull.Librarian.Core.DataServiceDatabaseConnectionString)
-		Seagull.Librarian.Core.Properties.Settings :: get_DebugConnectionString :: System.String get_DebugConnectionString()
-		Seagull.Librarian.Core.Repository :: GetConnectionString :: System.String GetConnectionString()
-		Seagull.Librarian.Core.Vault :: GetConnectionString :: System.String GetConnectionString()
-		Seagull.Librarian.Core.VaultItem :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Librarian.Core.VaultItem :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Repository.Interfaces.ILibrarian_FileInfo :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Repository.Repositories.Librarian.Librarian_FileInfo :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Services.Hosts.Integration.Messaging.Logging.LoggingService :: GetLogDatabaseConnectionString :: Seagull.Services.Integration.Contracts.Logging.GetLogDatabaseConnectionStringResponse GetLogDatabaseConnectionString(Seagull.Services.Integration.Contracts.Logging.GetLogDatabaseConnectionStringRequest)
-		Seagull.Services.Integration.Client.Logging.LoggingServiceClient :: GetLogDatabaseConnectionString :: Seagull.Services.Integration.Contracts.Logging.GetLogDatabaseConnectionStringResponse GetLogDatabaseConnectionString(Seagull.Services.Integration.Contracts.Logging.GetLogDatabaseConnectionStringRequest)
-		Seagull.Services.Integration.Client.Logging.LogMessages :: GetLogDatabaseConnectionString :: System.String GetLogDatabaseConnectionString(Boolean, System.Action`1[System.Exception])
-		Seagull.Services.Integration.Client.Messaging.MessageWatcher :: GetLogDatabaseConnectionString :: System.String GetLogDatabaseConnectionString()
-		Seagull.Services.Integration.Client.Messaging.MessageWatcher+<>c :: <GetLogDatabaseConnectionString>b__28_0 :: Void <GetLogDatabaseConnectionString>b__28_0(System.Exception)
-		Seagull.Services.Integration.Contracts.Logging.GetLogDatabaseConnectionStringResponse :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Services.Integration.Contracts.Logging.GetLogDatabaseConnectionStringResponse :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Services.Integration.Contracts.Logging.ILoggingService :: GetLogDatabaseConnectionString :: Seagull.Services.Integration.Contracts.Logging.GetLogDatabaseConnectionStringResponse GetLogDatabaseConnectionString(Seagull.Services.Integration.Contracts.Logging.GetLogDatabaseConnectionStringRequest)
-		Seagull.Services.Integration.Server.Logging.Data.LoggingDbConfigurationSingleton :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Services.Licensing.Server.Data.LicensingServerDbConfiguration :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.Services.Licensing.Server.Data.LicensingServerDbConfiguration :: get_DefaultConnectionString :: System.String get_DefaultConnectionString()
-		Seagull.Services.Licensing.Server.Data.LicensingServerDbConfiguration :: GetConnectionString :: System.String GetConnectionString(Int32)
-		Seagull.Services.Licensing.Server.Data.LicensingServerDbConfiguration :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		Seagull.Services.PrintScheduler.Server.Data.PrintSchedulerDbConfigurationSingleton :: get_ConnectionString :: System.String get_ConnectionString()
-		Seagull.XpoDataAccess.XpoDatabaseConnection :: get_ConnectionString :: System.Data.SqlClient.SqlConnectionStringBuilder get_ConnectionString()
-		sno210M.ABA :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		sno210M.ABJ :: get_ConnectionString :: System.String get_ConnectionString()
-		sno210M.ABJ :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.Access.AccessConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.Access.AccessConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.Access.AccessConnectionStringBuilder :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.Access.AccessConnectionStringBuilder :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.Access.AccessProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.CData.Excel.ExcelConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.Excel.ExcelConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.Excel.ExcelConnectionStringBuilder :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.Excel.ExcelConnectionStringBuilder :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.Excel.ExcelProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.CData.ExcelOnline.ExcelOnlineConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.ExcelOnline.ExcelOnlineConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.ExcelOnline.ExcelOnlineConnectionStringBuilder :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.ExcelOnline.ExcelOnlineConnectionStringBuilder :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.ExcelOnline.ExcelOnlineProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.CData.GoogleSheets.GoogleSheetsConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.GoogleSheets.GoogleSheetsConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.GoogleSheets.GoogleSheetsConnectionStringBuilder :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.GoogleSheets.GoogleSheetsConnectionStringBuilder :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.GoogleSheets.GoogleSheetsProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.CData.MySQL.MySQLConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.MySQL.MySQLConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.MySQL.MySQLConnectionStringBuilder :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.MySQL.MySQLConnectionStringBuilder :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.MySQL.MySQLProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.CData.QuickBooksOnline.QuickBooksOnlineConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.QuickBooksOnline.QuickBooksOnlineConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.QuickBooksOnline.QuickBooksOnlineConnectionStringBuilder :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.QuickBooksOnline.QuickBooksOnlineConnectionStringBuilder :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.QuickBooksOnline.QuickBooksOnlineProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.CData.SAPHANA.SAPHANAConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.SAPHANA.SAPHANAConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.SAPHANA.SAPHANAConnectionStringBuilder :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.CData.SAPHANA.SAPHANAConnectionStringBuilder :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.CData.SAPHANA.SAPHANAProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.Common.DbConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.Common.DbConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.Common.DbConnectionStringBuilder :: get_BrowsableConnectionString :: Boolean get_BrowsableConnectionString()
-		System.Data.Common.DbConnectionStringBuilder :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.Common.DbConnectionStringBuilder :: set_BrowsableConnectionString :: Void set_BrowsableConnectionString(Boolean)
-		System.Data.Common.DbConnectionStringBuilder :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.Common.DBDataPermissionAttribute :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.Common.DBDataPermissionAttribute :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.Common.DBDataPermissionAttribute :: ShouldSerializeConnectionString :: Boolean ShouldSerializeConnectionString()
-		System.Data.Common.DbProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.Entity.Core.EntityClient.EntityConnection :: ChangeConnectionString :: Void ChangeConnectionString(System.String)
-		System.Data.Entity.Core.EntityClient.EntityConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.Entity.Core.EntityClient.EntityConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder :: get_ProviderConnectionString :: System.String get_ProviderConnectionString()
-		System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder :: set_ProviderConnectionString :: Void set_ProviderConnectionString(System.String)
-		System.Data.Entity.Core.EntityClient.EntityProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.Entity.Core.EntityClient.Internal.DbConnectionOptions :: get_UsersConnectionString :: System.String get_UsersConnectionString()
-		System.Data.Entity.Infrastructure.DbConnectionInfo :: GetConnectionString :: System.Configuration.ConnectionStringSettings GetConnectionString(System.Data.Entity.Internal.AppConfig)
-		System.Data.Entity.Infrastructure.DbContextInfo :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.Entity.Infrastructure.DbContextInfo :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		System.Data.Entity.Infrastructure.DbContextInfo :: get_ConnectionStringOrigin :: System.Data.Entity.Infrastructure.DbConnectionStringOrigin get_ConnectionStringOrigin()
-		System.Data.Entity.Infrastructure.Interception.DatabaseLogFormatter :: ConnectionStringGetting :: Void ConnectionStringGetting(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DatabaseLogFormatter :: ConnectionStringGot :: Void ConnectionStringGot(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DatabaseLogFormatter :: ConnectionStringSet :: Void ConnectionStringSet(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DatabaseLogFormatter :: ConnectionStringSetting :: Void ConnectionStringSetting(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DbConnectionDispatcher :: <GetConnectionString>b__12 :: System.String <GetConnectionString>b__12(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DbConnectionDispatcher :: <GetConnectionString>b__13 :: Void <GetConnectionString>b__13(System.Data.Entity.Infrastructure.Interception.IDbConnectionInterceptor, System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DbConnectionDispatcher :: <GetConnectionString>b__14 :: Void <GetConnectionString>b__14(System.Data.Entity.Infrastructure.Interception.IDbConnectionInterceptor, System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DbConnectionDispatcher :: <SetConnectionString>b__18 :: Void <SetConnectionString>b__18(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DbConnectionDispatcher :: <SetConnectionString>b__19 :: Void <SetConnectionString>b__19(System.Data.Entity.Infrastructure.Interception.IDbConnectionInterceptor, System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DbConnectionDispatcher :: <SetConnectionString>b__1a :: Void <SetConnectionString>b__1a(System.Data.Entity.Infrastructure.Interception.IDbConnectionInterceptor, System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.DbConnectionDispatcher :: GetConnectionString :: System.String GetConnectionString(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbInterceptionContext)
-		System.Data.Entity.Infrastructure.Interception.DbConnectionDispatcher :: SetConnectionString :: Void SetConnectionString(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.IDbConnectionInterceptor :: ConnectionStringGetting :: Void ConnectionStringGetting(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.IDbConnectionInterceptor :: ConnectionStringGot :: Void ConnectionStringGot(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.IDbConnectionInterceptor :: ConnectionStringSet :: Void ConnectionStringSet(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.Interception.IDbConnectionInterceptor :: ConnectionStringSetting :: Void ConnectionStringSetting(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.LocalDbConnectionFactory :: get_BaseConnectionString :: System.String get_BaseConnectionString()
-		System.Data.Entity.Infrastructure.SqlCeConnectionFactory :: get_BaseConnectionString :: System.String get_BaseConnectionString()
-		System.Data.Entity.Infrastructure.SqlConnectionFactory :: get_BaseConnectionString :: System.String get_BaseConnectionString()
-		System.Data.Entity.Infrastructure.TransactionHandler :: ConnectionStringGetting :: Void ConnectionStringGetting(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.TransactionHandler :: ConnectionStringGot :: Void ConnectionStringGot(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.TransactionHandler :: ConnectionStringSet :: Void ConnectionStringSet(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Infrastructure.TransactionHandler :: ConnectionStringSetting :: Void ConnectionStringSetting(System.Data.Common.DbConnection, System.Data.Entity.Infrastructure.Interception.DbConnectionPropertyInterceptionContext`1[System.String])
-		System.Data.Entity.Internal.AppConfig :: GetConnectionString :: System.Configuration.ConnectionStringSettings GetConnectionString(System.String)
-		System.Data.Entity.Internal.DbHelpers :: <IsFullEFConnectionString>b__0 :: System.String <IsFullEFConnectionString>b__0(System.String)
-		System.Data.Entity.Internal.DbHelpers :: IsFullEFConnectionString :: Boolean IsFullEFConnectionString(System.String)
-		System.Data.Entity.Internal.DbHelpers :: TreatAsConnectionString :: Boolean TreatAsConnectionString(System.String)
-		System.Data.Entity.Internal.EagerInternalConnection :: get_ConnectionStringOrigin :: System.Data.Entity.Infrastructure.DbConnectionStringOrigin get_ConnectionStringOrigin()
-		System.Data.Entity.Internal.EagerInternalContext :: get_ConnectionStringOrigin :: System.Data.Entity.Infrastructure.DbConnectionStringOrigin get_ConnectionStringOrigin()
-		System.Data.Entity.Internal.EagerInternalContext :: get_OriginalConnectionString :: System.String get_OriginalConnectionString()
-		System.Data.Entity.Internal.IInternalConnection :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		System.Data.Entity.Internal.IInternalConnection :: get_ConnectionStringOrigin :: System.Data.Entity.Infrastructure.DbConnectionStringOrigin get_ConnectionStringOrigin()
-		System.Data.Entity.Internal.IInternalConnection :: get_OriginalConnectionString :: System.String get_OriginalConnectionString()
-		System.Data.Entity.Internal.InternalConnection :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		System.Data.Entity.Internal.InternalConnection :: get_ConnectionStringOrigin :: System.Data.Entity.Infrastructure.DbConnectionStringOrigin get_ConnectionStringOrigin()
-		System.Data.Entity.Internal.InternalConnection :: get_OriginalConnectionString :: System.String get_OriginalConnectionString()
-		System.Data.Entity.Internal.InternalConnection :: GetStoreConnectionString :: System.String GetStoreConnectionString(System.Data.Common.DbConnection)
-		System.Data.Entity.Internal.InternalContext :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		System.Data.Entity.Internal.InternalContext :: get_ConnectionStringOrigin :: System.Data.Entity.Infrastructure.DbConnectionStringOrigin get_ConnectionStringOrigin()
-		System.Data.Entity.Internal.InternalContext :: get_OriginalConnectionString :: System.String get_OriginalConnectionString()
-		System.Data.Entity.Internal.LazyInternalConnection :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		System.Data.Entity.Internal.LazyInternalConnection :: get_ConnectionStringOrigin :: System.Data.Entity.Infrastructure.DbConnectionStringOrigin get_ConnectionStringOrigin()
-		System.Data.Entity.Internal.LazyInternalConnection :: get_OriginalConnectionString :: System.String get_OriginalConnectionString()
-		System.Data.Entity.Internal.LazyInternalConnection :: InitializeFromConnectionStringSetting :: Void InitializeFromConnectionStringSetting(System.Configuration.ConnectionStringSettings)
-		System.Data.Entity.Internal.LazyInternalContext :: get_ConnectionStringName :: System.String get_ConnectionStringName()
-		System.Data.Entity.Internal.LazyInternalContext :: get_ConnectionStringOrigin :: System.Data.Entity.Infrastructure.DbConnectionStringOrigin get_ConnectionStringOrigin()
-		System.Data.Entity.Internal.LazyInternalContext :: get_OriginalConnectionString :: System.String get_OriginalConnectionString()
-		System.Data.Entity.Migrations.Design.ToolingFacade+BaseRunner :: get_ConnectionStringInfo :: System.Data.Entity.Infrastructure.DbConnectionInfo get_ConnectionStringInfo()
-		System.Data.Entity.Migrations.Design.ToolingFacade+BaseRunner :: set_ConnectionStringInfo :: Void set_ConnectionStringInfo(System.Data.Entity.Infrastructure.DbConnectionInfo)
-		System.Data.Entity.Resources.Error :: DbConnectionInfo_ConnectionStringNotFound :: System.Exception DbConnectionInfo_ConnectionStringNotFound(System.Object)
-		System.Data.Entity.Resources.Error :: DbContext_ConnectionStringNotFound :: System.Exception DbContext_ConnectionStringNotFound(System.Object)
-		System.Data.Entity.Resources.Error :: EntityClient_ConnectionStringNeededBeforeOperation :: System.Exception EntityClient_ConnectionStringNeededBeforeOperation()
-		System.Data.Entity.Resources.Strings :: ADP_ConnectionStringSyntax :: System.String ADP_ConnectionStringSyntax(System.Object)
-		System.Data.Entity.Resources.Strings :: DbConnectionInfo_ConnectionStringNotFound :: System.String DbConnectionInfo_ConnectionStringNotFound(System.Object)
-		System.Data.Entity.Resources.Strings :: DbContext_ConnectionStringNotFound :: System.String DbContext_ConnectionStringNotFound(System.Object)
-		System.Data.Entity.Resources.Strings :: EntityClient_ConnectionStringMissingInfo :: System.String EntityClient_ConnectionStringMissingInfo(System.Object)
-		System.Data.Entity.Resources.Strings :: get_EntityClient_ConnectionStringNeededBeforeOperation :: System.String get_EntityClient_ConnectionStringNeededBeforeOperation()
-		System.Data.Entity.Resources.Strings :: get_EntityConnectionString_Metadata :: System.String get_EntityConnectionString_Metadata()
-		System.Data.Entity.Resources.Strings :: get_EntityConnectionString_Name :: System.String get_EntityConnectionString_Name()
-		System.Data.Entity.Resources.Strings :: get_EntityConnectionString_Provider :: System.String get_EntityConnectionString_Provider()
-		System.Data.Entity.Resources.Strings :: get_EntityConnectionString_ProviderConnectionString :: System.String get_EntityConnectionString_ProviderConnectionString()
-		System.Data.Entity.Resources.Strings :: get_EntityDataCategory_NamedConnectionString :: System.String get_EntityDataCategory_NamedConnectionString()
-		System.Data.Entity.Resources.Strings :: get_ObjectContext_InvalidConnectionString :: System.String get_ObjectContext_InvalidConnectionString()
-		System.Data.SqlServerCe.ConStringUtil :: ConnectionStringSyntax :: System.Exception ConnectionStringSyntax(Int32, Char[])
-		System.Data.SqlServerCe.ConStringUtil :: MapToOledbConnectionString :: System.String MapToOledbConnectionString(System.String)
-		System.Data.SqlServerCe.ConStringUtil :: ParseConnectionString :: System.Collections.Generic.Dictionary`2[System.String,System.String] ParseConnectionString(System.String)
-		System.Data.SqlServerCe.NativeMethods :: uwrda_get_LocalConnectionString :: Int32 uwrda_get_LocalConnectionString(IntPtr, IntPtr ByRef)
-		System.Data.SqlServerCe.NativeMethods :: uwrda_put_LocalConnectionString :: Int32 uwrda_put_LocalConnectionString(IntPtr, System.String)
-		System.Data.SqlServerCe.NativeMethods :: uwrepl_get_SubscriberConnectionString :: Int32 uwrepl_get_SubscriberConnectionString(IntPtr, IntPtr ByRef)
-		System.Data.SqlServerCe.NativeMethods :: uwrepl_put_SubscriberConnectionString :: Int32 uwrepl_put_SubscriberConnectionString(IntPtr, System.String)
-		System.Data.SqlServerCe.NativeMethodsHelper :: uwrda_get_LocalConnectionString :: Int32 uwrda_get_LocalConnectionString(IntPtr, IntPtr ByRef)
-		System.Data.SqlServerCe.NativeMethodsHelper :: uwrda_put_LocalConnectionString :: Int32 uwrda_put_LocalConnectionString(IntPtr, System.String)
-		System.Data.SqlServerCe.NativeMethodsHelper :: uwrepl_get_SubscriberConnectionString :: Int32 uwrepl_get_SubscriberConnectionString(IntPtr, IntPtr ByRef)
-		System.Data.SqlServerCe.NativeMethodsHelper :: uwrepl_put_SubscriberConnectionString :: Int32 uwrepl_put_SubscriberConnectionString(IntPtr, System.String)
-		System.Data.SqlServerCe.SqlCeConnection :: CachedConnectionStringAdd :: Void CachedConnectionStringAdd(System.String, System.String, System.Data.SqlServerCe.SqlCeConnectionStringBuilder)
-		System.Data.SqlServerCe.SqlCeConnection :: get_ConnectionString :: System.String get_ConnectionString()
-		System.Data.SqlServerCe.SqlCeConnection :: set_ConnectionString :: Void set_ConnectionString(System.String)
-		System.Data.SqlServerCe.SqlCeConnectionStringBuilder :: get_OledbConnectionString :: System.String get_OledbConnectionString()
-		System.Data.SqlServerCe.SqlCeEngine :: get_LocalConnectionString :: System.String get_LocalConnectionString()
-		System.Data.SqlServerCe.SqlCeEngine :: set_LocalConnectionString :: Void set_LocalConnectionString(System.String)
-		System.Data.SqlServerCe.SqlCeProviderFactory :: CreateConnectionStringBuilder :: System.Data.Common.DbConnectionStringBuilder CreateConnectionStringBuilder()
-		System.Data.SqlServerCe.SqlCeRemoteDataAccess :: get_LocalConnectionString :: System.String get_LocalConnectionString()
-		System.Data.SqlServerCe.SqlCeRemoteDataAccess :: set_LocalConnectionString :: Void set_LocalConnectionString(System.String)
-		System.Data.SqlServerCe.SqlCeReplication :: get_SubscriberConnectionString :: System.String get_SubscriberConnectionString()
-		System.Data.SqlServerCe.SqlCeReplication :: set_SubscriberConnectionString :: Void set_SubscriberConnectionString(System.String)
-		PS C:\WINDOWS\system32>
+		PS C:\WINDOWS\system32> Get-WinEvent -FilterHashtable @{LogName='Application'; StartTime=(Get-Date).AddSeconds(-15)} |
+		>> Where-Object { $_.ProviderName -like '*BarTender*' -or $_.Message -like '*BarTender System Service*' } |
+		>> Select-Object TimeCreated,Id,LevelDisplayName,Message |
+		>> Format-List
 
 
+		TimeCreated      : 08.10.26 22:07:20
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:20
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:20
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:20
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:20
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:19
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:18
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:17
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:16
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:15
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:14
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:13
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:12
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:11
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:10
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:09
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:08
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:07
+		Id               : 10061
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Ну удалось выбрать запись ID сервера из-за следующей ошибки; Внутреннее со
+						   общение: Сбой Системная служба BarTender при попытке вставить уникальную информацию.
+
+						   Таблица: Servers, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.; Вн
+						   утреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:07
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:07
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:07
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:07
+		Id               : 10063
+		LevelDisplayName : Ошибка
+		Message          : BarTender System Service: Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:07
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:07
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:07
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Сбой Системная служба BarTender при попытке найти информацию.
+
+						   Таблица: MessageLog, Команда: ; Внутреннее сообщение: Не удается открыть подключение к базе данных.;
+							Внутреннее сообщение: Свойство ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:07
+		Id               : 10105
+		LevelDisplayName : Ошибка
+		Message          : Свойство настроек 'DbCommandTimeout' не найдено.
+
+		TimeCreated      : 08.10.26 22:07:06
+		Id               : 0
+		LevelDisplayName : Сведения
+		Message          : Служба успешно запущена.
+
+		TimeCreated      : 08.10.26 22:07:06
+		Id               : 10006
+		LevelDisplayName : Ошибка
+		Message          : SQL-запрос не выполнен в виду следующей ошибки: Запрос к базе не удался.
+
+						   Таблица: , Команда: select top 1 CategoryID from StringResourceCategories ORDER BY CategoryID DESC;
+						   Внутреннее сообщение: Не удается открыть подключение к базе данных.; Внутреннее сообщение: Свойство
+						   ConnectionString не инициализировано.
+
+		TimeCreated      : 08.10.26 22:07:05
+		Id               : 10006
+		LevelDisplayName : Ошибка
+		Message          : SQL-запрос не выполнен в виду следующей ошибки: Запрос к базе не удался.
+
+						   Таблица: , Команда: select top 1 CategoryID from StringResourceCategories ORDER BY CategoryID DESC;
+						   Внутреннее сообщение: Не удается открыть подключение к базе данных.; Внутреннее сообщение: Свойство
+						   ConnectionString не инициализировано.
+
+
+
+PS C:\WINDOWS\system32>
 	</per>
   </body>
 </html>
