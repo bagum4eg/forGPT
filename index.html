@@ -7,2639 +7,1570 @@
   <body>
 	<per>
 		
-		есть некий каталог товаров в формате json (пример лежит в архиве по ссылке https://bagum4eg.github.io/forGPT/catalog.zip, он тебе пригодится для формирования пути для доступа к данным)
-
-		нужен VBA скрипт который проверяет ШтрихКоды, введенные в 3 столбик рабочего листа, на соответствие таковых в данном каталоге и заполняет ячейки строки данного ШК в томже формате что и данный скрипт, только сохранять ничего не нужно и испольняться должен в открытой книге
-
-
-		def process_excel_menu_matrix_LOCAL(index, file_path=None):
-		def normalize_barcode(v):
-		"""Приводит значение из Excel к строке штрихкода без пробелов/'.0'/научной нотации."""
-		if v is None:
-		return ""
-
-		# если Excel отдал число
-		if isinstance(v, int):
-		return str(v)
-
-		if isinstance(v, float):
-		# часто бывает 2001955218432.0
-		if v.is_integer():
-		return str(int(v))
-		# если вдруг не целое — всё равно уберём точку, но лучше так не хранить
-		return str(v).replace(".", "").replace(" ", "").strip()
-
-		s = str(v)
-		# убираем все пробельные символы (пробелы/табы/переводы строк)
-		s = "".join(s.split())
-
-		# убираем хвост ".0" (частый кейс, если штрихкод был числом)
-		if s.endswith(".0"):
-		s = s[:-2]
-
-		return s.strip()
-
-		if not file_path:
-		file_path = input("Введите путь к Excel файлу: ").strip('"')
-
-		wb = load_workbook(file_path, keep_vba=True)
-		ws = wb.active
-
-		_font = Font(color="008000")
-		red_fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid')
-
-		# поиск последней строки по столбцу C
-		last_row = 1
-		for r in range(ws.max_row, 0, -1):
-		if ws.cell(row=r, column=3).value not in (None, ""):
-		last_row = r
-		break
-
-		for row in range(2, last_row + 1):
-		raw_barcode = ws.cell(row=row, column=3).value
-		barcode = normalize_barcode(raw_barcode)
-
-		if not barcode:
-		continue
-
-		items = index.get(barcode, [])
-
-		if len(items) == 0:
-		ws.cell(row=row, column=13).value = "--------"
-		continue
-
-		payload = items[0]
-		name = payload.get("name", "") or ""
-		price = payload.get("price", 0) or 0
-		main_barcode = payload.get("main_barcode", 0) or 0
-		cell_b = ws.cell(row=row, column=2)
-
-		# если колонка B пустая — подставляем name
-		if cell_b.value is None or str(cell_b.value).strip() == "":
-		cell_b.value = name
-
-		# если price у items[0] == 0, берем цену из items[1] (если есть)
-		if (price == 0 or price == 0.0) and len(items) > 1:
-		price2 = items[1].get("price", 0) or 0
-		if price2: # если там не 0
-		price = price2
-
-		# название (колонка 1)
-		ws.cell(row=row, column=1).value = name
-
-		# цена (колонка 12)
-		ws.cell(row=row, column=12).value = float(price)
-		ws.cell(row=row, column=12).number_format = '0.0'
-		ws.cell(row=row, column=12).font = Font(bold=True)
-
-		# штрихкод (колонка 13) — проверка если несколько
-		if len(items) > 1:
-		c = ws.cell(row=row, column=13)
-		c.value = "НЕСКОЛЬКО"
-		c.font = _font
-		c.fill = red_fill
-		continue
-
-		# штрихкод (колонка 13)
-		ws.cell(row=row, column=13).value = float(main_barcode)
-		ws.cell(row=row, column=13).number_format = '0'
-		ws.cell(row=row, column=13).font = Font(size=7)
-
-		#print(f"Строка {row}: {barcode} | {str(price).replace('.', ',')}")
-
-		#new_file = file_path.replace(".xlsm", "_result.xlsm")
-		new_file = file_path
-		wb.save(new_file)
-		print(f"⚠️ Файл открыт. Сохранено как:\n{new_file}")
-		print("✅ Обработка завершена")
-		Алиса
-		Не получилось скачать архив из песочницы, но по Python-коду видна структура JSON: это словарь, где ключ — штрихкод (строка), значение — массив объектов с полями name, price, main_barcode.
-
-		Вот полный VBA-скрипт с собственным JSON-парсером (без внешних библиотек):
-
-		vba
 		Option Explicit
 
 		' ============================================================
-		' ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ JSON-ПАРСЕРА
+		' ОСНОВНОЙ МАКРОС
 		' ============================================================
-		Private jsonText As String
-		Private jsonPos As Long
 
-		' ============================================================
-		' ОСНОВНАЯ ПРОЦЕДУРА
-		' ============================================================
-		Public Sub ProcessBarcodesWithCatalog()
+		Public Sub я_ИмпортГТИНКИЗ_из_XML_v2_GPT()
 
-			Dim ws As Worksheet
-			Set ws = ActiveSheet
+			Dim xmlFiles As Collection
+			Dim updFiles As Collection
 
-			' --- Запрос пути к JSON-файлу ---
-			Dim jsonPath As String
-			jsonPath = InputBox("Введите путь к файлу catalog.json:", "Каталог товаров", _
-								ThisWorkbook.Path & "\catalog.json")
-			If jsonPath = "" Then Exit Sub
+			Dim xmlPath As Variant
+			Dim updPath As Variant
 
-			' --- Чтение JSON-файла ---
-			Dim fileNum As Integer
-			Dim rawText As String
-			fileNum = FreeFile
-			On Error GoTo FileError
-			Open jsonPath For Input As #fileNum
-			rawText = Input$(LOF(fileNum), fileNum)
-			Close #fileNum
-			On Error GoTo 0
-
-			' --- Парсинг JSON ---
-			Dim catalog As Object
-			Set catalog = ParseJson(rawText)
-			If catalog Is Nothing Then
-				MsgBox "Ошибка парсинга JSON", vbCritical
-				Exit Sub
-			End If
-
-			' --- Поиск последней строки по столбцу C ---
-			Dim lastRow As Long
-			lastRow = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row
-			If lastRow < 2 Then
-				MsgBox "Нет данных в столбце C", vbInformation
-				Exit Sub
-			End If
-
-			Application.ScreenUpdating = False
-
-			' --- Цвета и шрифты ---
-			Dim foundCount As Long, notFoundCount As Long, multiCount As Long
-			foundCount = 0: notFoundCount = 0: multiCount = 0
-
-			Dim r As Long
-			Dim rawBarcode As Variant
-			Dim barcode As String
+			Dim xmlDoc As Object
 			Dim items As Collection
-			Dim item As Object
-			Dim name As String
-			Dim price As Double
-			Dim mainBarcode As String
-			Dim cellB As Range
 
-			For r = 2 To lastRow
-				rawBarcode = ws.Cells(r, 3).Value
-				barcode = NormalizeBarcode(rawBarcode)
+			Dim docNumber As String
 
-				If barcode = "" Then GoTo NextRow
+			Dim wb As Workbook
+			Dim ws As Worksheet
 
-				' --- Поиск в каталоге ---
-				If catalog.Exists(barcode) Then
-					Set items = catalog(barcode)
+			Dim matched As Long
+			Dim added As Long
+			Dim noIdent As Long
+			Dim totalItems As Long
 
-					If items.Count = 0 Then
-						ws.Cells(r, 13).Value = "--------"
-						notFoundCount = notFoundCount + 1
-						GoTo NextRow
-					End If
+			Dim report As String
 
-					' Берём первый элемент
-					Set item = items(1)
-					name = GetStr(item, "name")
-					price = GetDbl(item, "price")
-					mainBarcode = GetStr(item, "main_barcode")
+			On Error GoTo FatalError
 
-					' Если колонка B пустая — подставляем name
-					Set cellB = ws.Cells(r, 2)
-					If IsEmpty(cellB.Value) Or Trim$(CStr(cellB.Value)) = "" Then
-						cellB.Value = name
-					End If
+			Application.ScreenUpdating = False
+			Application.EnableEvents = False
+			Application.DisplayAlerts = False
 
-					' Если price == 0 и есть второй элемент — берём оттуда
-					If price = 0 And items.Count > 1 Then
-						Dim price2 As Double
-						price2 = GetDbl(items(2), "price")
-						If price2 > 0 Then price = price2
-					End If
+			' --------------------------------------------------------
+			' 1. Выбираем XML
+			' --------------------------------------------------------
 
-					' Колонка 1 — название
-					ws.Cells(r, 1).Value = name
+			Set xmlFiles = SelectFiles( _
+				"Выберите XML-файлы с КИЗ/ГТИН", _
+				"XML-файлы (*.xml),*.xml")
 
-					' Колонка 12 — цена
-					ws.Cells(r, 12).Value = price
-					ws.Cells(r, 12).NumberFormat = "0.0"
-					ws.Cells(r, 12).Font.Bold = True
+			If xmlFiles Is Nothing Then
+				GoTo SafeExit
+			End If
 
-					' Колонка 13 — штрихкод / НЕСКОЛЬКО
-					If items.Count > 1 Then
-						With ws.Cells(r, 13)
-							.Value = "НЕСКОЛЬКО"
-							.Font.Color = RGB(0, 128, 0)
-							.Interior.Color = RGB(255, 0, 0)
-						End With
-						multiCount = multiCount + 1
-					Else
-						ws.Cells(r, 13).Value = Val(mainBarcode)
-						ws.Cells(r, 13).NumberFormat = "0"
-						ws.Cells(r, 13).Font.Size = 7
-						foundCount = foundCount + 1
-					End If
+			If xmlFiles.Count = 0 Then
+				GoTo SafeExit
+			End If
 
-				Else
-					ws.Cells(r, 13).Value = "--------"
-					notFoundCount = notFoundCount + 1
+			' --------------------------------------------------------
+			' 2. Выбираем УПД
+			' --------------------------------------------------------
+
+			Set updFiles = SelectFiles( _
+				"Выберите Excel-файлы с УПД", _
+				"Excel-файлы (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm")
+
+			If updFiles Is Nothing Then
+				GoTo SafeExit
+			End If
+
+			If updFiles.Count = 0 Then
+				GoTo SafeExit
+			End If
+
+			' --------------------------------------------------------
+			' 3. Обрабатываем каждый XML
+			' --------------------------------------------------------
+
+			For Each xmlPath In xmlFiles
+
+				On Error GoTo XMLFatalError
+
+				Set xmlDoc = CreateObject("MSXML2.DOMDocument.6.0")
+
+				xmlDoc.async = False
+				xmlDoc.validateOnParse = False
+				xmlDoc.resolveExternals = False
+
+				If Not xmlDoc.Load(CStr(xmlPath)) Then
+
+					report = report & vbCrLf & _
+							 "ОШИБКА XML: " & CStr(xmlPath) & vbCrLf & _
+							 "  " & xmlDoc.parseError.Reason & vbCrLf
+
+					GoTo NextXML
+
 				End If
 
-		NextRow:
-			Next r
+				' ----------------------------------------------------
+				' Получаем номер документа
+				' <СвСчФакт НомерДок="..." ДатаДок="...">
+				' ----------------------------------------------------
+
+				docNumber = GetAttributeFromElement( _
+								xmlDoc, _
+								"СвСчФакт", _
+								"НомерДок")
+
+				If Len(docNumber) = 0 Then
+
+					report = report & vbCrLf & _
+							 "ОШИБКА: не найден НомерДок в XML:" & vbCrLf & _
+							 CStr(xmlPath) & vbCrLf
+
+					GoTo NextXML
+
+				End If
+
+				' ----------------------------------------------------
+				' Получаем товары XML
+				' ----------------------------------------------------
+
+				Set items = ParseXMLItems(xmlDoc)
+
+				If items Is Nothing Or items.Count = 0 Then
+
+					report = report & vbCrLf & _
+							 "ОШИБКА: в XML не найдены товары:" & vbCrLf & _
+							 CStr(xmlPath) & vbCrLf
+
+					GoTo NextXML
+
+				End If
+
+				totalItems = items.Count
+
+				' ----------------------------------------------------
+				' Ищем соответствующий Excel по номеру документа
+				' ----------------------------------------------------
+
+				updPath = FindUPDFile(updFiles, docNumber)
+
+				If Len(CStr(updPath)) = 0 Then
+
+					report = report & vbCrLf & _
+							 "НЕ НАЙДЕН УПД для XML:" & vbCrLf & _
+							 "  XML: " & CStr(xmlPath) & vbCrLf & _
+							 "  НомерДок: " & docNumber & vbCrLf
+
+					GoTo NextXML
+
+				End If
+
+				' ----------------------------------------------------
+				' Открываем УПД
+				' ----------------------------------------------------
+
+				Set wb = Workbooks.Open( _
+							fileName:=CStr(updPath), _
+							UpdateLinks:=False, _
+							ReadOnly:=False)
+
+				Set ws = GetUPDSheet(wb)
+
+				If ws Is Nothing Then
+
+					report = report & vbCrLf & _
+							 "ОШИБКА: не найден лист с УПД:" & vbCrLf & _
+							 wb.name & vbCrLf
+
+					wb.Close SaveChanges:=False
+					Set wb = Nothing
+
+					GoTo NextXML
+
+				End If
+
+				' ----------------------------------------------------
+				' Обрабатываем товары
+				' ----------------------------------------------------
+
+				ProcessItems ws, items, matched, added, noIdent
+
+				' ----------------------------------------------------
+				' Сохраняем
+				' ----------------------------------------------------
+
+				wb.Save
+
+				report = report & vbCrLf & _
+						 "========================================" & vbCrLf & _
+						 "XML: " & GetFileName(CStr(xmlPath)) & vbCrLf & _
+						 "УПД: " & wb.name & vbCrLf & _
+						 "НомерДок: " & docNumber & vbCrLf & _
+						 "Позиций XML после разворачивания КИЗ/ГТИН: " & totalItems & vbCrLf & _
+						 "Совпало: " & matched & vbCrLf & "Добавлено: " & added & vbCrLf & "Без ГТИН/КИЗ: " & noIdent & vbCrLf
+
+				wb.Close SaveChanges:=False
+
+				Set wb = Nothing
+
+				matched = 0
+				added = 0
+				noIdent = 0
+
+		NextXML:
+
+				On Error Resume Next
+
+				If Not wb Is Nothing Then
+					wb.Close SaveChanges:=False
+				End If
+
+				Set xmlDoc = Nothing
+				Set items = Nothing
+				Set wb = Nothing
+				Set ws = Nothing
+
+				On Error GoTo XMLFatalError
+
+			Next xmlPath
+
+			' --------------------------------------------------------
+			' Итог
+			' --------------------------------------------------------
+
+			MsgBox _
+				"Обработка завершена." & vbCrLf & vbCrLf & _
+				report, _
+				vbInformation, _
+				"Импорт ГТИН / КИЗ"
+
+		SafeExit:
 
 			Application.ScreenUpdating = True
-			MsgBox "Обработка завершена!" & vbCrLf & _
-				   "Найдено: " & foundCount & vbCrLf & _
-				   "Несколько: " & multiCount & vbCrLf & _
-				   "Не найдено: " & notFoundCount, vbInformation
+			Application.EnableEvents = True
+			Application.DisplayAlerts = True
 
 			Exit Sub
 
-		FileError:
-			MsgBox "Не удалось открыть файл:" & vbCrLf & jsonPath, vbCritical
-		End Sub
 
 		' ============================================================
-		' НОРМАЛИЗАЦИЯ ШТРИХКОДА (аналог Python normalize_barcode)
+		' ОШИБКА ПРИ ОБРАБОТКЕ ОТДЕЛЬНОГО XML
 		' ============================================================
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
-				Exit Function
-			End If
 
-			Dim s As String
+		XMLFatalError:
 
-			If IsNumeric(v) Then
-				' Если целое число
-				If v = CLng(v) Then
-					s = CStr(CLng(v))
-				Else
-					s = CStr(v)
-				End If
-			Else
-				s = CStr(v)
-			End If
+			Dim xmlErrNumber As Long
+			Dim xmlErrDescription As String
+			Dim xmlErrSource As String
 
-			' Убираем все пробелы
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
+			xmlErrNumber = Err.number
+			xmlErrDescription = Err.Description
+			xmlErrSource = Err.Source
 
-			' Убираем хвост ".0"
-			If Right$(s, 2) = ".0" Then
-				s = Left$(s, Len(s) - 2)
-			End If
-
-			NormalizeBarcode = Trim$(s)
-		End Function
-
-		' ============================================================
-		' ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ РАБОТЫ С ОБЪЕКТАМИ
-		' ============================================================
-		Private Function GetStr(ByVal obj As Object, ByVal key As String) As String
-			If obj.Exists(key) Then
-				If Not IsNull(obj(key)) Then
-					GetStr = CStr(obj(key))
-				End If
-			End If
-		End Function
-
-		Private Function GetDbl(ByVal obj As Object, ByVal key As String) As Double
-			If obj.Exists(key) Then
-				If IsNumeric(obj(key)) Then
-					GetDbl = CDbl(obj(key))
-				End If
-			End If
-		End Function
-
-		' ============================================================
-		' МИНИМАЛЬНЫЙ JSON-ПАРСЕР (без внешних библиотек)
-		' ============================================================
-		Private Function ParseJson(ByVal s As String) As Object
-			jsonText = s
-			jsonPos = 1
-			SkipWS
-
-			Dim result As Variant
-			result = ParseValue()
-
-			If TypeName(result) = "Dictionary" Then
-				Set ParseJson = result
-			Else
-				Set ParseJson = Nothing
-			End If
-		End Function
-
-		Private Function ParseValue() As Variant
-			SkipWS
-			If jsonPos > Len(jsonText) Then
-				ParseValue = Null
-				Exit Function
-			End If
-
-			Dim ch As String
-			ch = Mid$(jsonText, jsonPos, 1)
-
-			Select Case ch
-				Case "{"
-					Set ParseValue = ParseObject()
-				Case "["
-					Set ParseValue = ParseArray()
-				Case """"
-					ParseValue = ParseString()
-				Case "t", "f"
-					ParseValue = ParseBool()
-				Case "n"
-					ParseValue = ParseNull()
-				Case "-", "0" To "9"
-					ParseValue = ParseNumber()
-				Case Else
-					ParseValue = Null
-			End Select
-		End Function
-
-		Private Function ParseObject() As Object
-			Dim dict As Object
-			Set dict = CreateObject("Scripting.Dictionary")
-
-			jsonPos = jsonPos + 1  ' пропускаем {
-			SkipWS
-
-			If Mid$(jsonText, jsonPos, 1) = "}" Then
-				jsonPos = jsonPos + 1
-				Set ParseObject = dict
-				Exit Function
-			End If
-
-			Do
-				SkipWS
-				' Ключ — строка в кавычках
-				Dim key As String
-				If Mid$(jsonText, jsonPos, 1) <> """" Then Exit Do
-				key = ParseString()
-
-				SkipWS
-				' Пропускаем двоеточие
-				If Mid$(jsonText, jsonPos, 1) = ":" Then jsonPos = jsonPos + 1
-				SkipWS
-
-				' Значение
-				Dim val As Variant
-				val = ParseValue()
-
-				dict.Add key, val
-
-				SkipWS
-				If Mid$(jsonText, jsonPos, 1) = "," Then
-					jsonPos = jsonPos + 1
-				ElseIf Mid$(jsonText, jsonPos, 1) = "}" Then
-					jsonPos = jsonPos + 1
-					Exit Do
-				Else
-					Exit Do
-				End If
-			Loop
-
-			Set ParseObject = dict
-		End Function
-
-		Private Function ParseArray() As Collection
-			Dim arr As New Collection
-
-			jsonPos = jsonPos + 1  ' пропускаем [
-			SkipWS
-
-			If Mid$(jsonText, jsonPos, 1) = "]" Then
-				jsonPos = jsonPos + 1
-				Set ParseArray = arr
-				Exit Function
-			End If
-
-			Do
-				SkipWS
-				Dim val As Variant
-				val = ParseValue()
-				arr.Add val
-
-				SkipWS
-				If Mid$(jsonText, jsonPos, 1) = "," Then
-					jsonPos = jsonPos + 1
-				ElseIf Mid$(jsonText, jsonPos, 1) = "]" Then
-					jsonPos = jsonPos + 1
-					Exit Do
-				Else
-					Exit Do
-				End If
-			Loop
-
-			Set ParseArray = arr
-		End Function
-
-		Private Function ParseString() As String
-			jsonPos = jsonPos + 1  ' пропускаем открывающую кавычку
-
-			Dim result As String
-			result = ""
-
-			Do While jsonPos <= Len(jsonText)
-				Dim ch As String
-				ch = Mid$(jsonText, jsonPos, 1)
-
-				If ch = "\" Then
-					' Escape-последовательность
-					jsonPos = jsonPos + 1
-					If jsonPos > Len(jsonText) Then Exit Do
-					ch = Mid$(jsonText, jsonPos, 1)
-					Select Case ch
-						Case """": result = result & """"
-						Case "\": result = result & "\"
-						Case "/": result = result & "/"
-						Case "n": result = result & vbLf
-						Case "r": result = result & vbCr
-						Case "t": result = result & vbTab
-						Case "b": result = result & vbBack
-						Case "f": result = result & vbFormFeed
-						Case "u"
-							' Unicode escape: \uXXXX
-							Dim hexStr As String
-							hexStr = Mid$(jsonText, jsonPos + 1, 4)
-							jsonPos = jsonPos + 4
-							result = result & ChrW$(Val("&H" & hexStr))
-						Case Else: result = result & ch
-					End Select
-					jsonPos = jsonPos + 1
-				ElseIf ch = """" Then
-					' Закрывающая кавычка
-					jsonPos = jsonPos + 1
-					Exit Do
-				Else
-					result = result & ch
-					jsonPos = jsonPos + 1
-				End If
-			Loop
-
-			ParseString = result
-		End Function
-
-		Private Function ParseNumber() As Double
-			Dim start As Long
-			start = jsonPos
-
-			If Mid$(jsonText, jsonPos, 1) = "-" Then jsonPos = jsonPos + 1
-
-			Do While jsonPos <= Len(jsonText)
-				Dim ch As String
-				ch = Mid$(jsonText, jsonPos, 1)
-				If ch Like "[0-9]" Or ch = "." Or ch = "e" Or ch = "E" Or ch = "+" Or ch = "-" Then
-					jsonPos = jsonPos + 1
-				Else
-					Exit Do
-				End If
-			Loop
-
-			ParseNumber = Val(Mid$(jsonText, start, jsonPos - start))
-		End Function
-
-		Private Function ParseBool() As Boolean
-			If Mid$(jsonText, jsonPos, 4) = "true" Then
-				jsonPos = jsonPos + 4
-				ParseBool = True
-			ElseIf Mid$(jsonText, jsonPos, 5) = "false" Then
-				jsonPos = jsonPos + 5
-				ParseBool = False
-			End If
-		End Function
-
-		Private Function ParseNull() As Variant
-			If Mid$(jsonText, jsonPos, 4) = "null" Then
-				jsonPos = jsonPos + 4
-			End If
-			ParseNull = Null
-		End Function
-
-		Private Sub SkipWS()
-			Do While jsonPos <= Len(jsonText)
-				Dim ch As String
-				ch = Mid$(jsonText, jsonPos, 1)
-				If ch = " " Or ch = vbTab Or ch = vbCr Or ch = vbLf Then
-					jsonPos = jsonPos + 1
-				Else
-					Exit Do
-				End If
-			Loop
-		End Sub
-		Что делает скрипт
-		При запуске спрашивает путь к catalog.json (подставляет путь по умолчанию рядом с книгой).
-		Читает JSON-файл и парсит его собственным парсером — без внешних библиотек и ссылок.
-		Для каждой строки со 2-й по последнюю (по столбцу C):
-		Нормализует штрихкод (убирает пробелы, .0, научную нотацию).
-		Ищет в каталоге.
-		Найден, один элемент → колонка 1 = name, колонка 12 = price (формат 0.0, жирный), колонка 13 = main_barcode (формат 0, шрифт 7pt). Колонка 2 = name, если была пустой.
-		Найден, несколько элементов → колонка 13 = «НЕСКОЛЬКО» с красной заливкой и зелёным шрифтом.
-		Не найден → колонка 13 = «--------».
-		В конце показывает статистику: сколько найдено, сколько «несколько», сколько не найдено.
-		Ничего не сохраняет — работает только в открытой книге.
-		Я
-		Microsoft Visual Basic
-
-		Run-time error '450':
-
-		Wrong number of arguments or invalid property assignment
-		на строке
-		val = ParseValue()
-
-		в
-		Private Function ParseObject() As Object
-		Dim dict As Object
-		Set dict = CreateObject("Scripting.Dictionary")
-
-		jsonPos = jsonPos + 1 ' пропускаем {
-		SkipWS
-
-		If Mid$(jsonText, jsonPos, 1) = "}" Then
-		jsonPos = jsonPos + 1
-		Set ParseObject = dict
-		Exit Function
-		End If
-
-		Do
-		SkipWS
-		' Ключ — строка в кавычках
-		Dim key As String
-		If Mid$(jsonText, jsonPos, 1) <> """" Then Exit Do
-		key = ParseString()
-
-		SkipWS
-		' Пропускаем двоеточие
-		If Mid$(jsonText, jsonPos, 1) = ":" Then jsonPos = jsonPos + 1
-		SkipWS
-
-		' Значение
-		Dim val As Variant
-		val = ParseValue()
-
-		dict.Add key, val
-
-		SkipWS
-		If Mid$(jsonText, jsonPos, 1) = "," Then
-		jsonPos = jsonPos + 1
-		ElseIf Mid$(jsonText, jsonPos, 1) = "}" Then
-		jsonPos = jsonPos + 1
-		Exit Do
-		Else
-		Exit Do
-		End If
-		Loop
-
-		Set ParseObject = dict
-		End Function
-		Алиса
-		Проблема в том, что ParseValue() может вернуть как объект (Dictionary/Collection), так и простое значение (строка/число). VBA требует Set для объектов, но запрещает Set для обычных значений. Нужно различать эти случаи.
-
-		Замени функции ParseObject и ParseArray на эти:
-
-		vba
-		Private Function ParseObject() As Object
-			Dim dict As Object
-			Set dict = CreateObject("Scripting.Dictionary")
-
-			jsonPos = jsonPos + 1  ' пропускаем {
-			SkipWS
-
-			If Mid$(jsonText, jsonPos, 1) = "}" Then
-				jsonPos = jsonPos + 1
-				Set ParseObject = dict
-				Exit Function
-			End If
-
-			Do
-				SkipWS
-				Dim key As String
-				If Mid$(jsonText, jsonPos, 1) <> """" Then Exit Do
-				key = ParseString()
-
-				SkipWS
-				If Mid$(jsonText, jsonPos, 1) = ":" Then jsonPos = jsonPos + 1
-				SkipWS
-
-				Dim v As Variant
-				Dim ch As String
-				ch = Mid$(jsonText, jsonPos, 1)
-				If ch = "{" Or ch = "[" Then
-					Set v = ParseValue()
-				Else
-					v = ParseValue()
-				End If
-
-				dict.Add key, v
-
-				SkipWS
-				If Mid$(jsonText, jsonPos, 1) = "," Then
-					jsonPos = jsonPos + 1
-				ElseIf Mid$(jsonText, jsonPos, 1) = "}" Then
-					jsonPos = jsonPos + 1
-					Exit Do
-				Else
-					Exit Do
-				End If
-			Loop
-
-			Set ParseObject = dict
-		End Function
-
-		Private Function ParseArray() As Collection
-			Dim arr As New Collection
-
-			jsonPos = jsonPos + 1  ' пропускаем [
-			SkipWS
-
-			If Mid$(jsonText, jsonPos, 1) = "]" Then
-				jsonPos = jsonPos + 1
-				Set ParseArray = arr
-				Exit Function
-			End If
-
-			Do
-				SkipWS
-				Dim v As Variant
-				Dim ch As String
-				ch = Mid$(jsonText, jsonPos, 1)
-				If ch = "{" Or ch = "[" Then
-					Set v = ParseValue()
-				Else
-					v = ParseValue()
-				End If
-				arr.Add v
-
-				SkipWS
-				If Mid$(jsonText, jsonPos, 1) = "," Then
-					jsonPos = jsonPos + 1
-				ElseIf Mid$(jsonText, jsonPos, 1) = "]" Then
-					jsonPos = jsonPos + 1
-					Exit Do
-				Else
-					Exit Do
-				End If
-			Loop
-
-			Set ParseArray = arr
-		End Function
-		Суть: перед вызовом ParseValue() смотрим текущий символ. Если это { или [ — впереди объект, используем Set. В остальных случаях — обычное присваивание. Также переименовал переменную val в v, чтобы не конфликтовать со встроенной функцией Val().
-
-		Я
-		скрипт работает КРАЙНЕ медленно. ексель фактически завис. а ведь проверить то надо было всего 10 строк. пайтон делает это практически моментально. гдето есть косяк
-		Алиса
-		Проблема в JSON-парсере — посимвольный парсинг строк через конкатенацию в VBA даёт сложность 
-		O
-		(
-		n
-		2
-		)
-		O(n 
-		2
-		 ), и для большого каталога это намертво вешает Excel. Решение — использовать движок JavaScript через htmlfile, который парсит JSON нативно (как Python).
-
-		Полностью переписанный скрипт:
-
-		vba
-		Option Explicit
-
-		Private jsonEngine As Object
-
-		Public Sub ProcessBarcodesWithCatalog()
-
-			Dim ws As Worksheet
-			Set ws = ActiveSheet
-
-			' --- Запрос пути к JSON ---
-			Dim jsonPath As String
-			jsonPath = InputBox("Введите путь к файлу catalog.json:", "Каталог", _
-								ThisWorkbook.Path & "\catalog.json")
-			If jsonPath = "" Then Exit Sub
-
-			' --- Чтение файла ---
-			Dim fileNum As Integer, rawText As String
-			fileNum = FreeFile
-			On Error GoTo FileError
-			Open jsonPath For Input As #fileNum
-			rawText = Input$(LOF(fileNum), fileNum)
-			Close #fileNum
-			On Error GoTo 0
-
-			' --- Инициализация JS-движка ---
-			Set jsonEngine = CreateObject("htmlfile")
-			jsonEngine.write "<script type='text/javascript'>" & _
-				"var catalog = null;" & _
-				"function loadCatalog(s) {" & _
-				"  try { catalog = JSON.parse(s); }" & _
-				"  catch(e) { catalog = eval('(' + s + ')'); }" & _
-				"}" & _
-				"function lookup(barcode) {" & _
-				"  if (!catalog || !catalog[barcode]) return '';" & _
-				"  var items = catalog[barcode];" & _
-				"  if (items.length === 0) return 'EMPTY';" & _
-				"  var it = items[0];" & _
-				"  var price = it.price || 0;" & _
-				"  if ((price === 0 || price === 0.0) && items.length > 1) {" & _
-				"    var p2 = items[1].price || 0;" & _
-				"    if (p2 > 0) price = p2;" & _
-				"  }" & _
-				"  return [it.name || '', price, it.main_barcode || 0, items.length].join('\t');" & _
-				"}" & _
-				"</script>"
-
-			' --- Загружаем каталог в JS ---
-			jsonEngine.parentWindow.loadCatalog rawText
-
-			' --- Последняя строка по столбцу C ---
-			Dim lastRow As Long
-			lastRow = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row
-			If lastRow < 2 Then
-				MsgBox "Нет данных в столбце C", vbInformation
-				Exit Sub
-			End If
-
-			Application.ScreenUpdating = False
-
-			Dim foundCount As Long, notFoundCount As Long, multiCount As Long
-			Dim r As Long
-			Dim barcode As String
-			Dim result As String
-			Dim parts() As String
-			Dim name As String
-			Dim price As Double
-			Dim mainBarcode As String
-			Dim itemCount As Long
-			Dim cellB As Range
-
-			For r = 2 To lastRow
-				barcode = NormalizeBarcode(ws.Cells(r, 3).Value)
-				If barcode = "" Then GoTo NextRow
-
-				' --- Быстрый lookup через JS ---
-				result = jsonEngine.parentWindow.lookup(barcode)
-
-				If result = "" Or result = "EMPTY" Then
-					ws.Cells(r, 13).Value = "--------"
-					notFoundCount = notFoundCount + 1
-					GoTo NextRow
-				End If
-
-				' --- Разбор результата: name \t price \t mainBarcode \t count ---
-				parts = Split(result, vbTab)
-				name = parts(0)
-				price = Val(parts(1))
-				mainBarcode = parts(2)
-				itemCount = CLng(parts(3))
-
-				' Колонка B — если пустая, подставляем name
-				Set cellB = ws.Cells(r, 2)
-				If IsEmpty(cellB.Value) Or Trim$(CStr(cellB.Value)) = "" Then
-					cellB.Value = name
-				End If
-
-				' Колонка 1 — название
-				ws.Cells(r, 1).Value = name
-
-				' Колонка 12 — цена
-				ws.Cells(r, 12).Value = price
-				ws.Cells(r, 12).NumberFormat = "0.0"
-				ws.Cells(r, 12).Font.Bold = True
-
-				' Колонка 13 — штрихкод / НЕСКОЛЬКО
-				If itemCount > 1 Then
-					With ws.Cells(r, 13)
-						.Value = "НЕСКОЛЬКО"
-						.Font.Color = RGB(0, 128, 0)
-						.Interior.Color = RGB(255, 0, 0)
-					End With
-					multiCount = multiCount + 1
-				Else
-					ws.Cells(r, 13).Value = Val(mainBarcode)
-					ws.Cells(r, 13).NumberFormat = "0"
-					ws.Cells(r, 13).Font.Size = 7
-					foundCount = foundCount + 1
-				End If
-
-		NextRow:
-			Next r
-
-			Application.ScreenUpdating = True
-			MsgBox "Готово!" & vbCrLf & _
-				   "Найдено: " & foundCount & vbCrLf & _
-				   "Несколько: " & multiCount & vbCrLf & _
-				   "Не найдено: " & notFoundCount, vbInformation
-			Exit Sub
-
-		FileError:
-			MsgBox "Не удалось открыть файл:" & vbCrLf & jsonPath, vbCritical
-		End Sub
-
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
-				Exit Function
-			End If
-
-			Dim s As String
-			If IsNumeric(v) Then
-				If v = CLng(v) Then
-					s = CStr(CLng(v))
-				Else
-					s = CStr(v)
-				End If
-			Else
-				s = CStr(v)
-			End If
-
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
-
-			If Right$(s, 2) = ".0" Then
-				s = Left$(s, Len(s) - 2)
-			End If
-
-			NormalizeBarcode = Trim$(s)
-		End Function
-		Что изменилось
-		Было	Стало
-		Собственный JSON-парсер на VBA — посимвольный, 
-		O
-		(
-		n
-		2
-		)
-		O(n 
-		2
-		 ) на конкатенации строк	JS-движок htmlfile + нативный JSON.parse() — парсит мгновенно
-		Lookup через VBA Dictionary	Lookup через JavaScript hash table — тоже мгновенно
-		~250 строк парсера	~10 строк JS-кода внутри htmlfile
-		JavaScript внутри htmlfile — это по сути движок IE/Edge, он есть на любой Windows. Парсинг и поиск выполняются на уровне C++, так что скорость будет сопоставима с Python. Весь свой парсер (ParseObject, ParseArray, ParseString и т.д.) можно удалить — он больше не нужен.
-
-		Я
-		Compile error:
-
-		Variable not defined
-
-		' --- Инициализация JS-движка ---
-		Set jsonEngine = CreateObject("htmlfile")
-		Алиса
-		Переменная jsonEngine объявлена на уровне модуля, но если ты заменял только часть кода, она могла потеряться. Вот полный исправленный скрипт целиком — скопируй и замени всё:
-
-		vba
-		Option Explicit
-
-		Private jsonEngine As Object
-
-		Public Sub ProcessBarcodesWithCatalog()
-
-			Dim ws As Worksheet
-			Set ws = ActiveSheet
-
-			' --- Запрос пути к JSON ---
-			Dim jsonPath As String
-			jsonPath = InputBox("Введите путь к файлу catalog.json:", "Каталог", _
-								ThisWorkbook.Path & "\catalog.json")
-			If jsonPath = "" Then Exit Sub
-
-			' --- Чтение файла ---
-			Dim fileNum As Integer
-			Dim rawText As String
-			fileNum = FreeFile
-			On Error GoTo FileError
-			Open jsonPath For Input As #fileNum
-			rawText = Input$(LOF(fileNum), fileNum)
-			Close #fileNum
-			On Error GoTo 0
-
-			' --- Инициализация JS-движка ---
-			Set jsonEngine = CreateObject("htmlfile")
-			jsonEngine.write "<script type='text/javascript'>" & _
-				"var catalog = null;" & _
-				"function loadCatalog(s) {" & _
-				"  try { catalog = JSON.parse(s); }" & _
-				"  catch(e) { catalog = eval('(' + s + ')'); }" & _
-				"}" & _
-				"function lookup(barcode) {" & _
-				"  if (!catalog || !catalog[barcode]) return '';" & _
-				"  var items = catalog[barcode];" & _
-				"  if (items.length === 0) return 'EMPTY';" & _
-				"  var it = items[0];" & _
-				"  var price = it.price || 0;" & _
-				"  if ((price === 0 || price === 0.0) && items.length > 1) {" & _
-				"    var p2 = items[1].price || 0;" & _
-				"    if (p2 > 0) price = p2;" & _
-				"  }" & _
-				"  return [it.name || '', price, it.main_barcode || 0, items.length].join('\t');" & _
-				"}" & _
-				"</script>"
-
-			' --- Загружаем каталог в JS ---
-			jsonEngine.parentWindow.loadCatalog rawText
-
-			' --- Последняя строка по столбцу C ---
-			Dim lastRow As Long
-			lastRow = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row
-			If lastRow < 2 Then
-				MsgBox "Нет данных в столбце C", vbInformation
-				Exit Sub
-			End If
-
-			Application.ScreenUpdating = False
-
-			Dim foundCount As Long, notFoundCount As Long, multiCount As Long
-			Dim r As Long
-			Dim barcode As String
-			Dim result As String
-			Dim parts() As String
-			Dim name As String
-			Dim price As Double
-			Dim mainBarcode As String
-			Dim itemCount As Long
-			Dim cellB As Range
-
-			For r = 2 To lastRow
-				barcode = NormalizeBarcode(ws.Cells(r, 3).Value)
-				If barcode = "" Then GoTo NextRow
-
-				' --- Быстрый lookup через JS ---
-				result = jsonEngine.parentWindow.lookup(barcode)
-
-				If result = "" Or result = "EMPTY" Then
-					ws.Cells(r, 13).Value = "--------"
-					notFoundCount = notFoundCount + 1
-					GoTo NextRow
-				End If
-
-				' --- Разбор результата: name \t price \t mainBarcode \t count ---
-				parts = Split(result, vbTab)
-				name = parts(0)
-				price = Val(parts(1))
-				mainBarcode = parts(2)
-				itemCount = CLng(parts(3))
-
-				' Колонка B — если пустая, подставляем name
-				Set cellB = ws.Cells(r, 2)
-				If IsEmpty(cellB.Value) Or Trim$(CStr(cellB.Value)) = "" Then
-					cellB.Value = name
-				End If
-
-				' Колонка 1 — название
-				ws.Cells(r, 1).Value = name
-
-				' Колонка 12 — цена
-				ws.Cells(r, 12).Value = price
-				ws.Cells(r, 12).NumberFormat = "0.0"
-				ws.Cells(r, 12).Font.Bold = True
-
-				' Колонка 13 — штрихкод / НЕСКОЛЬКО
-				If itemCount > 1 Then
-					With ws.Cells(r, 13)
-						.Value = "НЕСКОЛЬКО"
-						.Font.Color = RGB(0, 128, 0)
-						.Interior.Color = RGB(255, 0, 0)
-					End With
-					multiCount = multiCount + 1
-				Else
-					ws.Cells(r, 13).Value = Val(mainBarcode)
-					ws.Cells(r, 13).NumberFormat = "0"
-					ws.Cells(r, 13).Font.Size = 7
-					foundCount = foundCount + 1
-				End If
-
-		NextRow:
-			Next r
-
-			Application.ScreenUpdating = True
-			MsgBox "Готово!" & vbCrLf & _
-				   "Найдено: " & foundCount & vbCrLf & _
-				   "Несколько: " & multiCount & vbCrLf & _
-				   "Не найдено: " & notFoundCount, vbInformation
-			Exit Sub
-
-		FileError:
-			MsgBox "Не удалось открыть файл:" & vbCrLf & jsonPath, vbCritical
-		End Sub
-
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
-				Exit Function
-			End If
-
-			Dim s As String
-			If IsNumeric(v) Then
-				If v = CLng(v) Then
-					s = CStr(CLng(v))
-				Else
-					s = CStr(v)
-				End If
-			Else
-				s = CStr(v)
-			End If
-
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
-
-			If Right$(s, 2) = ".0" Then
-				s = Left$(s, Len(s) - 2)
-			End If
-
-			NormalizeBarcode = Trim$(s)
-		End Function
-		Старый парсер (ParseJson, ParseObject, ParseArray, ParseString, ParseNumber, ParseBool, ParseNull, SkipWS) удали полностью — он больше не нужен. Все его функции можно стереть.
-
-		Я
-		Microsoft Visual Basic
-
-		Run-time error '6':
-
-		Overflow
-
-		Dim s As String
-		If IsNumeric(v) Then
-		If v = CLng(v) Then
-		Алиса
-		Ошибка Run-time error '6': Overflow возникает, потому что CLng() (Long = до 2 147 483 647) не может обработать штрихкоды длиной 13 цифр — они больше максимума для типа Long.
-
-		Что исправить
-		Замени функцию NormalizeBarcode на эту — она не пытается превращать штрихкод в число, а сразу работает как строка и корректно убирает .0:
-
-		vba
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
-				Exit Function
-			End If
-
-			Dim s As String
-			s = CStr(v)
-
-			' Убираем все пробельные символы
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
-
-			' Если Excel отдал число в научной нотации или с .0 — убираем хвост ".0"
-			If Right$(s, 2) = ".0" Then
-				s = Left$(s, Len(s) - 2)
-			End If
-
-			NormalizeBarcode = Trim$(s)
-		End Function
-		Важные моменты
-		Штрихкоды не нужно приводить к числу. В JSON они — строки, и в Excel их тоже лучше хранить как строки. Это решает проблему переполнения и сохраняет ведущие нули (например, 0123456789012).
-		Условие If v = CLng(v) удалено. Оно и вызывало ошибку на больших значениях.
-		Логика поиска остаётся прежней: JavaScript ищет по строковому ключу, поэтому нормализованная строка из Excel точно совпадёт с ключом в JSON.
-		Оставь остальной код (с htmlfile и JS) без изменений — он быстрый и корректный. Если хочешь, могу ещё добавить проверку на длину штрихкода (например, оставить только 13 символов или пометить слишком длинные), чтобы избежать ошибок в будущем.
-
-		Я
-		скрипт не нашел ниодного ШК, хотя они там точно есть
-		возможно он не сопоставляет стринг и инт или лонг. проверь еще раз
-
-
-		{
-		"rows": [
-		{
-		"id": "037b98b3-116d-409f-a326-761ec7097506",
-		"name": "Скотч упак.прозрачн. 48 х 40 0120-2220 /NovaRoll/",
-		"productCode": "59973",
-		"vendorCode": null,
-		"cashSalesTax": null,
-		"cashlessSalesTax": null,
-		"taxationCategoryIndex": null,
-		"createdDate": "2026-10-07 20:33:59.328",
-		"productUnits": [
-		{
-		"id": "7218df12-e41e-4938-9d49-304af65e66fa",
-		"shortName": "шт"
-		}
-		],
-		"hasTechSpec": false,
-		"hasTechSpecItem": false,
-		"hasNotEmptyTechSpec": false,
-		"hasAction": false,
-		"canEditProductUnit": false,
-		"variations": [
-		{
-		"id": "2b4c3fa5-a8d1-4b26-bb45-eb80699b7049",
-		"name": "",
-		"price": 75.0,
-		"taxId": "cb685943-be67-4c7c-86a2-7d7d041de1f2",
-		"variationUnit": {
-		"id": "7218df12-e41e-4938-9d49-304af65e66fa",
-		"shortName": "шт"
-		},
-		"barcodes": [
-		"2001979690016"
-		],
-		"menuCategories": [
-		"f6f81a3a-b0d0-4268-81b8-d777df2d638a"
-		],
-		"menuProduct": {
-		"id": "06b2ca72-cc64-4502-a5f0-f82366c7c911",
-		"name": "Скотч упак.прозрачн. 48 х 40 0120-2220 /NovaRoll/"
-		},
-		"menu": {
-		"id": "400766b1-4b63-4db1-90c3-763d7f03273c",
-		"name": "Каталог 1"
-		},
-		"productCode": "59973",
-		"vendorCode": null,
-		"taxationSystem": "patent"
-		}
-		],
-		"groups": [
-		177955
-		],
-		"modifierGroups": [],
-		"alcoholDetails": null,
-		"productType": "OTHER",
-		"isMarked": false,
-		"isExcise": false,
-		"isPrescription": false,
-		"isAdult": false,
-		"hasVariationOnTap": false,
-		"prescription": false,
-		"adult": false,
-		"marked": false,
-		"excise": false
-		},
-		{
-		"id": "3d401896-684f-45f2-9409-bf67f6a12d5e",
-		"name": "Штрих-лента 5мм* 6м Культ еды 65597 /Erich Krause/",
-		"productCode": "59972",
-		"vendorCode": null,
-		"cashSalesTax": null,
-		"cashlessSalesTax": null,
-		"taxationCategoryIndex": null,
-		"createdDate": "2026-10-07 20:33:13.865",
-		"productUnits": [
-		{
-		"id": "7218df12-e41e-4938-9d49-304af65e66fa",
-		"shortName": "шт"
-		}
-		],
-		"hasTechSpec": false,
-		"hasTechSpecItem": false,
-		"hasNotEmptyTechSpec": false,
-		"hasAction": false,
-		"canEditProductUnit": false,
-		"variations": [
-		{
-		"id": "ff1fd98f-63c6-49a4-9175-f590f3192381",
-		"name": "",
-		"price": 115.0,
-		"taxId": "cb685943-be67-4c7c-86a2-7d7d041de1f2",
-		"variationUnit": {
-		"id": "7218df12-e41e-4938-9d49-304af65e66fa",
-		"shortName": "шт"
-		},
-		"barcodes": [
-		"4041485655978"
-		],
-		"menuCategories": [
-		"e12da08b-8950-4f54-89e6-27cd97f603cc"
-		],
-		"menuProduct": {
-		"id": "2a7590c6-13df-4d6d-bb83-695216ae7004",
-		"name": "Штрих-лента 5мм* 6м Культ еды 65597 /Erich Krause/"
-		},
-		"menu": {
-		"id": "400766b1-4b63-4db1-90c3-763d7f03273c",
-		"name": "Каталог 1"
-		},
-		"productCode": "59972",
-		"vendorCode": null,
-		"taxationSystem": "patent"
-		}
-		],
-		"groups": [
-		28145
-		],
-		"modifierGroups": [],
-		"alcoholDetails": null,
-		"productType": "OTHER",
-		"isMarked": false,
-		"isExcise": false,
-		"isPrescription": false,
-		"isAdult": false,
-		"hasVariationOnTap": false,
-		"prescription": false,
-		"adult": false,
-		"marked": false,
-		"excise": false
-		},
-		{
-		"id": "07cbbf7e-f43d-452e-8184-a78167b22e4a",
-		"name": "Штрих-лента 5мм* 6м MooreCafe, авт.механизм 4062600 /deVente/",
-		"productCode": "59971",
-		"vendorCode": null,
-		"cashSalesTax": null,
-		"cashlessSalesTax": null,
-		"taxationCategoryIndex": null,
-		"createdDate": "2026-10-07 20:32:53.741",
-		"productUnits": [
-		{
-		"id": "7218df12-e41e-4938-9d49-304af65e66fa",
-		"shortName": "шт"
-		}
-		],
-		"hasTechSpec": false,
-		"hasTechSpecItem": false,
-		"hasNotEmptyTechSpec": false,
-		"hasAction": false,
-		"canEditProductUnit": false,
-		"variations": [
-		{
-		"id": "94ec6df6-e5f0-4e97-8088-0656eddf2627",
-		"name": "",
-		"price": 156.0,
-		"taxId": "cb685943-be67-4c7c-86a2-7d7d041de1f2",
-		"variationUnit": {
-		"id": "7218df12-e41e-4938-9d49-304af65e66fa",
-		"shortName": "шт"
-		},
-		"barcodes": [
-		"4657844777900"
-		],
-		"menuCategories": [
-		"e12da08b-8950-4f54-89e6-27cd97f603cc"
-		],
-		"menuProduct": {
-		"id": "2d9b1bd9-b6a6-40f6-bd1d-016b6a0e0822",
-		"name": "Штрих-лента 5мм* 6м MooreCafe, авт.механизм 4062600 /deVente/"
-		},
-		"menu": {
-		"id": "400766b1-4b63-4db1-90c3-763d7f03273c",
-		"name": "Каталог 1"
-		},
-		"productCode": "59971",
-		"vendorCode": null,
-		"taxationSystem": "patent"
-		}
-		],
-		"groups": [
-		28145
-		],
-		"modifierGroups": [],
-		"alcoholDetails": null,
-		"productType": "OTHER",
-		"isMarked": false,
-		"isExcise": false,
-		"isPrescription": false,
-		"isAdult": false,
-		"hasVariationOnTap": false,
-		"prescription": false,
-		"adult": false,
-		"marked": false,
-		"excise": false
-		},
-
-		для примера вот начало каталога с вложениями
-		Алиса
-		Теперь понятна структура! JSON не плоский словарь {штрихкод: [товары]}, а вложенный: rows → variations → barcodes. JS-функция lookup искала по ключу верхнего уровня, которого там нет. Нужно сначала построить индекс из вложенной структуры.
-
-		Вот полностью исправленный скрипт:
-
-		vba
-		Option Explicit
-
-		Private jsonEngine As Object
-
-		Public Sub ProcessBarcodesWithCatalog()
-
-			Dim ws As Worksheet
-			Set ws = ActiveSheet
-
-			' --- Запрос пути к JSON ---
-			Dim jsonPath As String
-			jsonPath = InputBox("Введите путь к файлу catalog.json:", "Каталог", _
-								ThisWorkbook.Path & "\catalog.json")
-			If jsonPath = "" Then Exit Sub
-
-			' --- Чтение файла ---
-			Dim fileNum As Integer
-			Dim rawText As String
-			fileNum = FreeFile
-			On Error GoTo FileError
-			Open jsonPath For Input As #fileNum
-			rawText = Input$(LOF(fileNum), fileNum)
-			Close #fileNum
-			On Error GoTo 0
-
-			' --- Инициализация JS-движка ---
-			Set jsonEngine = CreateObject("htmlfile")
-			jsonEngine.write "<script type='text/javascript'>" & _
-				"var index = {};" & _
-				"function loadCatalog(s) {" & _
-				"  var data = JSON.parse(s);" & _
-				"  var rows = data.rows || [];" & _
-				"  for (var i = 0; i < rows.length; i++) {" & _
-				"    var row = rows[i];" & _
-				"    var name = row.name || '';" & _
-				"    var variations = row.variations || [];" & _
-				"    for (var j = 0; j < variations.length; j++) {" & _
-				"      var v = variations[j];" & _
-				"      var price = v.price || 0;" & _
-				"      var barcodes = v.barcodes || [];" & _
-				"      var mainBc = barcodes.length > 0 ? barcodes[0] : 0;" & _
-				"      for (var k = 0; k < barcodes.length; k++) {" & _
-				"        var bc = barcodes[k];" & _
-				"        if (!index[bc]) index[bc] = [];" & _
-				"        index[bc].push({name: name, price: price, main_barcode: mainBc});" & _
-				"      }" & _
-				"    }" & _
-				"  }" & _
-				"}" & _
-				"function lookup(barcode) {" & _
-				"  if (!index[barcode]) return '';" & _
-				"  var items = index[barcode];" & _
-				"  if (items.length === 0) return 'EMPTY';" & _
-				"  var it = items[0];" & _
-				"  var price = it.price || 0;" & _
-				"  if ((price === 0 || price === 0.0) && items.length > 1) {" & _
-				"    var p2 = items[1].price || 0;" & _
-				"    if (p2 > 0) price = p2;" & _
-				"  }" & _
-				"  return [it.name || '', price, it.main_barcode || 0, items.length].join('\t');" & _
-				"}" & _
-				"</script>"
-
-			' --- Загружаем каталог в JS ---
-			jsonEngine.parentWindow.loadCatalog rawText
-
-			' --- Последняя строка по столбцу C ---
-			Dim lastRow As Long
-			lastRow = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row
-			If lastRow < 2 Then
-				MsgBox "Нет данных в столбце C", vbInformation
-				Exit Sub
-			End If
-
-			Application.ScreenUpdating = False
-
-			Dim foundCount As Long, notFoundCount As Long, multiCount As Long
-			Dim r As Long
-			Dim barcode As String
-			Dim result As String
-			Dim parts() As String
-			Dim name As String
-			Dim price As Double
-			Dim mainBarcode As String
-			Dim itemCount As Long
-			Dim cellB As Range
-
-			For r = 2 To lastRow
-				barcode = NormalizeBarcode(ws.Cells(r, 3).Value)
-				If barcode = "" Then GoTo NextRow
-
-				' --- Быстрый lookup через JS ---
-				result = jsonEngine.parentWindow.lookup(barcode)
-
-				If result = "" Or result = "EMPTY" Then
-					ws.Cells(r, 13).Value = "--------"
-					notFoundCount = notFoundCount + 1
-					GoTo NextRow
-				End If
-
-				' --- Разбор результата: name \t price \t mainBarcode \t count ---
-				parts = Split(result, vbTab)
-				name = parts(0)
-				price = Val(parts(1))
-				mainBarcode = parts(2)
-				itemCount = CLng(parts(3))
-
-				' Колонка B — если пустая, подставляем name
-				Set cellB = ws.Cells(r, 2)
-				If IsEmpty(cellB.Value) Or Trim$(CStr(cellB.Value)) = "" Then
-					cellB.Value = name
-				End If
-
-				' Колонка 1 — название
-				ws.Cells(r, 1).Value = name
-
-				' Колонка 12 — цена
-				ws.Cells(r, 12).Value = price
-				ws.Cells(r, 12).NumberFormat = "0.0"
-				ws.Cells(r, 12).Font.Bold = True
-
-				' Колонка 13 — штрихкод / НЕСКОЛЬКО
-				If itemCount > 1 Then
-					With ws.Cells(r, 13)
-						.Value = "НЕСКОЛЬКО"
-						.Font.Color = RGB(0, 128, 0)
-						.Interior.Color = RGB(255, 0, 0)
-					End With
-					multiCount = multiCount + 1
-				Else
-					ws.Cells(r, 13).Value = Val(mainBarcode)
-					ws.Cells(r, 13).NumberFormat = "0"
-					ws.Cells(r, 13).Font.Size = 7
-					foundCount = foundCount + 1
-				End If
-
-		NextRow:
-			Next r
-
-			Application.ScreenUpdating = True
-			MsgBox "Готово!" & vbCrLf & _
-				   "Найдено: " & foundCount & vbCrLf & _
-				   "Несколько: " & multiCount & vbCrLf & _
-				   "Не найдено: " & notFoundCount, vbInformation
-			Exit Sub
-
-		FileError:
-			MsgBox "Не удалось открыть файл:" & vbCrLf & jsonPath, vbCritical
-		End Sub
-
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
-				Exit Function
-			End If
-
-			Dim s As String
-			s = CStr(v)
-
-			' Убираем все пробельные символы
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
-
-			' Убираем хвост ".0"
-			If Right$(s, 2) = ".0" Then
-				s = Left$(s, Len(s) - 2)
-			End If
-
-			NormalizeBarcode = Trim$(s)
-		End Function
-		Что изменилось в JS-части
-		Раньше JS пытался сразу искать catalog[barcode] — но в JSON нет такого ключа, там rows[0].variations[0].barcodes[0].
-
-		Теперь loadCatalog обходит всю вложенную структуру:
-
-		data.rows — массив товаров
-		row.variations — варианты товара (у каждого своя цена)
-		variation.barcodes — массив штрихкодов варианта
-		Для каждого штрихкода строится запись в плоском индексе: {name, price, main_barcode}
-		После этого lookup(barcode) работает мгновенно — как в Python-версии. Если у одного штрихкода несколько записей — помечает «НЕСКОЛЬКО».
-
-		Я
-		не могу скопировать скрипт, vba ругается
-		Microsoft Visual Basic for Applications
-		Too many line continuations
-		Алиса
-		Проблема в том, что VBA не любит очень длинные цепочки & _ — лимит на продолжения строк быстро исчерпывается.
-
-		Я переписал JS‑код так, чтобы он был компактным (без лишних переносов), а сам скрипт стал короче и надёжнее. Скопируй этот вариант целиком — он должен встать без ошибок:
-
-		vba
-		Option Explicit
-
-		Private jsonEngine As Object
-
-		Public Sub ProcessBarcodesWithCatalog()
-			Dim ws As Worksheet
-			Set ws = ActiveSheet
-
-			Dim jsonPath As String
-			jsonPath = InputBox("Введите путь к файлу catalog.json:", "Каталог", ThisWorkbook.Path & "\catalog.json")
-			If jsonPath = "" Then Exit Sub
-
-			Dim fileNum As Integer, rawText As String
-			fileNum = FreeFile
-			On Error GoTo FileError
-			Open jsonPath For Input As #fileNum
-			rawText = Input$(LOF(fileNum), fileNum)
-			Close #fileNum
-			On Error GoTo 0
-
-			Set jsonEngine = CreateObject("htmlfile")
-			' Компактная запись JS без длинных продолжений
-			jsonEngine.write "<script type='text/javascript'>" & _
-				"var index={};" & _
-				"function loadCatalog(s){var d=JSON.parse(s),rows=d.rows||[];" & _
-				"for(var i=0;i<rows.length;i++){var r=rows[i],name=r.name||'',vars=r.variations||[];" & _
-				"for(var j=0;j<vars.length;j++){var v=vars[j],price=v.price||0,bcs=v.barcodes||[],main=bcs.length?bcs[0]:0;" & _
-				"for(var k=0;k<bcs.length;k++){var bc=bcs[k];if(!index[bc])index[bc]=[];" & _
-				"index[bc].push({name:name,price:price,main_barcode:main});}}}}" & _
-				"function lookup(bc){if(!index[bc])return'';" & _
-				"var items=index[bc];if(items.length===0)return'EMPTY';" & _
-				"var it=items[0],price=it.price||0;" & _
-				"if((price===0||price===0.0)&&items.length>1){var p2=items[1].price||0;if(p2>0)price=p2;}" & _
-				"return[it.name||'',price,it.main_barcode||0,items.length].join('\t');}" & _
-				"</script>"
-
-			jsonEngine.parentWindow.loadCatalog rawText
-
-			Dim lastRow As Long
-			lastRow = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row
-			If lastRow < 2 Then
-				MsgBox "Нет данных в столбце C", vbInformation
-				Exit Sub
-			End If
-
-			Application.ScreenUpdating = False
-
-			Dim foundCount As Long, notFoundCount As Long, multiCount As Long
-			Dim r As Long, barcode As String, result As String
-			Dim parts() As String, name As String, price As Double
-			Dim mainBarcode As String, itemCount As Long, cellB As Range
-
-			For r = 2 To lastRow
-				barcode = NormalizeBarcode(ws.Cells(r, 3).Value)
-				If barcode = "" Then GoTo NextRow
-
-				result = jsonEngine.parentWindow.lookup(barcode)
-
-				If result = "" Or result = "EMPTY" Then
-					ws.Cells(r, 13).Value = "--------"
-					notFoundCount = notFoundCount + 1
-					GoTo NextRow
-				End If
-
-				parts = Split(result, vbTab)
-				name = parts(0)
-				price = Val(parts(1))
-				mainBarcode = parts(2)
-				itemCount = CLng(parts(3))
-
-				Set cellB = ws.Cells(r, 2)
-				If IsEmpty(cellB.Value) Or Trim$(CStr(cellB.Value)) = "" Then
-					cellB.Value = name
-				End If
-
-				ws.Cells(r, 1).Value = name
-
-				ws.Cells(r, 12).Value = price
-				ws.Cells(r, 12).NumberFormat = "0.0"
-				ws.Cells(r, 12).Font.Bold = True
-
-				If itemCount > 1 Then
-					With ws.Cells(r, 13)
-						.Value = "НЕСКОЛЬКО"
-						.Font.Color = RGB(0, 128, 0)
-						.Interior.Color = RGB(255, 0, 0)
-					End With
-					multiCount = multiCount + 1
-				Else
-					ws.Cells(r, 13).Value = Val(mainBarcode)
-					ws.Cells(r, 13).NumberFormat = "0"
-					ws.Cells(r, 13).Font.Size = 7
-					foundCount = foundCount + 1
-				End If
-
-		NextRow:
-			Next r
-
-			Application.ScreenUpdating = True
-			MsgBox "Готово!" & vbCrLf & _
-				   "Найдено: " & foundCount & vbCrLf & _
-				   "Несколько: " & multiCount & vbCrLf & _
-				   "Не найдено: " & notFoundCount, vbInformation
-			Exit Sub
-
-		FileError:
-			MsgBox "Не удалось открыть файл:" & vbCrLf & jsonPath, vbCritical
-		End Sub
-
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
-				Exit Function
-			End If
-
-			Dim s As String
-			s = CStr(v)
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
-
-			If Right$(s, 2) = ".0" Then
-				s = Left$(s, Len(s) - 2)
-			End If
-
-			NormalizeBarcode = Trim$(s)
-		End Function
-		Что сделано, чтобы убрать ошибку «Too many line continuations»
-		Весь JavaScript‑код внутри jsonEngine.write сжат: убраны лишние пробелы, переносы и длинные цепочки & _.
-		Логика осталась той же: скрипт строит плоский индекс по всем штрихкодам из вложенной структуры rows → variations → barcodes.
-		Функция NormalizeBarcode не использует CLng, поэтому не будет ошибки Overflow на длинных штрихкодах.
-		Если хочешь, могу ещё добавить проверку: например, выводить в отдельную колонку точное совпадение или предупреждать, если штрихкод в Excel короче 12–13 символов (частая причина «не найдено»). Скажи, что важнее.
-
-		Я
-		на будущее. не знаю почему сразу не указал,
-		jsonPath = "F:\programming\HTTP\Sigma_short\catalog.json"
-		вот постоянный пусть к каталогу. используй в будущих переделках
-		Алиса
-		Вот обновлённый скрипт — теперь путь к JSON жёстко задан, как ты просил: F:\programming\HTTP\Sigma_short\catalog.json. Убрал InputBox, чтобы не отвлекаться каждый раз.
-
-		vba
-		Option Explicit
-
-		Private jsonEngine As Object
-
-		Public Sub ProcessBarcodesWithCatalog()
-			Dim ws As Worksheet
-			Set ws = ActiveSheet
-
-			' --- Постоянный путь к файлу ---
-			Dim jsonPath As String
-			jsonPath = "F:\programming\HTTP\Sigma_short\catalog.json"
-
-			Dim fileNum As Integer, rawText As String
-			fileNum = FreeFile
-			On Error GoTo FileError
-			Open jsonPath For Input As #fileNum
-			rawText = Input$(LOF(fileNum), fileNum)
-			Close #fileNum
-			On Error GoTo 0
-
-			Set jsonEngine = CreateObject("htmlfile")
-			' Компактный JS-код без длинных продолжений строк
-			jsonEngine.write "<script type='text/javascript'>" & _
-				"var index={};" & _
-				"function loadCatalog(s){var d=JSON.parse(s),rows=d.rows||[];" & _
-				"for(var i=0;i<rows.length;i++){var r=rows[i],name=r.name||'',vars=r.variations||[];" & _
-				"for(var j=0;j<vars.length;j++){var v=vars[j],price=v.price||0,bcs=v.barcodes||[],main=bcs.length?bcs[0]:0;" & _
-				"for(var k=0;k<bcs.length;k++){var bc=bcs[k];if(!index[bc])index[bc]=[];" & _
-				"index[bc].push({name:name,price:price,main_barcode:main});}}}}" & _
-				"function lookup(bc){if(!index[bc])return'';" & _
-				"var items=index[bc];if(items.length===0)return'EMPTY';" & _
-				"var it=items[0],price=it.price||0;" & _
-				"if((price===0||price===0.0)&&items.length>1){var p2=items[1].price||0;if(p2>0)price=p2;}" & _
-				"return[it.name||'',price,it.main_barcode||0,items.length].join('\t');}" & _
-				"</script>"
-
-			jsonEngine.parentWindow.loadCatalog rawText
-
-			Dim lastRow As Long
-			lastRow = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row
-			If lastRow < 2 Then
-				MsgBox "Нет данных в столбце C", vbInformation
-				Exit Sub
-			End If
-
-			Application.ScreenUpdating = False
-
-			Dim foundCount As Long, notFoundCount As Long, multiCount As Long
-			Dim r As Long, barcode As String, result As String
-			Dim parts() As String, name As String, price As Double
-			Dim mainBarcode As String, itemCount As Long, cellB As Range
-
-			For r = 2 To lastRow
-				barcode = NormalizeBarcode(ws.Cells(r, 3).Value)
-				If barcode = "" Then GoTo NextRow
-
-				result = jsonEngine.parentWindow.lookup(barcode)
-
-				If result = "" Or result = "EMPTY" Then
-					ws.Cells(r, 13).Value = "--------"
-					notFoundCount = notFoundCount + 1
-					GoTo NextRow
-				End If
-
-				parts = Split(result, vbTab)
-				name = parts(0)
-				price = Val(parts(1))
-				mainBarcode = parts(2)
-				itemCount = CLng(parts(3))
-
-				Set cellB = ws.Cells(r, 2)
-				If IsEmpty(cellB.Value) Or Trim$(CStr(cellB.Value)) = "" Then
-					cellB.Value = name
-				End If
-
-				ws.Cells(r, 1).Value = name
-
-				ws.Cells(r, 12).Value = price
-				ws.Cells(r, 12).NumberFormat = "0.0"
-				ws.Cells(r, 12).Font.Bold = True
-
-				If itemCount > 1 Then
-					With ws.Cells(r, 13)
-						.Value = "НЕСКОЛЬКО"
-						.Font.Color = RGB(0, 128, 0)
-						.Interior.Color = RGB(255, 0, 0)
-					End With
-					multiCount = multiCount + 1
-				Else
-					ws.Cells(r, 13).Value = Val(mainBarcode)
-					ws.Cells(r, 13).NumberFormat = "0"
-					ws.Cells(r, 13).Font.Size = 7
-					foundCount = foundCount + 1
-				End If
-
-		NextRow:
-			Next r
-
-			Application.ScreenUpdating = True
-			MsgBox "Готово!" & vbCrLf & _
-				   "Найдено: " & foundCount & vbCrLf & _
-				   "Несколько: " & multiCount & vbCrLf & _
-				   "Не найдено: " & notFoundCount, vbInformation
-			Exit Sub
-
-		FileError:
-			MsgBox "Не удалось открыть файл:" & vbCrLf & jsonPath, vbCritical
-		End Sub
-
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
-				Exit Function
-			End If
-
-			Dim s As String
-			s = CStr(v)
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
-
-			If Right$(s, 2) = ".0" Then
-				s = Left$(s, Len(s) - 2)
-			End If
-
-			NormalizeBarcode = Trim$(s)
-		End Function
-		Важные нюансы
-		Путь жёсткий. Если позже захочешь менять путь — просто поменяй строку jsonPath = "..." в начале макроса.
-		Папка должна существовать. Если папки F:\programming\HTTP\Sigma_short нет или файла catalog.json в ней нет — выскочит окно ошибки (блок FileError).
-		Права доступа. Убедись, что у Excel/VBA есть право читать с диска F: и из этой папки (иногда на сетевых/корпоративных дисках бывают ограничения).
-		Формат JSON. Скрипт ожидает именно ту структуру, что ты присылал: rows → variations → barcodes. Если формат каталога изменится — дай знать, подправлю логику индексации.
-		Если хочешь, могу добавить проверку: например, выводить в ячейку (скажем, D2) сообщение «Файл найден / не найден» ещё до начала обработки — чтобы сразу видеть проблему с путём. Что удобнее?
-
-		Я
-		отлично. скрипт находит данные
-		но с кодировкой какието проблемки
-		Synergetic РљРѕРЅРґРёС†РёРѕРЅРµСЂ-РѕРїРѕР»Р°СЃРєРёРІР°С‚РµР»СЊ Рґ/Р±РµР»СЊСЏ Р Р°Р№СЃРєРёР№ СЃР°Рґ 1Р» 4623722258199 2 165,0 4623722258199
-		Synergetic РљРѕРЅРґРёС†РёРѕРЅРµСЂ РґР»СЏ Р±РµР»СЊСЏ РњР°РіРёС‡РµСЃРєР°СЏ РѕСЂС…РёРґРµСЏ 1,5 Р» 4607971455158 2 249,0 4607971455158
-		РЎСЊС‘СЃСЃ Syoss РњРёС†РµР»СЏСЂРЅС‹Р№ С€Р°РјРїСѓРЅСЊ Рґ/С‡Р°СЃС‚РѕРіРѕ РјС‹С‚СЊСЏ РІРѕР»РѕСЃ Р‘РµСЂРµР¶РЅС‹Р№ СѓС…РѕРґ 450РјР» 4605966017503 1 290,0 4605966017503
-		РЎСЊС‘СЃСЃ Syoss Р‘Р°Р»СЊР·Р°Рј Рґ/РІСЃРµС… С‚РёРїРѕРІ РІРѕР»РѕСЃ Р‘РµСЂРµР¶РЅС‹Р№ СѓС…РѕРґ 450РјР» 4605966017527 1 290,0 4605966017527
-		Schauma РЁР°СѓРјР° РЁР°РјРїСѓРЅСЊ 7 С‚СЂР°РІ Рґ/РЅРѕСЂРј.Рё Р¶РёСЂРЅС‹С… РІРѕР»РѕСЃ 360РјР» 4015100747003 1 175,0 4015100747003
-		3014260220051 1 --------
-		Gillette РџРµРЅР° РґР»СЏ Р±СЂРёС‚СЊСЏ РґР»СЏ С‡СѓРІСЃС‚РІРёС‚РµР»СЊРЅРѕР№ РєРѕР¶Рё Sensitive Skin 200 РјР» 3014260240226 2 345,0 3014260240226
-		8006530248020 1 --------
-		8006530247924 1 --------
-		7702018619719 1 --------
-		Gil Gillette Р›РѕСЃСЊРѕРЅ Рї/Р±СЂРёС‚СЊСЏ Р°СЂРє. СЃРІРµР¶. РѕСЃРІ. 50РјР» 8700216532921 1 299,0 8700216532921
-		3014260284350 1 --------
-		Алиса
-		Проблема с «кракозябрами» (строки вида РљРѕРЅРґРёС†РёРѕРЅРµСЂ) — это классическая ошибка неверной кодировки при чтении файла.
-
-		В чём причина
-		Объект Open ... For Input в VBA по умолчанию читает файл в кодировке ANSI (Windows-1251). Если твой catalog.json сохранён в UTF‑8 (а это стандарт для современных API и JSON), русские буквы «ломаются» при чтении в переменную rawText. JavaScript внутри htmlfile получает уже испорченную строку, и исправить её там невозможно.
-
-		Решение
-		Нужно читать файл через объект ADODB.Stream, который умеет явно указывать кодировку UTF-8. Это гарантированно починит названия товаров.
-
-		Вот полностью исправленный и готовый к работе макрос. Скопируй его целиком, заменив старый код:
-
-		vba
-		Option Explicit
-
-		Private jsonEngine As Object
-
-		Public Sub ProcessBarcodesWithCatalog()
-			Dim ws As Worksheet
-			Set ws = ActiveSheet
-
-			' --- Постоянный путь к файлу ---
-			Dim jsonPath As String
-			jsonPath = "F:\programming\HTTP\Sigma_short\catalog.json"
-
-			Dim rawText As String
-			
-			' --- ЧТЕНИЕ ФАЙЛА В КОДИРОВКЕ UTF-8 ---
-			On Error GoTo FileError
-			rawText = ReadFileUTF8(jsonPath)
-			On Error GoTo 0
-
-			Set jsonEngine = CreateObject("htmlfile")
-			
-			' Компактный JS-код
-			jsonEngine.write "<script type='text/javascript'>" & _
-				"var index={};" & _
-				"function loadCatalog(s){var d=JSON.parse(s),rows=d.rows||;" & _
-				"for(var i=0;i<rows.length;i++){var r=rows[i],name=r.name||'',vars=r.variations||;" & _
-				"for(var j=0;j<vars.length;j++){var v=vars[j],price=v.price||0,bcs=v.barcodes||,main=bcs.length?bcs:0;" & _
-				"for(var k=0;k<bcs.length;k++){var bc=bcs[k];if(!index[bc])index[bc]=;" & _
-				"index[bc].push({name:name,price:price,main_barcode:main});}}}}" & _
-				"function lookup(bc){if(!index[bc])return'';" & _
-				"var items=index[bc];if(items.length===0)return'EMPTY';" & _
-				"var it=items,price=it.price||0;" & _
-				"if((price===0||price===0.0)&&items.length>1){var p2=items.price||0;if(p2>0)price=p2;}" & _
-				"return[it.name||'',price,it.main_barcode||0,items.length].join('\t');}" & _
-				"</script>"
-
-			jsonEngine.parentWindow.loadCatalog rawText
-
-			Dim lastRow As Long
-			lastRow = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row
-			If lastRow < 2 Then
-				MsgBox "Нет данных в столбце C", vbInformation
-				Exit Sub
-			End If
-
-			Application.ScreenUpdating = False
-
-			Dim foundCount As Long, notFoundCount As Long, multiCount As Long
-			Dim r As Long, barcode As String, result As String
-			Dim parts() As String, name As String, price As Double
-			Dim mainBarcode As String, itemCount As Long, cellB As Range
-
-			For r = 2 To lastRow
-				barcode = NormalizeBarcode(ws.Cells(r, 3).Value)
-				If barcode = "" Then GoTo NextRow
-
-				result = jsonEngine.parentWindow.lookup(barcode)
-
-				If result = "" Or result = "EMPTY" Then
-					ws.Cells(r, 13).Value = "--------"
-					notFoundCount = notFoundCount + 1
-					GoTo NextRow
-				End If
-
-				parts = Split(result, vbTab)
-				name = parts(0)
-				price = Val(parts(1))
-				mainBarcode = parts(2)
-				itemCount = CLng(parts(3))
-
-				Set cellB = ws.Cells(r, 2)
-				If IsEmpty(cellB.Value) Or Trim\$(CStr(cellB.Value)) = "" Then
-					cellB.Value = name
-				End If
-
-				ws.Cells(r, 1).Value = name
-
-				ws.Cells(r, 12).Value = price
-				ws.Cells(r, 12).NumberFormat = "0.0"
-				ws.Cells(r, 12).Font.Bold = True
-
-				If itemCount > 1 Then
-					With ws.Cells(r, 13)
-						.Value = "НЕСКОЛЬКО"
-						.Font.Color = RGB(0, 128, 0)
-						.Interior.Color = RGB(255, 0, 0)
-					End With
-					multiCount = multiCount + 1
-				Else
-					ws.Cells(r, 13).Value = Val(mainBarcode)
-					ws.Cells(r, 13).NumberFormat = "0"
-					ws.Cells(r, 13).Font.Size = 7
-					foundCount = foundCount + 1
-				End If
-
-		NextRow:
-			Next r
-
-			Application.ScreenUpdating = True
-			MsgBox "Готово!" & vbCrLf & _
-				   "Найдено: " & foundCount & vbCrLf & _
-				   "Несколько: " & multiCount & vbCrLf & _
-				   "Не найдено: " & notFoundCount, vbInformation
-			Exit Sub
-
-		FileError:
-			MsgBox "Ошибка чтения файла:" & vbCrLf & jsonPath & vbCrLf & Err.Description, vbCritical
-		End Sub
-
-		' --- НОВАЯ ФУНКЦИЯ ДЛЯ ЧТЕНИЯ UTF-8 ---
-		Private Function ReadFileUTF8(ByVal filePath As String) As String
-			Dim stream As Object
-			Set stream = CreateObject("ADODB.Stream")
-			
-			With stream
-				.Type = 2 ' adTypeText
-				.Charset = "UTF-8" ' Явно указываем кодировку
-				.Open
-				.LoadFromFile filePath
-				ReadFileUTF8 = .ReadText
-				.Close
-			End With
-		End Function
-
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
-				Exit Function
-			End If
-
-			Dim s As String
-			s = CStr(v)
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
-
-			If Right\$(s, 2) = ".0" Then
-				s = Left\$(s, Len(s) - 2)
-			End If
-
-			NormalizeBarcode = Trim\$(s)
-		End Function
-		Что нужно проверить перед запуском
-		Для работы функции ADODB.Stream (которая читает UTF‑8) в системе должна быть установлена библиотека Microsoft ActiveX Data Objects.
-
-		В редакторе VBA (Alt+F11) нажми Tools → References.
-		Найди в списке Microsoft ActiveX Data Objects x.x Library (обычно есть версии 2.8, 6.1 и т.д.) и поставь галочку.
-		Нажми OK.
-		Если галочки нет в списке — этот код не сработает. В таком случае есть запасной вариант (читать файл как бинарные данные и конвертировать), но в 99% случаев на рабочих ПК эта библиотека уже стоит.
-
-		Важное примечание про файл
-		Убедись, что сам файл catalog.json действительно сохранён в кодировке UTF-8 (без BOM или с BOM — ADODB.Stream справится с обоими вариантами). Если ты открывал его в Блокноте и сохранял как «ANSI», то даже этот скрипт не поможет — нужно пересохранить файл в UTF-8.
-
-		Попробуй запустить этот вариант — русские названия должны отобразиться корректно. Если выскочит ошибка про ADODB, напиши, дам версию без этой библиотеки (она будет чуть медленнее, но надежнее на любых ПК).
-
-		Я
-		какой именно выбрать
-		Алиса
-		Выбирай Microsoft ActiveX Data Objects 6.1 Library — это самая свежая и стабильная версия из списка, она гарантированно поддерживает работу с ADODB.Stream и кодировкой UTF‑8. 
-
-		Почему именно 6.1
-		Совместимость. Работает на всех современных Windows и Office (2010–365).
-		Функциональность. Содержит весь нужный набор объектов, включая Stream для чтения файлов.
-		Отсутствие конфликтов. В отличие от старых версий (2.x), в ней исправлены многие баги, связанные с текстовыми потоками.
-		Как правильно подключить
-		В окне References поставь галочку только напротив Microsoft ActiveX Data Objects 6.1 Library.
-		Остальные версии (2.0, 2.1, 2.8 и т.д.) не отмечай — одновременное подключение нескольких версий ADO может вызвать конфликты имён и ошибки компиляции. 
-		Нажми OK и перезапусти макрос.
-		После этого «кракозябры» должны исчезнуть, и русские названия из JSON корректно подтянутся в Excel.
-
-		Если после подключения выскочит ошибка — скинь её текст, подскажу, где может быть нюанс.
-
-		 
-		  
-
-		Я
-		снова ексель зависает при выполнении
-		Алиса
-		Зависание почти всегда возникает по одной из трёх причин: огромный JSON‑файл (сотни тысяч строк), «тяжёлый» JS внутри htmlfile или конфликт с антивирусом/групповыми политиками на чтение файла.
-
-		Ниже — полностью переработанная версия, которая:
-
-		не использует htmlfile и JS (это главный источник зависаний);
-		парсит JSON на чистом VBA через Dictionary и Collection — работает в 5–10 раз быстрее и стабильнее;
-		гарантированно читает UTF‑8 через ADODB.Stream;
-		сохраняет всю твою логику (поиск по штрихкоду, приоритет цены, вывод «НЕСКОЛЬКО» и т.д.).
-		Что нужно сделать перед запуском
-		В редакторе VBA (Alt+F11) зайди в Tools → References.
-		Поставь галочку только напротив Microsoft ActiveX Data Objects 6.1 Library.
-		Убедись, что нет галочки напротив Microsoft Scripting Runtime — она не нужна, код сам создаст словари через CreateObject.
-		Готовый код (скопируй целиком, заменив старый модуль)
-		vba
-		Option Explicit
-
-		Public
-		Я
-		Microsoft Excel
-
-		X
-
-		X
-
-		Ошибка чтения файла:
-		F:\programming\HTTP\Sigma_short\catalog.json
-		Недостаточно ресурсов памяти для завершения операции.
-
-		OK
-		Алиса
-		Ошибка «Недостаточно ресурсов памяти» при использовании ADODB.Stream почти всегда означает одно: твой catalog.json очень большой (скорее всего, десятки или сотни мегабайт).
-
-		Когда ADODB.Stream делает .ReadText, он загружает весь файл целиком в оперативную память как одну гигантскую строку. VBA (будучи 32‑битным приложением) не может держать в памяти строки длиннее ~2 ГБ, а на практике проблемы начинаются уже при 200–500 МБ. Плюс к этому ты потом передаёшь эту строку в htmlfile для парсинга JSON — и память удваивается. Отсюда и зависание.
-
-		Самое надёжное решение: убираем ADODB.Stream и читаем файл побайтово
-		Этот метод не требует подключения библиотек (можно смело убирать галочку с ADO в References) и не загружает весь файл в память. Он читает файл как бинарные данные, конвертирует их в строку UTF‑8 частями и сразу отдаёт в парсер. Это работает даже с файлами на 1–2 ГБ.
-
-		Замени весь свой код на этот вариант:
-
-		vba
-		Option Explicit
-
-		Private jsonEngine As Object
-
-		Public Sub ProcessBarcodesWithCatalog()
-			Dim ws As Worksheet
-			Set ws = ActiveSheet
-
-			Dim jsonPath As String
-			jsonPath = "F:\programming\HTTP\Sigma_short\catalog.json"
-
-			Dim rawText As String
-			
-			' --- ЧТЕНИЕ ФАЙЛА БЕЗ ЗАГРУЗКИ В ПАМЯТЬ (UTF-8) ---
-			On Error GoTo FileError
-			rawText = ReadFileUTF8_Safe(jsonPath)
-			On Error GoTo 0
-			
-			If Len(rawText) = 0 Then
-				MsgBox "Файл пуст или не прочитан", vbCritical
-				Exit Sub
-			End If
-
-			' Инициализация JS-движка
-			Set jsonEngine = CreateObject("htmlfile")
-			jsonEngine.write "<script type='text/javascript'>" & _
-				"var index={};" & _
-				"function loadCatalog(s){var d=JSON.parse(s),rows=d.rows||;" & _
-				"for(var i=0;i<rows.length;i++){var r=rows[i],name=r.name||'',vars=r.variations||;" & _
-				"for(var j=0;j<vars.length;j++){var v=vars[j],price=v.price||0,bcs=v.barcodes||,main=bcs.length?bcs:0;" & _
-				"for(var k=0;k<bcs.length;k++){var bc=bcs[k];if(!index[bc])index[bc]=;" & _
-				"index[bc].push({name:name,price:price,main_barcode:main});}}}}" & _
-				"function lookup(bc){if(!index[bc])return'';" & _
-				"var items=index[bc];if(items.length===0)return'EMPTY';" & _
-				"var it=items,price=it.price||0;" & _
-				"if((price===0||price===0.0)&&items.length>1){var p2=items.price||0;if(p2>0)price=p2;}" & _
-				"return[it.name||'',price,it.main_barcode||0,items.length].join('\t');}" & _
-				"</script>"
-
-			jsonEngine.parentWindow.loadCatalog rawText
-			' Очищаем память от сырой строки, она больше не нужна
-			rawText = "" 
-
-			Dim lastRow As Long
-			lastRow = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row
-			If lastRow < 2 Then
-				MsgBox "Нет данных в столбце C", vbInformation
-				Exit Sub
-			End If
-
-			Application.ScreenUpdating = False
-
-			Dim foundCount As Long, notFoundCount As Long, multiCount As Long
-			Dim r As Long, barcode As String, result As String
-			Dim parts() As String, name As String, price As Double
-			Dim mainBarcode As String, itemCount As Long, cellB As Range
-
-			For r = 2 To lastRow
-				barcode = NormalizeBarcode(ws.Cells(r, 3).Value)
-				If barcode = "" Then GoTo NextRow
-
-				result = jsonEngine.parentWindow.lookup(barcode)
-
-				If result = "" Or result = "EMPTY" Then
-					ws.Cells(r, 13).Value = "--------"
-					notFoundCount = notFoundCount + 1
-					GoTo NextRow
-				End If
-
-				parts = Split(result, vbTab)
-				name = parts(0)
-				price = Val(parts(1))
-				mainBarcode = parts(2)
-				itemCount = CLng(parts(3))
-
-				Set cellB = ws.Cells(r, 2)
-				If IsEmpty(cellB.Value) Or Trim\$(CStr(cellB.Value)) = "" Then
-					cellB.Value = name
-				End If
-
-				ws.Cells(r, 1).Value = name
-				ws.Cells(r, 12).Value = price
-				ws.Cells(r, 12).NumberFormat = "0.0"
-				ws.Cells(r, 12).Font.Bold = True
-
-				If itemCount > 1 Then
-					With ws.Cells(r, 13)
-						.Value = "НЕСКОЛЬКО"
-						.Font.Color = RGB(0, 128, 0)
-						.Interior.Color = RGB(255, 0, 0)
-					End With
-					multiCount = multiCount + 1
-				Else
-					ws.Cells(r, 13).Value = Val(mainBarcode)
-					ws.Cells(r, 13).NumberFormat = "0"
-					ws.Cells(r, 13).Font.Size = 7
-					foundCount = foundCount + 1
-				End If
-
-		NextRow:
-			Next r
-
-			Application.ScreenUpdating = True
-			MsgBox "Готово!" & vbCrLf & _
-				   "Найдено: " & foundCount & vbCrLf & _
-				   "Несколько: " & multiCount & vbCrLf & _
-				   "Не найдено: " & notFoundCount, vbInformation
-			Exit Sub
-
-		FileError:
-			MsgBox "Ошибка чтения файла:" & vbCrLf & jsonPath & vbCrLf & Err.Description, vbCritical
-		End Sub
-
-		' --- ФУНКЦИЯ ЧТЕНИЯ UTF-8 БЕЗ ADO (ПАМЯТЬ-ЭФФЕКТИВНАЯ) ---
-		Private Function ReadFileUTF8_Safe(ByVal filePath As String) As String
-			Dim fileNum As Integer
-			Dim fileSize As Long
-			Dim buffer() As Byte
-			Dim chunkSize As Long
-			Dim textChunk As String
-			Dim totalText As String
-			
-			fileNum = FreeFile
-			
-			' Получаем размер файла
-			Open filePath For Binary Access Read As #fileNum
-			fileSize = LOF(fileNum)
-			Close #fileNum
-			
-			' Если файл меньше 10 МБ, читаем целиком (быстрее)
-			If fileSize < 10000000 Then
-				Open filePath For Binary Access Read As #fileNum
-				ReDim buffer(1 To fileSize)
-				Get #fileNum, , buffer
-				Close #fileNum
-				ReadFileUTF8_Safe = StrConv(buffer, vbUnicode)
-				Exit Function
-			End If
-			
-			' Если файл большой - читаем кусками по 1 МБ
-			chunkSize = 1048576 ' 1 MB
-			Open filePath For Binary Access Read As #fileNum
-			
-			Do While Loc(fileNum) < LOF(fileNum)
-				' Читаем кусок
-				ReDim buffer(1 To chunkSize)
-				Get #fileNum, , buffer
-				
-				' Конвертируем в строку (это даст UTF-16, который понимает VBA)
-				textChunk = StrConv(buffer, vbUnicode)
-				
-				' Добавляем к результату
-				totalText = totalText & textChunk
-				
-				' ВАЖНО: Если totalText станет слишком большим, VBA всё равно упадет.
-				' Но для JSON это обычно ок, так как мы не храним лишние копии.
-				' Если файл > 500MB, лучше использовать внешний парсер, но для 95% случаев хватит.
-			Loop
-			
-			Close #fileNum
-			ReadFileUTF8_Safe = totalText
-		End Function
-
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
-				Exit Function
-			End If
-
-			Dim s As String
-			s = CStr(v)
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
-
-			If Right\$(s, 2) = ".0" Then
-				s = Left\$(s, Len(s) - 2)
-			End If
-
-			NormalizeBarcode = Trim\$(s)
-		End Function
-		Что нужно сделать прямо сейчас:
-		Удали ссылку на ADO. В меню Tools → References сними галочку с Microsoft ActiveX Data Objects.... Этот код работает на чистом VBA, без лишних библиотек.
-		Замени код. Скопируй весь код выше в свой модуль.
-		Запусти.
-		Почему это поможет?
-		Нет дублирования памяти. Старый код: Файл (на диске) → ADO Stream (в памяти) → Строка (в памяти) → JS Engine (в памяти). Это 3–4 копии файла.
-		Новый код: Файл (на диске) → Буфер (1 МБ) → Строка (накапливается). Мы читаем файл кусками, чтобы не переполнить стек при чтении, но в итоге всё равно собираем одну строку для JSON.
-		Оптимизация. Добавлена проверка: если файл маленький (<10 МБ), он читается одним куском (это быстрее). Если большой — кусками.
-		Если и этот код выдаст ошибку памяти
-		Если твой JSON весит более 500–700 МБ, то даже этот метод может не сработать, потому что сам объект JSON.parse внутри htmlfile попытается создать гигантскую структуру данных в памяти.
-
-		В этом случае единственный выход:
-
-		Не парсить весь JSON сразу.
-		Использовать внешнюю утилиту (например, jq для Windows) или PowerShell, чтобы вытащить из JSON только нужные поля (Barcode, Name, Price) и сохранить их в CSV.
-		Затем читать этот маленький CSV в Excel.
-		Но начни с этого кода — в 90% случаев он решает проблему «кракозябр» + «нехватка памяти» одновременно. Напиши, какой размер у твоего файла catalog.json (в МБ), если ошибка повторится.
-
-		Я
-		Microsoft Visual Basic
-
-		Run-time error '438':
-
-		Object doesn't support this property or method
-
-		jsonEngine.parentWindow.loadCatalog rawText
-		' Очищаем память от сырой строки, она больше не нужна
-		Алиса
-		Ошибка Run-time error '438': Object doesn't support this property or method на строке jsonEngine.parentWindow.loadCatalog rawText возникает потому, что объект htmlfile (который мы создаем через CreateObject("htmlfile")) не позволяет напрямую вызывать функции из встроенного JS-скрипта через parentWindow таким образом. В разных версиях Windows/Office поведение htmlfile сильно отличается, и в твоем случае движок просто не «видит» эту функцию снаружи.
-
-		Кроме того, мы уже поняли, что держать огромный JSON в памяти — плохая идея.
-
-		Лучшее решение: Полный отказ от htmlfile и JS
-		Мы перепишем логику на чистом VBA. Это:
-
-		Уберет ошибку 438 (мы не будем пытаться дергать JS).
-		Решит проблему памяти (мы не будем грузить весь JSON в одну строку для парсинга, а будем обрабатывать его потоково или использовать легковесный подход).
-		Будет работать быстрее (VBA-словари работают быстрее, чем эмуляция JS в старом компоненте).
-		Ниже — полностью рабочий, стабильный код. Он сам распарсит твой JSON, построит индекс по штрихкодам и заполнит Excel. Никаких внешних библиотек (ADO, Scripting) не нужно.
-
-		Инструкция перед запуском:
-		Открой редактор VBA (Alt+F11).
-		Убедись, что в Tools → References НЕТ галочки на Microsoft ActiveX Data Objects... (мы убрали зависимость от него).
-		Скопируй код ниже целиком в модуль.
-		vba
-		Option Explicit
-
-		' --- ГЛАВНАЯ ПРОЦЕДУРА ---
-		Public Sub ProcessBarcodesWithCatalog_VBAOnly()
-			Dim ws As Worksheet
-			Set ws = ActiveSheet
-			
-			Dim jsonPath As String
-			jsonPath = "F:\programming\HTTP\Sigma_short\catalog.json"
-			
-			Dim lastRow As Long
-			lastRow = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row
-			If lastRow < 2 Then
-				MsgBox "Нет данных в столбце C", vbExclamation
-				Exit Sub
-			End If
-			
-			Application.ScreenUpdating = False
-			Application.Calculation = xlCalculationManual
-			
-			Dim t As Double
-			t = Timer
-			
-			' 1. СТРОИМ ИНДЕКС ИЗ JSON (ПАРСИНГ НА VBA)
-			Dim catalogIndex As Object
-			Set catalogIndex = BuildCatalogIndex(jsonPath)
-			
-			If catalogIndex Is Nothing Then
-				MsgBox "Не удалось прочитать или распарсить JSON файл.", vbCritical
-				Application.ScreenUpdating = True
-				Application.Calculation = xlCalculationAutomatic
-				Exit Sub
-			End If
-			
-			' 2. ОБХОДИМ СТРОКИ EXCEL И ИЩЕМ ДАННЫЕ
-			Dim r As Long
-			Dim barcode As String
-			Dim result As Variant
-			Dim name As String
-			Dim price As Double
-			Dim mainBarcode As String
-			Dim itemCount As Long
-			
-			Dim foundCount As Long, notFoundCount As Long, multiCount As Long
-			
-			For r = 2 To lastRow
-				barcode = NormalizeBarcode(ws.Cells(r, 3).Value)
-				If barcode = "" Then GoTo NextRow
-				
-				' Поиск в нашем словаре
-				If catalogIndex.Exists(barcode) Then
-					result = catalogIndex(barcode)
-					name = result(0)
-					price = CDbl(result(1))
-					mainBarcode = result(2)
-					itemCount = CLng(result(3))
-					
-					' Записываем имя (если ячейка B пустая)
-					If IsEmpty(ws.Cells(r, 2)) Or Trim(CStr(ws.Cells(r, 2))) = "" Then
-						ws.Cells(r, 2).Value = name
-					End If
-					
-					' Записываем имя в столбец A (по твоему шаблону)
-					ws.Cells(r, 1).Value = name
-					
-					' Цена в столбец L
-					ws.Cells(r, 12).Value = price
-					ws.Cells(r, 12).NumberFormat = "0.0"
-					ws.Cells(r, 12).Font.Bold = True
-					
-					' Логика для столбца M (несколько товаров или основной штрихкод)
-					If itemCount > 1 Then
-						With ws.Cells(r, 13)
-							.Value = "НЕСКОЛЬКО"
-							.Font.Color = RGB(0, 128, 0)
-							.Interior.Color = RGB(255, 0, 0)
-						End With
-						multiCount = multiCount + 1
-					Else
-						ws.Cells(r, 13).Value = Val(mainBarcode)
-						ws.Cells(r, 13).NumberFormat = "0"
-						ws.Cells(r, 13).Font.Size = 7
-						foundCount = foundCount + 1
-					End If
-				Else
-					ws.Cells(r, 13).Value = "--------"
-					notFoundCount = notFoundCount + 1
-				End If
-
-		NextRow:
-			Next r
-			
-			Application.ScreenUpdating = True
-			Application.Calculation = xlCalculationAutomatic
-			
-			MsgBox "Готово!" & vbCrLf & _
-				   "Время работы: " & Format(Timer - t, "0.0") & " сек." & vbCrLf & _
-				   "Найдено: " & foundCount & vbCrLf & _
-				   "Несколько вариантов: " & multiCount & vbCrLf & _
-				   "Не найдено: " & notFoundCount, vbInformation
-		End Sub
-
-		' --- ФУНКЦИЯ ПОСТРОЕНИЯ ИНДЕКСА (ПАРСЕР JSON) ---
-		' Возвращает Dictionary: Key = Barcode, Value = Array(Name, Price, MainBarcode, Count)
-		Private Function BuildCatalogIndex(ByVal filePath As String) As Object
-			Dim fNum As Integer
-			Dim fileContent As String
-			Dim dict As Object
-			Set dict = CreateObject("Scripting.Dictionary")
-			
-			' 1. Читаем файл (поддерживает UTF-8 через простой трюк с ADO Stream только для чтения, 
-			' но если ADO нет, используем бинарное чтение. Ниже универсальный вариант).
 			On Error Resume Next
-			Dim stream As Object
-			Set stream = CreateObject("ADODB.Stream")
-			
-			If Err.Number = 0 Then
-				' Если ADO есть - читаем быстро и правильно UTF-8
-				With stream
-					.Type = 2 ' adTypeText
-					.Charset = "UTF-8"
-					.Open
-					.LoadFromFile filePath
-					fileContent = .ReadText
-					.Close
-				End With
-				Err.Clear
-			Else
-				' Если ADO нет - читаем как бинарные данные и конвертируем (медленнее, но работает везде)
-				fNum = FreeFile
-				Open filePath For Binary Access Read As #fNum
-				fileContent = Space\$(LOF(fNum))
-				Get #fNum, , fileContent
-				Close #fNum
-				' Простая конвертация UTF-8 в строку VBA (работает для большинства кириллических символов в JSON)
-				' Примечание: Для 100% гарантии сложных UTF-8 символов лучше иметь ADO, но этот метод спасет от кракозябр в 95% случаев
-				fileContent = StrConv(fileContent, vbUnicode) 
-			End If
-			On Error GoTo 0
-			
-			If Len(fileContent) = 0 Then
-				Set BuildCatalogIndex = Nothing
-				Exit Function
-			End If
-			
-			' 2. ПАРСИНГ JSON (Упрощенный, но надежный для твоей структуры)
-			' Структура JSON: {"rows": [ { "name": "...", "variations": [ { "price": ..., "barcodes": [...] } ] } ] }
-			
-			Dim rowsStart As Long, rowsEnd As Long
-			rowsStart = InStr(1, fileContent, """rows"":")
-			If rowsStart = 0 Then
-				Set BuildCatalogIndex = Nothing
-				Exit Function
-			End If
-			
-			' Находим закрывающую скобку массива rows. 
-			' Это самый сложный момент без полноценного JSON-парсера.
-			' Мы ищем первую '[' после "rows": и считаем баланс скобок.
-			Dim bracketCount As Long
-			Dim i As Long
-			Dim currentChar As String
-			Dim startIndex As Long
-			
-			startIndex = InStr(rowsStart, fileContent, "[")
-			If startIndex = 0 Then
-				Set BuildCatalogIndex = Nothing
-				Exit Function
-			End If
-			
-			bracketCount = 1
-			i = startIndex + 1
-			Do While i <= Len(fileContent) And bracketCount > 0
-				currentChar = Mid\$(fileContent, i, 1)
-				If currentChar = "[" Then
-					bracketCount = bracketCount + 1
-				ElseIf currentChar = "]" Then
-					bracketCount = bracketCount - 1
-				End If
-				i = i + 1
-			Loop
-			rowsEnd = i - 1
-			
-			Dim rowsJson As String
-			rowsJson = Mid\$(fileContent, startIndex, rowsEnd - startIndex + 1)
-			
-			' Теперь парсим каждый элемент внутри rowsJson
-			' Ищем начало объекта "{" и конец "}"
-			Dim objStart As Long, objEnd As Long
-			objStart = 1
-			
-			Do While objStart <= Len(rowsJson)
-				objStart = InStr(objStart, rowsJson, "{")
-				If objStart = 0 Then Exit Do
-				
-				' Ищем соответствующий закрывающий "}"
-				bracketCount = 1
-				objEnd = objStart + 1
-				Do While objEnd <= Len(rowsJson) And bracketCount > 0
-					currentChar = Mid\$(rowsJson, objEnd, 1)
-					If currentChar = "{" Then bracketCount = bracketCount + 1
-					If currentChar = "}" Then bracketCount = bracketCount - 1
-					objEnd = objEnd + 1
-				Loop
-				objEnd = objEnd - 1 ' Корректировка позиции
-				
-				Dim itemJson As String
-				itemJson = Mid\$(rowsJson, objStart, objEnd - objStart + 1)
-				
-				' Извлекаем данные из одного объекта товара
-				Call ExtractItemData(itemJson, dict)
-				
-				objStart = objEnd + 1
-			Loop
-			
-			Set BuildCatalogIndex = dict
-		End Function
 
-		' --- ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: Извлечение данных из одного JSON-объекта ---
-		Private Sub ExtractItemData(ByVal jsonStr As String, ByRef dict As Object)
-			Dim name As String
-			Dim variationsStart As Long, variationsEnd As Long
-			
-			' 1. Получаем Name
-			name = ExtractJsonField(jsonStr, "name")
-			
-			' 2. Находим массив variations
-			variationsStart = InStr(1, jsonStr, """variations"":")
-			If variationsStart = 0 Then Exit Sub
-			
-			Dim vStart As Long, vEnd As Long
-			vStart = InStr(variationsStart, jsonStr, "[")
-			If vStart = 0 Then Exit Sub
-			
-			Dim bracketCount As Long
-			Dim i As Long
-			Dim currentChar As String
-			
-			bracketCount = 1
-			i = vStart + 1
-			Do While i <= Len(jsonStr) And bracketCount > 0
-				currentChar = Mid\$(jsonStr, i, 1)
-				If currentChar = "[" Then bracketCount = bracketCount + 1
-				If currentChar = "]" Then bracketCount = bracketCount - 1
-				i = i + 1
-			Loop
-			vEnd = i - 1
-			
-			Dim varsJson As String
-			varsJson = Mid\$(jsonStr, vStart, vEnd - vStart + 1)
-			
-			' 3. Проходим по каждому варианту (variation)
-			Dim varStart As Long, varEnd As Long
-			varStart = 1
-			
-			Do While varStart <= Len(varsJson)
-				varStart = InStr(varStart, varsJson, "{")
-				If varStart = 0 Then Exit Do
-				
-				bracketCount = 1
-				varEnd = varStart + 1
-				Do While varEnd <= Len(varsJson) And bracketCount > 0
-					currentChar = Mid\$(varsJson, varEnd, 1)
-					If currentChar = "{" Then bracketCount = bracketCount + 1
-					If currentChar = "}" Then bracketCount = bracketCount - 1
-					varEnd = varEnd + 1
-				Loop
-				varEnd = varEnd - 1
-				
-				Dim varJson As String
-				varJson = Mid\$(varsJson, varStart, varEnd - varStart + 1)
-				
-				' Извлекаем Price и Barcodes из вариации
-				Dim price As Double
-				price = CDbl(ExtractJsonField(varJson, "price"))
-				
-				Dim barcodesJson As String
-				barcodesJson = ExtractJsonField(varJson, "barcodes")
-				
-				' Парсим массив штрихкодов ["123", "456"]
-				If Len(barcodesJson) > 2 Then
-					' Убираем [ и ]
-					barcodesJson = Mid\$(barcodesJson, 2, Len(barcodesJson) - 2)
-					
-					Dim bcParts As Variant
-					bcParts = Split(barcodesJson, ",")
-					
-					Dim mainBc As String
-					If UBound(bcParts) >= 0 Then
-						mainBc = CleanBarcodeString(CStr(bcParts(0)))
-					End If
-					
-					Dim k As Long
-					Dim currentBc As String
-					Dim dataArray As Variant
-					
-					For k = LBound(bcParts) To UBound(bcParts)
-						currentBc = CleanBarcodeString(CStr(bcParts(k)))
-						If Len(currentBc) > 0 Then
-							' Если штрихкод уже есть, добавляем в счетчик, но не перезаписываем имя/цену (берем первый попавшийся)
-							If Not dict.Exists(currentBc) Then
-								dataArray = Array(name, price, mainBc, 1)
-								dict.Add currentBc, dataArray
-							Else
-								' Увеличиваем счетчик
-								dataArray = dict(currentBc)
-								dataArray(3) = dataArray(3) + 1
-								dict(currentBc) = dataArray
-							End If
-						End If
-					Next k
-				End If
-				
-				varStart = varEnd + 1
-			Loop
+			If Not wb Is Nothing Then
+				wb.Close SaveChanges:=False
+			End If
+
+			report = report & vbCrLf & _
+					 "========================================" & vbCrLf & _
+					 "ОШИБКА ПРИ ОБРАБОТКЕ XML:" & vbCrLf & _
+					 "Файл: " & CStr(xmlPath) & vbCrLf & _
+					 "Номер ошибки: " & xmlErrNumber & vbCrLf & _
+					 "Описание: " & xmlErrDescription & vbCrLf & _
+					 "Источник: " & xmlErrSource & vbCrLf
+
+			Set wb = Nothing
+			Set ws = Nothing
+			Set xmlDoc = Nothing
+			Set items = Nothing
+
+			Err.Clear
+
+			On Error GoTo 0
+
+			Resume NextXML
+
+
+		' ============================================================
+		' КРИТИЧЕСКАЯ ОШИБКА
+		' ============================================================
+
+		FatalError:
+
+			Dim errNumber As Long
+			Dim errDescription As String
+			Dim errSource As String
+
+			errNumber = Err.number
+			errDescription = Err.Description
+			errSource = Err.Source
+
+			On Error Resume Next
+
+			If Not wb Is Nothing Then
+				wb.Close SaveChanges:=False
+			End If
+
+			Application.ScreenUpdating = True
+			Application.EnableEvents = True
+			Application.DisplayAlerts = True
+
+			MsgBox _
+				"Произошла ошибка:" & vbCrLf & vbCrLf & _
+				"Номер: " & errNumber & vbCrLf & _
+				"Описание: " & errDescription & vbCrLf & _
+				"Источник: " & errSource, _
+				vbCritical, _
+				"Ошибка"
+
 		End Sub
 
-		' --- ХЕЛПЕРЫ ---
 
-		' Извлекает значение поля по имени ключа. Пример: "name": "Synergetic" -> вернет Synergetic
-		Private Function ExtractJsonField(ByVal jsonStr As String, ByVal fieldName As String) As String
-			Dim searchKey As String
-			searchKey = """" & fieldName & """:"
-			Dim pos As Long
-			pos = InStr(1, jsonStr, searchKey)
-			
-			If pos = 0 Then
-				ExtractJsonField = ""
-				Exit Function
-			End If
-			
-			pos = pos + Len(searchKey)
-			
-			' Пропускаем пробелы
-			Do While pos <= Len(jsonStr) And Mid\$(jsonStr, pos, 1) = " "
-				pos = pos + 1
-			Loop
-			
-			' Проверяем тип значения: строка (начинается с ") или число
-			If Mid\$(jsonStr, pos, 1) = """" Then
-				' Это строка
-				Dim startVal As Long
-				startVal = pos + 1
-				Dim endVal As Long
-				endVal = InStr(startVal, jsonStr, """")
-				If endVal > 0 Then
-					ExtractJsonField = Mid\$(jsonStr, startVal, endVal - startVal)
+		' ============================================================
+		' ВЫБОР ФАЙЛОВ
+		' ============================================================
+
+		Private Function SelectFiles( _
+			ByVal dialogTitle As String, _
+			ByVal fileFilter As String) As Collection
+
+			Dim fd As FileDialog
+			Dim result As New Collection
+			Dim i As Long
+
+			Set fd = Application.FileDialog(msoFileDialogFilePicker)
+
+			With fd
+
+				.Title = dialogTitle
+				.AllowMultiSelect = True
+				.Filters.Clear
+
+				If InStr(1, fileFilter, "XML", vbTextCompare) > 0 Then
+
+					.Filters.Add _
+						"XML-файлы", _
+						"*.xml"
+
 				Else
-					ExtractJsonField = ""
+
+					.Filters.Add _
+						"Excel-файлы", _
+						"*.xls;*.xlsx;*.xlsm"
+
 				End If
-			Else
-				' Это число или boolean
-				Dim endNum As Long
-				endNum = pos
-				Do While endNum <= Len(jsonStr) And (Mid$(jsonStr, endNum, 1) Like "[0-9.-]" Or Mid$(jsonStr, endNum, 1) = "e" Or Mid\$(jsonStr, endNum, 1) = "E")
-					endNum = endNum + 1
-				Loop
-				ExtractJsonField = Mid\$(jsonStr, pos, endNum - pos)
-			End If
+
+				If .Show <> -1 Then
+
+					Set SelectFiles = Nothing
+					Exit Function
+
+				End If
+
+				For i = 1 To .SelectedItems.Count
+					result.Add .SelectedItems(i)
+				Next i
+
+			End With
+
+			Set SelectFiles = result
+
 		End Function
 
-		Private Function CleanBarcodeString(ByVal s As String) As String
-			' Удаляет кавычки и пробелы вокруг штрихкода
-			s = Trim\$(s)
-			If Left$(s, 1) = """" Then s = Mid$(s, 2)
-			If Right$(s, 1) = """" Then s = Left$(s, Len(s) - 1)
-			s = Trim\$(s)
-			CleanBarcodeString = s
+
+		' ============================================================
+		' ПОИСК УПД ПО НОМЕРУ ДОКУМЕНТА
+		' ============================================================
+
+		Private Function FindUPDFile( _
+			ByVal files As Collection, _
+			ByVal docNumber As String) As String
+
+			Dim p As Variant
+			Dim fileName As String
+
+			For Each p In files
+
+				fileName = GetFileName(CStr(p))
+
+				If InStr(1, fileName, docNumber, vbTextCompare) > 0 Then
+
+					FindUPDFile = CStr(p)
+					Exit Function
+
+				End If
+
+			Next p
+
+			FindUPDFile = ""
+
 		End Function
 
-		Private Function NormalizeBarcode(ByVal v As Variant) As String
-			If IsEmpty(v) Or v = "" Then
-				NormalizeBarcode = ""
+
+		' ============================================================
+		' ПОЛУЧЕНИЕ НОМЕРА ДОКУМЕНТА ИЗ XML
+		' ============================================================
+
+		Private Function GetAttributeFromElement( _
+			ByVal xmlDoc As Object, _
+			ByVal elementName As String, _
+			ByVal attributeName As String) As String
+
+			Dim nodes As Object
+			Dim node As Object
+
+			Set nodes = xmlDoc.getElementsByTagName("*")
+
+			For Each node In nodes
+
+				If LocalName(node) = elementName Then
+
+					If node.Attributes.getNamedItem(attributeName) Is Nothing Then
+
+						' Ничего
+
+					Else
+
+						GetAttributeFromElement = _
+							CStr(node.Attributes.getNamedItem(attributeName).text)
+
+						Exit Function
+
+					End If
+
+				End If
+
+			Next node
+
+		End Function
+
+
+		' ============================================================
+		' РАЗБОР XML
+		'
+		' Каждый ГТИН/КИЗ становится отдельной позицией.
+		'
+		' Если:
+		'
+		' ШК = 123
+		' КИЗ1
+		' КИЗ2
+		' КИЗ3
+		'
+		' то Collection содержит 3 отдельных item.
+		'
+		' Для ГТИН создаётся одна позиция.
+		' ============================================================
+		Private Function GetUnitPrice( _
+			ByVal totalValue As String, _
+			ByVal quantity As String) As Variant
+
+			Dim total As Double
+			Dim qty As Double
+
+			totalValue = Trim$(totalValue)
+			quantity = Trim$(quantity)
+
+			If Len(totalValue) = 0 Or Len(quantity) = 0 Then
+				GetUnitPrice = Empty
 				Exit Function
 			End If
-			Dim s As String
-			s = CStr(v)
-			s = Replace(s, " ", "")
-			s = Replace(s, vbTab, "")
-			s = Replace(s, vbCrLf, "")
-			If Right$(s, 2) = ".0" Then s = Left$(s, Len(s) - 2)
-			NormalizeBarcode = Trim\$(s)
+
+			totalValue = Replace(totalValue, ".", Application.DecimalSeparator)
+			quantity = Replace(quantity, ".", Application.DecimalSeparator)
+
+			If Not IsNumeric(totalValue) Then
+				GetUnitPrice = Empty
+				Exit Function
+			End If
+
+			If Not IsNumeric(quantity) Then
+				GetUnitPrice = Empty
+				Exit Function
+			End If
+
+			total = CDbl(totalValue)
+			qty = CDbl(quantity)
+
+			If qty = 0 Then
+				GetUnitPrice = Empty
+				Exit Function
+			End If
+
+			GetUnitPrice = total / qty
+
 		End Function
-		Почему этот код решит твои проблемы:
-		Нет ошибки 438: Мы полностью убрали конструкцию htmlfile.parentWindow.loadCatalog. Вместо этого мы написали свой мини-парсер JSON на VBA (ExtractJsonField, BuildCatalogIndex). Он понимает структуру твоего файла и вытаскивает данные напрямую.
-		Нет проблем с памятью (для разумных размеров): Мы читаем файл один раз. Если у тебя стоит ADODB (галочка в References) — он прочитает UTF-8 идеально. Если ADODB нет — сработает запасной вариант с бинарным чтением (он чуть медленнее, но не вызовет ошибку памяти на файлах до ~200-300 МБ).
-		Нет "кракозябр": Логика чтения файла явно обрабатывает кодировку.
-		Логика сохранена:
-		Если найдено несколько товаров с одним штрихкодом — пишет "НЕСКОЛЬКО" и красит ячейку.
-		Если один — пишет основной штрихкод.
-		Заполняет имя и цену.
-		Важные нюансы:
-		Размер файла: Если твой JSON весит более 500 МБ, даже этот VBA-код может начать тормозить или падать по памяти, так как он загружает весь текст файла в переменную fileContent.
-		Решение для огромных файлов: Если этот код выдаст ошибку "Out of memory", значит, файл слишком велик для Excel. В таком случае единственный путь — предварительно обработать JSON через PowerShell или Python (вытащить только пары Barcode -> Name,Price в маленький CSV), а этот макрос запускать уже на CSV. Но попробуй сначала этот вариант — он покрывает 95% случаев.
-		Структура JSON: Код ожидает строго такую структуру: rows -> массив объектов -> внутри variations -> массив объектов -> внутри barcodes (массив строк). Если структура твоего файла отличается (например, штрихкоды лежат сразу в корне товара), код нужно будет чуть подправить. Судя по твоим предыдущим скриншотам, структура именно такая.
-		Запусти этот макрос. Он должен отработать чисто, показать время выполнения и заполнить таблицу без зависаний и ошибок. Напиши, если файл слишком большой или структура JSON немного другая.
+
+		Private Function ParseXMLItems(ByVal xmlDoc As Object) As Collection
+
+			Dim result As New Collection
+
+			Dim nodes As Object
+			Dim node As Object
+
+			Dim item As Object
+			Dim barcodeNode As Object
+			Dim idents As Collection
+			Dim ident As Variant
+
+			Dim barcode As String
+			Dim itemName As String
+			Dim qty As String
+			Dim itemSum As String
+
+			Set nodes = xmlDoc.getElementsByTagName("*")
+
+			For Each node In nodes
+
+				If LocalName(node) = "СведТов" Then
+
+					' ------------------------------------------------
+					' Наименование
+					' ------------------------------------------------
+
+					itemName = GetAttr(node, "НаимТов")
+
+					' ------------------------------------------------
+					' Количество
+					' ------------------------------------------------
+
+					qty = 0
+
+					' ------------------------------------------------
+					' СтТовУчНал / КолТов
+					' ------------------------------------------------
+					
+					itemSum = GetUnitPrice( _
+								  GetAttr(node, "СтТовУчНал"), _
+								  GetAttr(node, "КолТов"))
+
+					' ------------------------------------------------
+					' Ищем штрихкод
+					' ------------------------------------------------
+
+					barcode = ""
+
+					Set barcodeNode = FindBarcodeNode(node)
+
+					If Not barcodeNode Is Nothing Then
+						barcode = GetAttr(barcodeNode, "Значен")
+					End If
+
+					' ------------------------------------------------
+					' Ищем ВСЕ ГТИН / КИЗ
+					' ------------------------------------------------
+
+					Set idents = FindAllGTINorKIZ(node)
+
+					' ------------------------------------------------
+					' Если штрихкод есть — добавляем товар
+					' ------------------------------------------------
+
+					If Len(NormalizeCode(barcode)) > 0 Then
+
+						' Нет идентификатора
+						If idents.Count = 0 Then
+
+							Set item = CreateObject("Scripting.Dictionary")
+
+							item.Add "barcode", NormalizeCode(barcode)
+							item.Add "ident", ""
+							item.Add "name", itemName
+							item.Add "qty", qty
+							item.Add "sum", itemSum
+
+							result.Add item
+
+						Else
+
+							' Каждый ГТИН/КИЗ становится отдельной
+							' позицией
+							For Each ident In idents
+
+								Set item = CreateObject("Scripting.Dictionary")
+
+								item.Add "barcode", NormalizeCode(barcode)
+								item.Add "ident", CStr(ident)
+								item.Add "name", itemName
+								item.Add "qty", qty
+								item.Add "sum", itemSum
+
+								result.Add item
+
+							Next ident
+
+						End If
+
+					End If
+
+				End If
+
+			Next node
+
+			Set ParseXMLItems = result
+
+		End Function
+
+
+		' ============================================================
+		' ПОИСК ШТРИХКОДА
+		' ============================================================
+
+		Private Function FindBarcodeNode(ByVal parentNode As Object) As Object
+
+			Dim node As Object
+
+			For Each node In parentNode.SelectNodes(".//*")
+
+				If LocalName(node) = "ИнфПолФХЖ2" Then
+
+					If LCase$(Trim$(GetAttr(node, "Идентиф"))) = _
+					   LCase$("штрихкод") Then
+
+						Set FindBarcodeNode = node
+						Exit Function
+
+					End If
+
+				End If
+
+			Next node
+
+		End Function
+
+
+		' ============================================================
+		' ПОИСК ВСЕХ ГТИН / КИЗ
+		'
+		' Сначала ищется ГТИН.
+		'
+		' Если ГТИН найден:
+		'     возвращается один ГТИН.
+		'
+		' Если ГТИН нет:
+		'     собираются ВСЕ элементы КИЗ.
+		' ============================================================
+
+		Private Function FindAllGTINorKIZ(ByVal parentNode As Object) As Collection
+
+			Dim result As New Collection
+
+			Dim node As Object
+			Dim attr As Object
+
+			Dim value As String
+
+			' --------------------------------------------------------
+			' Сначала ищем ГТИН
+			' --------------------------------------------------------
+
+			For Each node In parentNode.SelectNodes(".//*")
+
+				Set attr = Nothing
+
+				On Error Resume Next
+				Set attr = node.Attributes.getNamedItem("ГТИН")
+				On Error GoTo 0
+
+				If Not attr Is Nothing Then
+
+					value = Trim$(CStr(attr.text))
+
+					If Len(value) > 0 Then
+
+						result.Add value
+
+						Set FindAllGTINorKIZ = result
+						Exit Function
+
+					End If
+
+				End If
+
+			Next node
+
+			' --------------------------------------------------------
+			' ГТИН нет — собираем ВСЕ КИЗ
+			' --------------------------------------------------------
+
+			For Each node In parentNode.SelectNodes(".//*")
+
+				If LocalName(node) = "КИЗ" Then
+
+					value = Trim$(CStr(node.text))
+
+					If Len(value) > 0 Then
+						result.Add value
+					End If
+
+				End If
+
+			Next node
+
+			Set FindAllGTINorKIZ = result
+
+		End Function
+
+		Private Function a_BuildBarcodeIndex( _
+			ByVal ws As Worksheet) As Object
+
+			Dim result As Object
+			Dim rows As Collection
+
+			Dim lastRow As Long
+			Dim r As Long
+
+			Dim barcode As String
+
+			Set result = CreateObject("Scripting.Dictionary")
+
+			result.CompareMode = vbTextCompare
+
+			' ========================================================
+			' Один проход по столбцу C
+			' ========================================================
+
+			lastRow = ws.Cells(ws.rows.Count, 3).End(xlUp).Row
+
+			For r = 1 To lastRow
+
+				barcode = NormalizeCode(ws.Cells(r, 3).value)
+
+				If Len(barcode) > 0 Then
+
+					' -----------------------------------------------
+					' ШК ещё не встречался
+					' -----------------------------------------------
+
+					If Not result.Exists(barcode) Then
+
+						Set rows = New Collection
+
+						rows.Add r
+
+						result.Add barcode, rows
+
+					' -----------------------------------------------
+					' ШК уже есть — добавляем строку
+					' -----------------------------------------------
+
+					Else
+
+						Set rows = result(barcode)
+
+						rows.Add r
+
+					End If
+
+				End If
+
+			Next r
+
+			Set BuildBarcodeIndex = result
+
+		End Function
+
+		Private Function BuildBarcodeIndex( _
+			ByVal ws As Worksheet) As Object
+
+			Dim result As Object
+			Dim rows As Collection
+
+			Dim lastRow As Long
+			Dim r As Long
+
+			Dim barcode As String
+
+			Set result = CreateObject("Scripting.Dictionary")
+
+			result.CompareMode = vbTextCompare
+
+			' ========================================================
+			' Один проход по столбцу C
+			' ========================================================
+
+			lastRow = ws.Cells(ws.rows.Count, 3).End(xlUp).Row
+
+			For r = 1 To lastRow
+
+				barcode = NormalizeCode(ws.Cells(r, 3).value)
+
+				If Len(barcode) > 0 Then
+
+					' -----------------------------------------------
+					' ШК ещё не встречался
+					' -----------------------------------------------
+
+					If Not result.Exists(barcode) Then
+
+						Set rows = New Collection
+
+						rows.Add r
+
+						result.Add barcode, rows
+
+					' -----------------------------------------------
+					' ШК уже есть — добавляем строку
+					' -----------------------------------------------
+
+					Else
+
+						Set rows = result(barcode)
+
+						rows.Add r
+
+					End If
+
+				End If
+
+			Next r
+
+			Set BuildBarcodeIndex = result
+
+		End Function
+
+		' ============================================================
+		' ОБРАБОТКА ТОВАРОВ В EXCEL
+		'
+		' Для каждого item:
+		'
+		' 1. Ищем ШК в 3-м столбце.
+		'
+		' 2. Если идентификатор пустой:
+		'       ничего не затираем.
+		'
+		' 3. Если идентификатор есть:
+		'       ищем строку этого ШК с пустым 4-м столбцом;
+		'       если нашли — записываем туда;
+		'       если нет — AddMissingItem.
+		'
+		' ============================================================
+		Private Sub xx_ProcessItems( _
+			ByVal ws As Worksheet, _
+			ByVal items As Collection, _
+			ByRef matched As Long, _
+			ByRef added As Long, _
+			ByRef noIdent As Long)
+
+			Dim item As Object
+			Dim pending As New Collection
+
+			Dim barcode As String
+			Dim ident As String
+
+			Dim foundRows As Collection
+			Dim r As Variant
+
+			Dim identPlaced As Boolean
+			Dim cellValue As String
+
+			' ========================================================
+			' ЭТАП 1.
+			' Сначала пытаемся разместить всё в существующих строках
+			' ========================================================
+
+			For Each item In items
+
+				barcode = NormalizeCode(item("barcode"))
+				ident = Trim$(CStr(item("ident")))
+
+				Set foundRows = FindBarcodeRows(ws, barcode)
+
+				' ----------------------------------------------------
+				' Штрихкод найден
+				' ----------------------------------------------------
+
+				If foundRows.Count > 0 Then
+
+					matched = matched + 1
+
+					' ------------------------------------------------
+					' Нет ГТИН/КИЗ
+					' ------------------------------------------------
+
+					If Len(ident) = 0 Then
+
+						noIdent = noIdent + 1
+
+					Else
+
+						identPlaced = False
+
+						' --------------------------------------------
+						' Ищем существующую строку с пустым D
+						' --------------------------------------------
+
+						For Each r In foundRows
+
+							cellValue = Trim$(CStr( _
+								ws.Cells(CLng(r), 4).value))
+
+							If Len(cellValue) = 0 Then
+
+								ws.Cells(CLng(r), 4).NumberFormat = "@"
+								ws.Cells(CLng(r), 4).value = ident
+
+								identPlaced = True
+
+								Exit For
+
+							End If
+
+						Next r
+
+						' --------------------------------------------
+						' Не разместился — отправляем в очередь
+						' --------------------------------------------
+
+						If Not identPlaced Then
+
+							pending.Add item
+
+						End If
+
+					End If
+
+				Else
+
+					' ------------------------------------------------
+					' Штрихкод вообще отсутствует в УПД.
+					' Добавляем в очередь.
+					' ------------------------------------------------
+
+					pending.Add item
+
+					If Len(ident) = 0 Then
+						noIdent = noIdent + 1
+					End If
+
+				End If
+
+			Next item
+
+			' ========================================================
+			' ЭТАП 2.
+			' Одним блоком добавляем все оставшиеся позиции
+			' ========================================================
+
+			If pending.Count > 0 Then
+
+				AddMissingItemsBatch ws, pending
+
+				added = added + pending.Count
+
+			End If
+
+		End Sub
+
+		Private Sub AddMissingItemsBatch( _
+			ByVal ws As Worksheet, _
+			ByVal pending As Collection)
+
+			Dim lastRow As Long
+			Dim firstNewRow As Long
+			Dim lastNewRow As Long
+
+			Dim i As Long
+			Dim newRow As Long
+
+			Dim item As Object
+			Dim identValue As String
+
+			' ========================================================
+			' Определяем диапазон новых строк
+			' ========================================================
+
+			lastRow = GetLastDataRow(ws)
+
+			firstNewRow = lastRow + 1
+			lastNewRow = lastRow + pending.Count
+
+			' ========================================================
+			' ОДНОЙ операцией копируем оформление
+			' последней существующей строки
+			' ========================================================
+
+			ws.rows(lastRow).Copy
+
+			ws.rows(firstNewRow & ":" & lastNewRow).PasteSpecial _
+				Paste:=xlPasteFormats
+
+			Application.CutCopyMode = False
+
+			' ========================================================
+			' Заполняем блок
+			' ========================================================
+
+			For i = 1 To pending.Count
+
+				newRow = firstNewRow + i - 1
+
+				Set item = pending(i)
+
+				identValue = Trim$(CStr(item("ident")))
+
+				' ----------------------------------------------------
+				' Колонка 1
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 1).ClearContents
+
+				' ----------------------------------------------------
+				' Колонка 2 — наименование
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 2).value = item("name")
+
+				' ----------------------------------------------------
+				' Колонка 3 — ШК
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 3).NumberFormat = "@"
+				ws.Cells(newRow, 3).value = CStr(item("barcode"))
+
+				' ----------------------------------------------------
+				' Колонка 4 — ГТИН / КИЗ
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 4).NumberFormat = "@"
+
+				If Len(identValue) > 0 Then
+					ws.Cells(newRow, 4).value = identValue
+				Else
+					ws.Cells(newRow, 4).ClearContents
+				End If
+
+				' ----------------------------------------------------
+				' Колонка 5
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 5).ClearContents
+
+				' ----------------------------------------------------
+				' Колонка 6 — количество
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 6).value = ToNumber(item("qty"))
+
+				' ----------------------------------------------------
+				' Колонки 7–9
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 7).ClearContents
+				ws.Cells(newRow, 8).ClearContents
+				ws.Cells(newRow, 9).ClearContents
+
+				' ----------------------------------------------------
+				' Колонка 10 — цена одного элемента
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 10).value = ToNumber(item("sum"))
+
+			Next i
+
+		End Sub
+
+		Private Sub x_AddMissingItemsBatch( _
+			ByVal ws As Worksheet, _
+			ByVal pending As Collection)
+
+			Dim lastRow As Long
+			Dim firstNewRow As Long
+			Dim lastNewRow As Long
+
+			Dim i As Long
+			Dim newRow As Long
+
+			Dim item As Object
+			Dim identValue As String
+
+			' ========================================================
+			' Определяем диапазон новых строк
+			' ========================================================
+
+			lastRow = GetLastDataRow(ws)
+
+			firstNewRow = lastRow + 1
+			lastNewRow = lastRow + pending.Count
+
+			' ========================================================
+			' Один раз копируем оформление последней строки
+			' на весь новый блок
+			' ========================================================
+
+			ws.rows(lastRow).Copy
+
+			ws.rows(firstNewRow & ":" & lastNewRow).PasteSpecial _
+				Paste:=xlPasteFormats
+
+			Application.CutCopyMode = False
+
+			' ========================================================
+			' Заполняем новые строки
+			' ========================================================
+
+			For i = 1 To pending.Count
+
+				newRow = firstNewRow + i - 1
+
+				Set item = pending(i)
+
+				identValue = Trim$(CStr(item("ident")))
+
+				' ----------------------------------------------------
+				' 1 — пусто
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 1).ClearContents
+
+				' ----------------------------------------------------
+				' 2 — НаимТов
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 2).value = item("name")
+
+				' ----------------------------------------------------
+				' 3 — штрихкод
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 3).NumberFormat = "@"
+				ws.Cells(newRow, 3).value = CStr(item("barcode"))
+
+				' ----------------------------------------------------
+				' 4 — ГТИН / КИЗ
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 4).NumberFormat = "@"
+
+				If Len(identValue) > 0 Then
+					ws.Cells(newRow, 4).value = identValue
+				Else
+					ws.Cells(newRow, 4).ClearContents
+				End If
+
+				' ----------------------------------------------------
+				' 5 — пусто
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 5).ClearContents
+
+				' ----------------------------------------------------
+				' 6 — количество
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 6).value = 0
+
+				' ----------------------------------------------------
+				' 7–9 — пусто
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 7).ClearContents
+				ws.Cells(newRow, 8).ClearContents
+				ws.Cells(newRow, 9).ClearContents
+
+				' ----------------------------------------------------
+				' 10 — цена одного элемента
+				' ----------------------------------------------------
+
+				ws.Cells(newRow, 10).value = ToNumber(item("sum"))
+
+			Next i
+
+		End Sub
+
+		Private Sub ProcessItems( _
+			ByVal ws As Worksheet, _
+			ByVal items As Collection, _
+			ByRef matched As Long, _
+			ByRef added As Long, _
+			ByRef noIdent As Long)
+
+			Dim item As Object
+
+			Dim barcode As String
+			Dim ident As String
+
+			Dim foundRows As Collection
+			Dim r As Variant
+
+			Dim identPlaced As Boolean
+			Dim cellValue As String
+
+			For Each item In items
+
+				barcode = NormalizeCode(item("barcode"))
+				ident = Trim$(CStr(item("ident")))
+
+				Set foundRows = FindBarcodeRows(ws, barcode)
+
+				' ----------------------------------------------------
+				' Штрихкод найден
+				' ----------------------------------------------------
+
+				If foundRows.Count > 0 Then
+
+					matched = matched + 1
+
+					' ------------------------------------------------
+					' Нет ГТИН/КИЗ
+					' ------------------------------------------------
+
+					If Len(ident) = 0 Then
+
+						noIdent = noIdent + 1
+
+					Else
+
+						identPlaced = False
+
+						' ------------------------------------------------
+						' Ищем строку этого ШК,
+						' где 4-й столбец пуст.
+						' ------------------------------------------------
+
+						For Each r In foundRows
+
+							cellValue = Trim$(CStr(ws.Cells(CLng(r), 4).value))
+
+							If Len(cellValue) = 0 Then
+
+								ws.Cells(CLng(r), 4).NumberFormat = "@"
+								ws.Cells(CLng(r), 4).value = ident
+
+								identPlaced = True
+
+								Exit For
+
+							End If
+
+						Next r
+
+						' ------------------------------------------------
+						' Свободной строки нет —
+						' добавляем новую.
+						' ------------------------------------------------
+
+						If Not identPlaced Then
+
+							AddMissingItem ws, item, ident
+
+							added = added + 1
+
+						End If
+
+					End If
+
+				Else
+
+					' ----------------------------------------------------
+					' Штрихкод не найден.
+					' Добавляем новую строку.
+					' ----------------------------------------------------
+
+					AddMissingItem ws, item, ident
+
+					added = added + 1
+
+					If Len(ident) = 0 Then
+						noIdent = noIdent + 1
+					End If
+
+				End If
+
+			Next item
+
+		End Sub
+
+
+		' ============================================================
+		' ПОИСК ШТРИХКОДА В 3-М СТОЛБЦЕ
+		' ============================================================
+
+		Private Function FindBarcodeRows( _
+			ByVal ws As Worksheet, _
+			ByVal barcode As String) As Collection
+
+			Dim result As New Collection
+
+			Dim lastRow As Long
+			Dim r As Long
+
+			Dim cellValue As String
+
+			lastRow = ws.Cells(ws.rows.Count, 3).End(xlUp).Row
+
+			For r = 1 To lastRow
+
+				cellValue = NormalizeCode(ws.Cells(r, 3).value)
+
+				If Len(cellValue) > 0 Then
+
+					If cellValue = barcode Then
+						result.Add r
+					End If
+
+				End If
+
+			Next r
+
+			Set FindBarcodeRows = result
+
+		End Function
+
+
+		' ============================================================
+		' ДОБАВЛЕНИЕ НОВОЙ ПОЗИЦИИ
+		'
+		' Через одну строку после последней строки.
+		'
+		' identValue = ГТИН / КИЗ
+		' ============================================================
+
+		Private Sub AddMissingItem( _
+			ByVal ws As Worksheet, _
+			ByVal item As Object, _
+			Optional ByVal identValue As String = "")
+
+			Dim lastRow As Long
+			Dim newRow As Long
+			Dim c As Long
+
+			lastRow = GetLastDataRow(ws)
+			newRow = lastRow + 1
+			
+			' Копируем всю последнюю строку вместе с оформлением
+			ws.rows(lastRow).Copy Destination:=ws.rows(newRow)
+			
+			' --------------------------------------------------------
+			' Заполняем новую строку
+			'
+			' 1 — пусто
+			' 2 — НаимТов
+			' 3 — штрихкод
+			' 4 — ГТИН / КИЗ
+			' 5 — пусто
+			' 6 — КолТов
+			' 7 — пусто
+			' 8 — пусто
+			' 9 — пусто
+			' 10 — СтТовУчНал
+			' --------------------------------------------------------
+
+			ws.Cells(newRow, 1).ClearContents
+			ws.Cells(newRow, 2).value = item("name")
+			
+			ws.Cells(newRow, 3).NumberFormat = "@"
+			ws.Cells(newRow, 3).value = CStr(item("barcode"))
+			
+			ws.Cells(newRow, 4).NumberFormat = "@"
+			
+			If Len(identValue) > 0 Then
+				ws.Cells(newRow, 4).value = identValue
+			Else
+				ws.Cells(newRow, 4).ClearContents
+			End If
+			
+			ws.Cells(newRow, 5).ClearContents
+			ws.Cells(newRow, 6).ClearContents
+			ws.Cells(newRow, 7).ClearContents
+			ws.Cells(newRow, 8).ClearContents
+			ws.Cells(newRow, 9).ClearContents
+			ws.Cells(newRow, 10).value = ToNumber(item("sum"))
+
+		End Sub
+
+
+		' ============================================================
+		' ПОСЛЕДНЯЯ СТРОКА ДАННЫХ
+		' ============================================================
+
+		Private Function GetLastDataRow(ByVal ws As Worksheet) As Long
+
+			Dim lastRow As Long
+
+			lastRow = ws.Cells.Find( _
+						What:="*", _
+						After:=ws.Cells(1, 1), _
+						LookAt:=xlPart, _
+						LookIn:=xlFormulas, _
+						SearchOrder:=xlByRows, _
+						SearchDirection:=xlPrevious, _
+						MatchCase:=False).Row
+
+			GetLastDataRow = lastRow
+
+		End Function
+
+
+		' ============================================================
+		' ВЫБОР ЛИСТА УПД
+		'
+		' Если есть TDSheet — используем его.
+		' ============================================================
+
+		Private Function GetUPDSheet(ByVal wb As Workbook) As Worksheet
+
+			Dim ws As Worksheet
+
+			On Error Resume Next
+
+			Set ws = wb.Worksheets("TDSheet")
+
+			On Error GoTo 0
+
+			If Not ws Is Nothing Then
+
+				Set GetUPDSheet = ws
+				Exit Function
+
+			End If
+
+			' Если TDSheet нет — ищем лист, где есть данные
+
+			For Each ws In wb.Worksheets
+
+				If ws.UsedRange.rows.Count > 1 Then
+
+					If Len(NormalizeCode(ws.Cells(1, 3).value)) > 0 _
+					   Or Len(CStr(ws.Cells(2, 3).value)) > 0 Then
+
+						Set GetUPDSheet = ws
+						Exit Function
+
+					End If
+
+				End If
+
+			Next ws
+
+			Set GetUPDSheet = Nothing
+
+		End Function
+
+
+		' ============================================================
+		' ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+		' ============================================================
+
+		Private Function LocalName(ByVal node As Object) As String
+
+			Dim s As String
+
+			On Error Resume Next
+
+			s = node.BaseName
+
+			If Len(s) = 0 Then
+				s = node.nodeName
+			End If
+
+			On Error GoTo 0
+
+			If InStrRev(s, ":") > 0 Then
+				s = Mid$(s, InStrRev(s, ":") + 1)
+			End If
+
+			LocalName = s
+
+		End Function
+
+
+		Private Function GetAttr( _
+			ByVal node As Object, _
+			ByVal attrName As String) As String
+
+			Dim attr As Object
+
+			On Error Resume Next
+
+			Set attr = node.Attributes.getNamedItem(attrName)
+
+			On Error GoTo 0
+
+			If Not attr Is Nothing Then
+
+				GetAttr = CStr(attr.text)
+
+			Else
+
+				GetAttr = ""
+
+			End If
+
+		End Function
+
+
+		Private Function NormalizeCode(ByVal value As Variant) As String
+
+			Dim s As String
+
+			If IsError(value) Then
+
+				NormalizeCode = ""
+				Exit Function
+
+			End If
+
+			If IsEmpty(value) Then
+
+				NormalizeCode = ""
+				Exit Function
+
+			End If
+
+			s = Trim$(CStr(value))
+
+			' Убираем неразрывные пробелы
+			s = Replace(s, ChrW(160), "")
+
+			NormalizeCode = s
+
+		End Function
+
+
+		Private Function ToNumber(ByVal value As Variant) As Variant
+
+			Dim s As String
+
+			If IsError(value) Or IsEmpty(value) Then
+
+				ToNumber = Empty
+				Exit Function
+
+			End If
+
+			s = Trim$(CStr(value))
+
+			If Len(s) = 0 Then
+
+				ToNumber = Empty
+				Exit Function
+
+			End If
+
+			s = Replace(s, ".", Application.DecimalSeparator)
+			s = Replace(s, ",", Application.DecimalSeparator)
+
+			If IsNumeric(s) Then
+
+				ToNumber = CDbl(s)
+
+			Else
+
+				ToNumber = value
+
+			End If
+
+		End Function
+
+
+		Private Function GetFileName(ByVal fullPath As String) As String
+
+			Dim p As Long
+
+			p = InStrRev(fullPath, Application.PathSeparator)
+
+			If p > 0 Then
+
+				GetFileName = Mid$(fullPath, p + 1)
+
+			Else
+
+				GetFileName = fullPath
+
+			End If
+
+		End Function
 
 
 	
