@@ -7,1573 +7,558 @@
   <body>
 	<per>
 		
-		Option Explicit
-
-		' ============================================================
-		' ОСНОВНОЙ МАКРОС
-		' ============================================================
-
-		Public Sub я_ИмпортГТИНКИЗ_из_XML_v2_GPT()
-
-			Dim xmlFiles As Collection
-			Dim updFiles As Collection
-
-			Dim xmlPath As Variant
-			Dim updPath As Variant
-
-			Dim xmlDoc As Object
-			Dim items As Collection
-
-			Dim docNumber As String
-
-			Dim wb As Workbook
-			Dim ws As Worksheet
-
-			Dim matched As Long
-			Dim added As Long
-			Dim noIdent As Long
-			Dim totalItems As Long
-
-			Dim report As String
-
-			On Error GoTo FatalError
-
-			Application.ScreenUpdating = False
-			Application.EnableEvents = False
-			Application.DisplayAlerts = False
-
-			' --------------------------------------------------------
-			' 1. Выбираем XML
-			' --------------------------------------------------------
-
-			Set xmlFiles = SelectFiles( _
-				"Выберите XML-файлы с КИЗ/ГТИН", _
-				"XML-файлы (*.xml),*.xml")
-
-			If xmlFiles Is Nothing Then
-				GoTo SafeExit
-			End If
-
-			If xmlFiles.Count = 0 Then
-				GoTo SafeExit
-			End If
-
-			' --------------------------------------------------------
-			' 2. Выбираем УПД
-			' --------------------------------------------------------
-
-			Set updFiles = SelectFiles( _
-				"Выберите Excel-файлы с УПД", _
-				"Excel-файлы (*.xls;*.xlsx;*.xlsm),*.xls;*.xlsx;*.xlsm")
-
-			If updFiles Is Nothing Then
-				GoTo SafeExit
-			End If
-
-			If updFiles.Count = 0 Then
-				GoTo SafeExit
-			End If
-
-			' --------------------------------------------------------
-			' 3. Обрабатываем каждый XML
-			' --------------------------------------------------------
-
-			For Each xmlPath In xmlFiles
-
-				On Error GoTo XMLFatalError
-
-				Set xmlDoc = CreateObject("MSXML2.DOMDocument.6.0")
-
-				xmlDoc.async = False
-				xmlDoc.validateOnParse = False
-				xmlDoc.resolveExternals = False
-
-				If Not xmlDoc.Load(CStr(xmlPath)) Then
-
-					report = report & vbCrLf & _
-							 "ОШИБКА XML: " & CStr(xmlPath) & vbCrLf & _
-							 "  " & xmlDoc.parseError.Reason & vbCrLf
-
-					GoTo NextXML
-
-				End If
-
-				' ----------------------------------------------------
-				' Получаем номер документа
-				' <СвСчФакт НомерДок="..." ДатаДок="...">
-				' ----------------------------------------------------
-
-				docNumber = GetAttributeFromElement( _
-								xmlDoc, _
-								"СвСчФакт", _
-								"НомерДок")
-
-				If Len(docNumber) = 0 Then
-
-					report = report & vbCrLf & _
-							 "ОШИБКА: не найден НомерДок в XML:" & vbCrLf & _
-							 CStr(xmlPath) & vbCrLf
-
-					GoTo NextXML
-
-				End If
-
-				' ----------------------------------------------------
-				' Получаем товары XML
-				' ----------------------------------------------------
-
-				Set items = ParseXMLItems(xmlDoc)
-
-				If items Is Nothing Or items.Count = 0 Then
-
-					report = report & vbCrLf & _
-							 "ОШИБКА: в XML не найдены товары:" & vbCrLf & _
-							 CStr(xmlPath) & vbCrLf
-
-					GoTo NextXML
-
-				End If
-
-				totalItems = items.Count
-
-				' ----------------------------------------------------
-				' Ищем соответствующий Excel по номеру документа
-				' ----------------------------------------------------
-
-				updPath = FindUPDFile(updFiles, docNumber)
-
-				If Len(CStr(updPath)) = 0 Then
-
-					report = report & vbCrLf & _
-							 "НЕ НАЙДЕН УПД для XML:" & vbCrLf & _
-							 "  XML: " & CStr(xmlPath) & vbCrLf & _
-							 "  НомерДок: " & docNumber & vbCrLf
-
-					GoTo NextXML
-
-				End If
-
-				' ----------------------------------------------------
-				' Открываем УПД
-				' ----------------------------------------------------
-
-				Set wb = Workbooks.Open( _
-							fileName:=CStr(updPath), _
-							UpdateLinks:=False, _
-							ReadOnly:=False)
-
-				Set ws = GetUPDSheet(wb)
-
-				If ws Is Nothing Then
-
-					report = report & vbCrLf & _
-							 "ОШИБКА: не найден лист с УПД:" & vbCrLf & _
-							 wb.name & vbCrLf
-
-					wb.Close SaveChanges:=False
-					Set wb = Nothing
-
-					GoTo NextXML
-
-				End If
-
-				' ----------------------------------------------------
-				' Обрабатываем товары
-				' ----------------------------------------------------
-
-				ProcessItems ws, items, matched, added, noIdent
-
-				' ----------------------------------------------------
-				' Сохраняем
-				' ----------------------------------------------------
-
-				wb.Save
-
-				report = report & vbCrLf & _
-						 "========================================" & vbCrLf & _
-						 "XML: " & GetFileName(CStr(xmlPath)) & vbCrLf & _
-						 "УПД: " & wb.name & vbCrLf & _
-						 "НомерДок: " & docNumber & vbCrLf & _
-						 "Позиций XML после разворачивания КИЗ/ГТИН: " & totalItems & vbCrLf & _
-						 "Совпало: " & matched & vbCrLf & "Добавлено: " & added & vbCrLf & "Без ГТИН/КИЗ: " & noIdent & vbCrLf
-
-				wb.Close SaveChanges:=False
-
-				Set wb = Nothing
-
-				matched = 0
-				added = 0
-				noIdent = 0
-
-		NextXML:
-
-				On Error Resume Next
-
-				If Not wb Is Nothing Then
-					wb.Close SaveChanges:=False
-				End If
-
-				Set xmlDoc = Nothing
-				Set items = Nothing
-				Set wb = Nothing
-				Set ws = Nothing
-
-				On Error GoTo XMLFatalError
-
-			Next xmlPath
-
-			' --------------------------------------------------------
-			' Итог
-			' --------------------------------------------------------
-
-			MsgBox _
-				"Обработка завершена." & vbCrLf & vbCrLf & _
-				report, _
-				vbInformation, _
-				"Импорт ГТИН / КИЗ"
-
-		SafeExit:
-
-			Application.ScreenUpdating = True
-			Application.EnableEvents = True
-			Application.DisplayAlerts = True
-
-			Exit Sub
-
-
-		' ============================================================
-		' ОШИБКА ПРИ ОБРАБОТКЕ ОТДЕЛЬНОГО XML
-		' ============================================================
-
-		XMLFatalError:
-
-			Dim xmlErrNumber As Long
-			Dim xmlErrDescription As String
-			Dim xmlErrSource As String
-
-			xmlErrNumber = Err.number
-			xmlErrDescription = Err.Description
-			xmlErrSource = Err.Source
-
-			On Error Resume Next
-
-			If Not wb Is Nothing Then
-				wb.Close SaveChanges:=False
-			End If
-
-			report = report & vbCrLf & _
-					 "========================================" & vbCrLf & _
-					 "ОШИБКА ПРИ ОБРАБОТКЕ XML:" & vbCrLf & _
-					 "Файл: " & CStr(xmlPath) & vbCrLf & _
-					 "Номер ошибки: " & xmlErrNumber & vbCrLf & _
-					 "Описание: " & xmlErrDescription & vbCrLf & _
-					 "Источник: " & xmlErrSource & vbCrLf
-
-			Set wb = Nothing
-			Set ws = Nothing
-			Set xmlDoc = Nothing
-			Set items = Nothing
-
-			Err.Clear
-
-			On Error GoTo 0
-
-			Resume NextXML
-
-
-		' ============================================================
-		' КРИТИЧЕСКАЯ ОШИБКА
-		' ============================================================
-
-		FatalError:
-
-			Dim errNumber As Long
-			Dim errDescription As String
-			Dim errSource As String
-
-			errNumber = Err.number
-			errDescription = Err.Description
-			errSource = Err.Source
-
-			On Error Resume Next
-
-			If Not wb Is Nothing Then
-				wb.Close SaveChanges:=False
-			End If
-
-			Application.ScreenUpdating = True
-			Application.EnableEvents = True
-			Application.DisplayAlerts = True
-
-			MsgBox _
-				"Произошла ошибка:" & vbCrLf & vbCrLf & _
-				"Номер: " & errNumber & vbCrLf & _
-				"Описание: " & errDescription & vbCrLf & _
-				"Источник: " & errSource, _
-				vbCritical, _
-				"Ошибка"
-
-		End Sub
-
-
-		' ============================================================
-		' ВЫБОР ФАЙЛОВ
-		' ============================================================
-
-		Private Function SelectFiles( _
-			ByVal dialogTitle As String, _
-			ByVal fileFilter As String) As Collection
-
-			Dim fd As FileDialog
-			Dim result As New Collection
-			Dim i As Long
-
-			Set fd = Application.FileDialog(msoFileDialogFilePicker)
-
-			With fd
-
-				.Title = dialogTitle
-				.AllowMultiSelect = True
-				.Filters.Clear
-
-				If InStr(1, fileFilter, "XML", vbTextCompare) > 0 Then
-
-					.Filters.Add _
-						"XML-файлы", _
-						"*.xml"
-
-				Else
-
-					.Filters.Add _
-						"Excel-файлы", _
-						"*.xls;*.xlsx;*.xlsm"
-
-				End If
-
-				If .Show <> -1 Then
-
-					Set SelectFiles = Nothing
-					Exit Function
-
-				End If
-
-				For i = 1 To .SelectedItems.Count
-					result.Add .SelectedItems(i)
-				Next i
-
-			End With
-
-			Set SelectFiles = result
-
-		End Function
-
-
-		' ============================================================
-		' ПОИСК УПД ПО НОМЕРУ ДОКУМЕНТА
-		' ============================================================
-
-		Private Function FindUPDFile( _
-			ByVal files As Collection, _
-			ByVal docNumber As String) As String
-
-			Dim p As Variant
-			Dim fileName As String
-
-			For Each p In files
-
-				fileName = GetFileName(CStr(p))
-
-				If InStr(1, fileName, docNumber, vbTextCompare) > 0 Then
-
-					FindUPDFile = CStr(p)
-					Exit Function
-
-				End If
-
-			Next p
-
-			FindUPDFile = ""
-
-		End Function
-
-
-		' ============================================================
-		' ПОЛУЧЕНИЕ НОМЕРА ДОКУМЕНТА ИЗ XML
-		' ============================================================
-
-		Private Function GetAttributeFromElement( _
-			ByVal xmlDoc As Object, _
-			ByVal elementName As String, _
-			ByVal attributeName As String) As String
-
-			Dim nodes As Object
-			Dim node As Object
-
-			Set nodes = xmlDoc.getElementsByTagName("*")
-
-			For Each node In nodes
-
-				If LocalName(node) = elementName Then
-
-					If node.Attributes.getNamedItem(attributeName) Is Nothing Then
-
-						' Ничего
-
-					Else
-
-						GetAttributeFromElement = _
-							CStr(node.Attributes.getNamedItem(attributeName).text)
-
-						Exit Function
-
-					End If
-
-				End If
-
-			Next node
-
-		End Function
-
-
-		' ============================================================
-		' РАЗБОР XML
-		'
-		' Каждый ГТИН/КИЗ становится отдельной позицией.
-		'
-		' Если:
-		'
-		' ШК = 123
-		' КИЗ1
-		' КИЗ2
-		' КИЗ3
-		'
-		' то Collection содержит 3 отдельных item.
-		'
-		' Для ГТИН создаётся одна позиция.
-		' ============================================================
-		Private Function GetUnitPrice( _
-			ByVal totalValue As String, _
-			ByVal quantity As String) As Variant
-
-			Dim total As Double
-			Dim qty As Double
-
-			totalValue = Trim$(totalValue)
-			quantity = Trim$(quantity)
-
-			If Len(totalValue) = 0 Or Len(quantity) = 0 Then
-				GetUnitPrice = Empty
-				Exit Function
-			End If
-
-			totalValue = Replace(totalValue, ".", Application.DecimalSeparator)
-			quantity = Replace(quantity, ".", Application.DecimalSeparator)
-
-			If Not IsNumeric(totalValue) Then
-				GetUnitPrice = Empty
-				Exit Function
-			End If
-
-			If Not IsNumeric(quantity) Then
-				GetUnitPrice = Empty
-				Exit Function
-			End If
-
-			total = CDbl(totalValue)
-			qty = CDbl(quantity)
-
-			If qty = 0 Then
-				GetUnitPrice = Empty
-				Exit Function
-			End If
-
-			GetUnitPrice = total / qty
-
-		End Function
-
-		Private Function ParseXMLItems(ByVal xmlDoc As Object) As Collection
-
-			Dim result As New Collection
-
-			Dim nodes As Object
-			Dim node As Object
-
-			Dim item As Object
-			Dim barcodeNode As Object
-			Dim idents As Collection
-			Dim ident As Variant
-
-			Dim barcode As String
-			Dim itemName As String
-			Dim qty As String
-			Dim itemSum As String
-
-			Set nodes = xmlDoc.getElementsByTagName("*")
-
-			For Each node In nodes
-
-				If LocalName(node) = "СведТов" Then
-
-					' ------------------------------------------------
-					' Наименование
-					' ------------------------------------------------
-
-					itemName = GetAttr(node, "НаимТов")
-
-					' ------------------------------------------------
-					' Количество
-					' ------------------------------------------------
-
-					qty = 0
-
-					' ------------------------------------------------
-					' СтТовУчНал / КолТов
-					' ------------------------------------------------
-					
-					itemSum = GetUnitPrice( _
-								  GetAttr(node, "СтТовУчНал"), _
-								  GetAttr(node, "КолТов"))
-
-					' ------------------------------------------------
-					' Ищем штрихкод
-					' ------------------------------------------------
-
-					barcode = ""
-
-					Set barcodeNode = FindBarcodeNode(node)
-
-					If Not barcodeNode Is Nothing Then
-						barcode = GetAttr(barcodeNode, "Значен")
-					End If
-
-					' ------------------------------------------------
-					' Ищем ВСЕ ГТИН / КИЗ
-					' ------------------------------------------------
-
-					Set idents = FindAllGTINorKIZ(node)
-
-					' ------------------------------------------------
-					' Если штрихкод есть — добавляем товар
-					' ------------------------------------------------
-
-					If Len(NormalizeCode(barcode)) > 0 Then
-
-						' Нет идентификатора
-						If idents.Count = 0 Then
-
-							Set item = CreateObject("Scripting.Dictionary")
-
-							item.Add "barcode", NormalizeCode(barcode)
-							item.Add "ident", ""
-							item.Add "name", itemName
-							item.Add "qty", qty
-							item.Add "sum", itemSum
-
-							result.Add item
-
-						Else
-
-							' Каждый ГТИН/КИЗ становится отдельной
-							' позицией
-							For Each ident In idents
-
-								Set item = CreateObject("Scripting.Dictionary")
-
-								item.Add "barcode", NormalizeCode(barcode)
-								item.Add "ident", CStr(ident)
-								item.Add "name", itemName
-								item.Add "qty", qty
-								item.Add "sum", itemSum
-
-								result.Add item
-
-							Next ident
-
-						End If
-
-					End If
-
-				End If
-
-			Next node
-
-			Set ParseXMLItems = result
-
-		End Function
-
-
-		' ============================================================
-		' ПОИСК ШТРИХКОДА
-		' ============================================================
-
-		Private Function FindBarcodeNode(ByVal parentNode As Object) As Object
-
-			Dim node As Object
-
-			For Each node In parentNode.SelectNodes(".//*")
-
-				If LocalName(node) = "ИнфПолФХЖ2" Then
-
-					If LCase$(Trim$(GetAttr(node, "Идентиф"))) = _
-					   LCase$("штрихкод") Then
-
-						Set FindBarcodeNode = node
-						Exit Function
-
-					End If
-
-				End If
-
-			Next node
-
-		End Function
-
-
-		' ============================================================
-		' ПОИСК ВСЕХ ГТИН / КИЗ
-		'
-		' Сначала ищется ГТИН.
-		'
-		' Если ГТИН найден:
-		'     возвращается один ГТИН.
-		'
-		' Если ГТИН нет:
-		'     собираются ВСЕ элементы КИЗ.
-		' ============================================================
-
-		Private Function FindAllGTINorKIZ(ByVal parentNode As Object) As Collection
-
-			Dim result As New Collection
-
-			Dim node As Object
-			Dim attr As Object
-
-			Dim value As String
-
-			' --------------------------------------------------------
-			' Сначала ищем ГТИН
-			' --------------------------------------------------------
-
-			For Each node In parentNode.SelectNodes(".//*")
-
-				Set attr = Nothing
-
-				On Error Resume Next
-				Set attr = node.Attributes.getNamedItem("ГТИН")
-				On Error GoTo 0
-
-				If Not attr Is Nothing Then
-
-					value = Trim$(CStr(attr.text))
-
-					If Len(value) > 0 Then
-
-						result.Add value
-
-						Set FindAllGTINorKIZ = result
-						Exit Function
-
-					End If
-
-				End If
-
-			Next node
-
-			' --------------------------------------------------------
-			' ГТИН нет — собираем ВСЕ КИЗ
-			' --------------------------------------------------------
-
-			For Each node In parentNode.SelectNodes(".//*")
-
-				If LocalName(node) = "КИЗ" Then
-
-					value = Trim$(CStr(node.text))
-
-					If Len(value) > 0 Then
-						result.Add value
-					End If
-
-				End If
-
-			Next node
-
-			Set FindAllGTINorKIZ = result
-
-		End Function
-
-		Private Function a_BuildBarcodeIndex( _
-			ByVal ws As Worksheet) As Object
-
-			Dim result As Object
-			Dim rows As Collection
-
-			Dim lastRow As Long
-			Dim r As Long
-
-			Dim barcode As String
-
-			Set result = CreateObject("Scripting.Dictionary")
-
-			result.CompareMode = vbTextCompare
-
-			' ========================================================
-			' Один проход по столбцу C
-			' ========================================================
-
-			lastRow = ws.Cells(ws.rows.Count, 3).End(xlUp).Row
-
-			For r = 1 To lastRow
-
-				barcode = NormalizeCode(ws.Cells(r, 3).value)
-
-				If Len(barcode) > 0 Then
-
-					' -----------------------------------------------
-					' ШК ещё не встречался
-					' -----------------------------------------------
-
-					If Not result.Exists(barcode) Then
-
-						Set rows = New Collection
-
-						rows.Add r
-
-						result.Add barcode, rows
-
-					' -----------------------------------------------
-					' ШК уже есть — добавляем строку
-					' -----------------------------------------------
-
-					Else
-
-						Set rows = result(barcode)
-
-						rows.Add r
-
-					End If
-
-				End If
-
-			Next r
-
-			Set BuildBarcodeIndex = result
-
-		End Function
-
-		Private Function BuildBarcodeIndex( _
-			ByVal ws As Worksheet) As Object
-
-			Dim result As Object
-			Dim rows As Collection
-
-			Dim lastRow As Long
-			Dim r As Long
-
-			Dim barcode As String
-
-			Set result = CreateObject("Scripting.Dictionary")
-
-			result.CompareMode = vbTextCompare
-
-			' ========================================================
-			' Один проход по столбцу C
-			' ========================================================
-
-			lastRow = ws.Cells(ws.rows.Count, 3).End(xlUp).Row
-
-			For r = 1 To lastRow
-
-				barcode = NormalizeCode(ws.Cells(r, 3).value)
-
-				If Len(barcode) > 0 Then
-
-					' -----------------------------------------------
-					' ШК ещё не встречался
-					' -----------------------------------------------
-
-					If Not result.Exists(barcode) Then
-
-						Set rows = New Collection
-
-						rows.Add r
-
-						result.Add barcode, rows
-
-					' -----------------------------------------------
-					' ШК уже есть — добавляем строку
-					' -----------------------------------------------
-
-					Else
-
-						Set rows = result(barcode)
-
-						rows.Add r
-
-					End If
-
-				End If
-
-			Next r
-
-			Set BuildBarcodeIndex = result
-
-		End Function
-
-		' ============================================================
-		' ОБРАБОТКА ТОВАРОВ В EXCEL
-		'
-		' Для каждого item:
-		'
-		' 1. Ищем ШК в 3-м столбце.
-		'
-		' 2. Если идентификатор пустой:
-		'       ничего не затираем.
-		'
-		' 3. Если идентификатор есть:
-		'       ищем строку этого ШК с пустым 4-м столбцом;
-		'       если нашли — записываем туда;
-		'       если нет — AddMissingItem.
-		'
-		' ============================================================
-		Private Sub xx_ProcessItems( _
-			ByVal ws As Worksheet, _
-			ByVal items As Collection, _
-			ByRef matched As Long, _
-			ByRef added As Long, _
-			ByRef noIdent As Long)
-
-			Dim item As Object
-			Dim pending As New Collection
-
-			Dim barcode As String
-			Dim ident As String
-
-			Dim foundRows As Collection
-			Dim r As Variant
-
-			Dim identPlaced As Boolean
-			Dim cellValue As String
-
-			' ========================================================
-			' ЭТАП 1.
-			' Сначала пытаемся разместить всё в существующих строках
-			' ========================================================
-
-			For Each item In items
-
-				barcode = NormalizeCode(item("barcode"))
-				ident = Trim$(CStr(item("ident")))
-
-				Set foundRows = FindBarcodeRows(ws, barcode)
-
-				' ----------------------------------------------------
-				' Штрихкод найден
-				' ----------------------------------------------------
-
-				If foundRows.Count > 0 Then
-
-					matched = matched + 1
-
-					' ------------------------------------------------
-					' Нет ГТИН/КИЗ
-					' ------------------------------------------------
-
-					If Len(ident) = 0 Then
-
-						noIdent = noIdent + 1
-
-					Else
-
-						identPlaced = False
-
-						' --------------------------------------------
-						' Ищем существующую строку с пустым D
-						' --------------------------------------------
-
-						For Each r In foundRows
-
-							cellValue = Trim$(CStr( _
-								ws.Cells(CLng(r), 4).value))
-
-							If Len(cellValue) = 0 Then
-
-								ws.Cells(CLng(r), 4).NumberFormat = "@"
-								ws.Cells(CLng(r), 4).value = ident
-
-								identPlaced = True
-
-								Exit For
-
-							End If
-
-						Next r
-
-						' --------------------------------------------
-						' Не разместился — отправляем в очередь
-						' --------------------------------------------
-
-						If Not identPlaced Then
-
-							pending.Add item
-
-						End If
-
-					End If
-
-				Else
-
-					' ------------------------------------------------
-					' Штрихкод вообще отсутствует в УПД.
-					' Добавляем в очередь.
-					' ------------------------------------------------
-
-					pending.Add item
-
-					If Len(ident) = 0 Then
-						noIdent = noIdent + 1
-					End If
-
-				End If
-
-			Next item
-
-			' ========================================================
-			' ЭТАП 2.
-			' Одним блоком добавляем все оставшиеся позиции
-			' ========================================================
-
-			If pending.Count > 0 Then
-
-				AddMissingItemsBatch ws, pending
-
-				added = added + pending.Count
-
-			End If
-
-		End Sub
-
-		Private Sub AddMissingItemsBatch( _
-			ByVal ws As Worksheet, _
-			ByVal pending As Collection)
-
-			Dim lastRow As Long
-			Dim firstNewRow As Long
-			Dim lastNewRow As Long
-
-			Dim i As Long
-			Dim newRow As Long
-
-			Dim item As Object
-			Dim identValue As String
-
-			' ========================================================
-			' Определяем диапазон новых строк
-			' ========================================================
-
-			lastRow = GetLastDataRow(ws)
-
-			firstNewRow = lastRow + 1
-			lastNewRow = lastRow + pending.Count
-
-			' ========================================================
-			' ОДНОЙ операцией копируем оформление
-			' последней существующей строки
-			' ========================================================
-
-			ws.rows(lastRow).Copy
-
-			ws.rows(firstNewRow & ":" & lastNewRow).PasteSpecial _
-				Paste:=xlPasteFormats
-
-			Application.CutCopyMode = False
-
-			' ========================================================
-			' Заполняем блок
-			' ========================================================
-
-			For i = 1 To pending.Count
-
-				newRow = firstNewRow + i - 1
-
-				Set item = pending(i)
-
-				identValue = Trim$(CStr(item("ident")))
-
-				' ----------------------------------------------------
-				' Колонка 1
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 1).ClearContents
-
-				' ----------------------------------------------------
-				' Колонка 2 — наименование
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 2).value = item("name")
-
-				' ----------------------------------------------------
-				' Колонка 3 — ШК
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 3).NumberFormat = "@"
-				ws.Cells(newRow, 3).value = CStr(item("barcode"))
-
-				' ----------------------------------------------------
-				' Колонка 4 — ГТИН / КИЗ
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 4).NumberFormat = "@"
-
-				If Len(identValue) > 0 Then
-					ws.Cells(newRow, 4).value = identValue
-				Else
-					ws.Cells(newRow, 4).ClearContents
-				End If
-
-				' ----------------------------------------------------
-				' Колонка 5
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 5).ClearContents
-
-				' ----------------------------------------------------
-				' Колонка 6 — количество
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 6).value = ToNumber(item("qty"))
-
-				' ----------------------------------------------------
-				' Колонки 7–9
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 7).ClearContents
-				ws.Cells(newRow, 8).ClearContents
-				ws.Cells(newRow, 9).ClearContents
-
-				' ----------------------------------------------------
-				' Колонка 10 — цена одного элемента
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 10).value = ToNumber(item("sum"))
-
-			Next i
-
-		End Sub
-
-		Private Sub x_AddMissingItemsBatch( _
-			ByVal ws As Worksheet, _
-			ByVal pending As Collection)
-
-			Dim lastRow As Long
-			Dim firstNewRow As Long
-			Dim lastNewRow As Long
-
-			Dim i As Long
-			Dim newRow As Long
-
-			Dim item As Object
-			Dim identValue As String
-
-			' ========================================================
-			' Определяем диапазон новых строк
-			' ========================================================
-
-			lastRow = GetLastDataRow(ws)
-
-			firstNewRow = lastRow + 1
-			lastNewRow = lastRow + pending.Count
-
-			' ========================================================
-			' Один раз копируем оформление последней строки
-			' на весь новый блок
-			' ========================================================
-
-			ws.rows(lastRow).Copy
-
-			ws.rows(firstNewRow & ":" & lastNewRow).PasteSpecial _
-				Paste:=xlPasteFormats
-
-			Application.CutCopyMode = False
-
-			' ========================================================
-			' Заполняем новые строки
-			' ========================================================
-
-			For i = 1 To pending.Count
-
-				newRow = firstNewRow + i - 1
-
-				Set item = pending(i)
-
-				identValue = Trim$(CStr(item("ident")))
-
-				' ----------------------------------------------------
-				' 1 — пусто
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 1).ClearContents
-
-				' ----------------------------------------------------
-				' 2 — НаимТов
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 2).value = item("name")
-
-				' ----------------------------------------------------
-				' 3 — штрихкод
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 3).NumberFormat = "@"
-				ws.Cells(newRow, 3).value = CStr(item("barcode"))
-
-				' ----------------------------------------------------
-				' 4 — ГТИН / КИЗ
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 4).NumberFormat = "@"
-
-				If Len(identValue) > 0 Then
-					ws.Cells(newRow, 4).value = identValue
-				Else
-					ws.Cells(newRow, 4).ClearContents
-				End If
-
-				' ----------------------------------------------------
-				' 5 — пусто
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 5).ClearContents
-
-				' ----------------------------------------------------
-				' 6 — количество
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 6).value = 0
-
-				' ----------------------------------------------------
-				' 7–9 — пусто
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 7).ClearContents
-				ws.Cells(newRow, 8).ClearContents
-				ws.Cells(newRow, 9).ClearContents
-
-				' ----------------------------------------------------
-				' 10 — цена одного элемента
-				' ----------------------------------------------------
-
-				ws.Cells(newRow, 10).value = ToNumber(item("sum"))
-
-			Next i
-
-		End Sub
-
-		Private Sub ProcessItems( _
-			ByVal ws As Worksheet, _
-			ByVal items As Collection, _
-			ByRef matched As Long, _
-			ByRef added As Long, _
-			ByRef noIdent As Long)
-
-			Dim item As Object
-
-			Dim barcode As String
-			Dim ident As String
-
-			Dim foundRows As Collection
-			Dim r As Variant
-
-			Dim identPlaced As Boolean
-			Dim cellValue As String
-
-			For Each item In items
-
-				barcode = NormalizeCode(item("barcode"))
-				ident = Trim$(CStr(item("ident")))
-
-				Set foundRows = FindBarcodeRows(ws, barcode)
-
-				' ----------------------------------------------------
-				' Штрихкод найден
-				' ----------------------------------------------------
-
-				If foundRows.Count > 0 Then
-
-					matched = matched + 1
-
-					' ------------------------------------------------
-					' Нет ГТИН/КИЗ
-					' ------------------------------------------------
-
-					If Len(ident) = 0 Then
-
-						noIdent = noIdent + 1
-
-					Else
-
-						identPlaced = False
-
-						' ------------------------------------------------
-						' Ищем строку этого ШК,
-						' где 4-й столбец пуст.
-						' ------------------------------------------------
-
-						For Each r In foundRows
-
-							cellValue = Trim$(CStr(ws.Cells(CLng(r), 4).value))
-
-							If Len(cellValue) = 0 Then
-
-								ws.Cells(CLng(r), 4).NumberFormat = "@"
-								ws.Cells(CLng(r), 4).value = ident
-
-								identPlaced = True
-
-								Exit For
-
-							End If
-
-						Next r
-
-						' ------------------------------------------------
-						' Свободной строки нет —
-						' добавляем новую.
-						' ------------------------------------------------
-
-						If Not identPlaced Then
-
-							AddMissingItem ws, item, ident
-
-							added = added + 1
-
-						End If
-
-					End If
-
-				Else
-
-					' ----------------------------------------------------
-					' Штрихкод не найден.
-					' Добавляем новую строку.
-					' ----------------------------------------------------
-
-					AddMissingItem ws, item, ident
-
-					added = added + 1
-
-					If Len(ident) = 0 Then
-						noIdent = noIdent + 1
-					End If
-
-				End If
-
-			Next item
-
-		End Sub
-
-
-		' ============================================================
-		' ПОИСК ШТРИХКОДА В 3-М СТОЛБЦЕ
-		' ============================================================
-
-		Private Function FindBarcodeRows( _
-			ByVal ws As Worksheet, _
-			ByVal barcode As String) As Collection
-
-			Dim result As New Collection
-
-			Dim lastRow As Long
-			Dim r As Long
-
-			Dim cellValue As String
-
-			lastRow = ws.Cells(ws.rows.Count, 3).End(xlUp).Row
-
-			For r = 1 To lastRow
-
-				cellValue = NormalizeCode(ws.Cells(r, 3).value)
-
-				If Len(cellValue) > 0 Then
-
-					If cellValue = barcode Then
-						result.Add r
-					End If
-
-				End If
-
-			Next r
-
-			Set FindBarcodeRows = result
-
-		End Function
-
-
-		' ============================================================
-		' ДОБАВЛЕНИЕ НОВОЙ ПОЗИЦИИ
-		'
-		' Через одну строку после последней строки.
-		'
-		' identValue = ГТИН / КИЗ
-		' ============================================================
-
-		Private Sub AddMissingItem( _
-			ByVal ws As Worksheet, _
-			ByVal item As Object, _
-			Optional ByVal identValue As String = "")
-
-			Dim lastRow As Long
-			Dim newRow As Long
-			Dim c As Long
-
-			lastRow = GetLastDataRow(ws)
-			newRow = lastRow + 1
-			
-			' Копируем всю последнюю строку вместе с оформлением
-			ws.rows(lastRow).Copy Destination:=ws.rows(newRow)
-			
-			' --------------------------------------------------------
-			' Заполняем новую строку
-			'
-			' 1 — пусто
-			' 2 — НаимТов
-			' 3 — штрихкод
-			' 4 — ГТИН / КИЗ
-			' 5 — пусто
-			' 6 — КолТов
-			' 7 — пусто
-			' 8 — пусто
-			' 9 — пусто
-			' 10 — СтТовУчНал
-			' --------------------------------------------------------
-
-			ws.Cells(newRow, 1).ClearContents
-			ws.Cells(newRow, 2).value = item("name")
-			
-			ws.Cells(newRow, 3).NumberFormat = "@"
-			ws.Cells(newRow, 3).value = CStr(item("barcode"))
-			
-			ws.Cells(newRow, 4).NumberFormat = "@"
-			
-			If Len(identValue) > 0 Then
-				ws.Cells(newRow, 4).value = identValue
-			Else
-				ws.Cells(newRow, 4).ClearContents
-			End If
-			
-			ws.Cells(newRow, 5).ClearContents
-			ws.Cells(newRow, 6).ClearContents
-			ws.Cells(newRow, 7).ClearContents
-			ws.Cells(newRow, 8).ClearContents
-			ws.Cells(newRow, 9).ClearContents
-			ws.Cells(newRow, 10).value = ToNumber(item("sum"))
-
-		End Sub
-
-
-		' ============================================================
-		' ПОСЛЕДНЯЯ СТРОКА ДАННЫХ
-		' ============================================================
-
-		Private Function GetLastDataRow(ByVal ws As Worksheet) As Long
-
-			Dim lastRow As Long
-
-			lastRow = ws.Cells.Find( _
-						What:="*", _
-						After:=ws.Cells(1, 1), _
-						LookAt:=xlPart, _
-						LookIn:=xlFormulas, _
-						SearchOrder:=xlByRows, _
-						SearchDirection:=xlPrevious, _
-						MatchCase:=False).Row
-
-			GetLastDataRow = lastRow
-
-		End Function
-
-
-		' ============================================================
-		' ВЫБОР ЛИСТА УПД
-		'
-		' Если есть TDSheet — используем его.
-		' ============================================================
-
-		Private Function GetUPDSheet(ByVal wb As Workbook) As Worksheet
-
-			Dim ws As Worksheet
-
-			On Error Resume Next
-
-			Set ws = wb.Worksheets("TDSheet")
-
-			On Error GoTo 0
-
-			If Not ws Is Nothing Then
-
-				Set GetUPDSheet = ws
-				Exit Function
-
-			End If
-
-			' Если TDSheet нет — ищем лист, где есть данные
-
-			For Each ws In wb.Worksheets
-
-				If ws.UsedRange.rows.Count > 1 Then
-
-					If Len(NormalizeCode(ws.Cells(1, 3).value)) > 0 _
-					   Or Len(CStr(ws.Cells(2, 3).value)) > 0 Then
-
-						Set GetUPDSheet = ws
-						Exit Function
-
-					End If
-
-				End If
-
-			Next ws
-
-			Set GetUPDSheet = Nothing
-
-		End Function
-
-
-		' ============================================================
-		' ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-		' ============================================================
-
-		Private Function LocalName(ByVal node As Object) As String
-
-			Dim s As String
-
-			On Error Resume Next
-
-			s = node.BaseName
-
-			If Len(s) = 0 Then
-				s = node.nodeName
-			End If
-
-			On Error GoTo 0
-
-			If InStrRev(s, ":") > 0 Then
-				s = Mid$(s, InStrRev(s, ":") + 1)
-			End If
-
-			LocalName = s
-
-		End Function
-
-
-		Private Function GetAttr( _
-			ByVal node As Object, _
-			ByVal attrName As String) As String
-
-			Dim attr As Object
-
-			On Error Resume Next
-
-			Set attr = node.Attributes.getNamedItem(attrName)
-
-			On Error GoTo 0
-
-			If Not attr Is Nothing Then
-
-				GetAttr = CStr(attr.text)
-
-			Else
-
-				GetAttr = ""
-
-			End If
-
-		End Function
-
-
-		Private Function NormalizeCode(ByVal value As Variant) As String
-
-			Dim s As String
-
-			If IsError(value) Then
-
-				NormalizeCode = ""
-				Exit Function
-
-			End If
-
-			If IsEmpty(value) Then
-
-				NormalizeCode = ""
-				Exit Function
-
-			End If
-
-			s = Trim$(CStr(value))
-
-			' Убираем неразрывные пробелы
-			s = Replace(s, ChrW(160), "")
-
-			NormalizeCode = s
-
-		End Function
-
-
-		Private Function ToNumber(ByVal value As Variant) As Variant
-
-			Dim s As String
-
-			If IsError(value) Or IsEmpty(value) Then
-
-				ToNumber = Empty
-				Exit Function
-
-			End If
-
-			s = Trim$(CStr(value))
-
-			If Len(s) = 0 Then
-
-				ToNumber = Empty
-				Exit Function
-
-			End If
-
-			s = Replace(s, ".", Application.DecimalSeparator)
-			s = Replace(s, ",", Application.DecimalSeparator)
-
-			If IsNumeric(s) Then
-
-				ToNumber = CDbl(s)
-
-			Else
-
-				ToNumber = value
-
-			End If
-
-		End Function
-
-
-		Private Function GetFileName(ByVal fullPath As String) As String
-
-			Dim p As Long
-
-			p = InStrRev(fullPath, Application.PathSeparator)
-
-			If p > 0 Then
-
-				GetFileName = Mid$(fullPath, p + 1)
-
-			Else
-
-				GetFileName = fullPath
-
-			End If
-
-		End Function
-
-
-	
+	Path
+----
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer\cache\wizard_profile_data.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\cache\wizard_profile_data.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra 3 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra 3 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra 3 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra X 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra 3 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra 3 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra 3 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra X 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic ABS.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic ASA.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic PA-CF.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic PA.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic PC.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic PETG.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic PLA-CF.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic PLA.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic PVA.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic Generic TPU.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PA @Anycubic Kobra S1 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PA @Anycubic Kobra S1 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PA @Anycubic Kobra S1 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PA6-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PA6-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PA6-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PAHT-CF @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PAHT-CF @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PAHT-CF @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PC @Anycubic Kobra S1 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PC @Anycubic Kobra S1 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PC @Anycubic Kobra S1 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PC-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PC-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PC-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PC-GF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PC-GF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PC-GF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PEBA 95A @Anycubic Kobra 3 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PEBA @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PEBA @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PEBA @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PET-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PET-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PET-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra 3 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra X 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG-CF @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG-CF @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PETG-CF @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 2 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 2 Neo 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 2 Plus 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 2 Pro 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 0.2 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 0.6 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 0.8 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra Neo 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra X 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra 3 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra X 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Luminous @Anycubic Kobra ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra 3 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra 3 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra S1 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra S1 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra S1 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra X 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA SE @Anycubic Kobra 3 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra 3 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra S1 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra X 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Slik @Anycubic Kobra 3 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA Translucent @Anycubic Kob...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra 3 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra S1 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra X 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PLA-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PVA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PVA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PVA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic PVA @Anycubic Kobra X 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU 95A @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU 95A @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU 95A @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU 95A @Anycubic Kobra X 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU @Anycubic Kobra 3 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU @Anycubic Kobra 3 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU @Anycubic Kobra 3 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU @Anycubic Kobra S1 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU for ACE @Anycubic Kobra S...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU for ACE @Anycubic Kobra S...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU for ACE @Anycubic Kobra S...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Anycubic TPU for ACE @Anycubic Kobra X...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Generic ABS @Anycubic Kobra 3 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Generic PETG @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Generic PETG @Anycubic Kobra X 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Generic PETG Basic @Anycubic Kobra 3 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Generic TPU @Anycubic Kobra 3 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Polymaker\Fiberon PA6-CF20 @Anycubic K...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Polymaker\Panchroma PLA @Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Polymaker\Polymaker PLA Pro @Anycubic ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\filament\Polymaker\Polymaker PLA Pro Metallic @...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2 Max 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2 Max.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2 Neo 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2 Neo.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2 Plus 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2 Plus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2 Pro 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2 Pro.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 2.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 3 0.2 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 3 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 3 0.6 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 3 0.8 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 3 Max 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 3 Max 0.6 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 3 Max 0.8 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 3 Max.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra 3.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra Max 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra Max.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra Neo 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra Neo.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra Plus 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra Plus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra S1 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra S1 Max 0.25 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra S1 Max 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra S1 Max 0.6 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra S1 Max 0.8 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra S1 Max.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra S1.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra X 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra X.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\machine\Anycubic Kobra.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.06mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.08mm HighDetail @Anycubic Kobra 3 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.08mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.08mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.08mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.08mm Standard @Anycubic Kobra X 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.10mm Detail @Anycubic Kobra 3 0.2 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.10mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.12mm Detail @Anycubic Kobra 2 Neo 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.12mm Detail @Anycubic Kobra 3 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.12mm Detail @Anycubic Kobra Neo 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.12mm High Quality @Anycubic Kobra X 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.12mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.12mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.12mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.12mm Standard @Anycubic Kobra X 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.14mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.15mm Optimal @Anycubic Kobra.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.15mm Optimal @Anycubic Kobra2.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.15mm Optimal @Anycubic KobraMax.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.15mm Optimal @Anycubic KobraPlus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.16mm High Quality @Anycubic Kobra S1 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.16mm High Quality @Anycubic Kobra X 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.16mm Optimal @Anycubic Kobra 2 Pro 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.16mm Optimal @Anycubic Kobra 3 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.16mm Standard @Anycubic Kobra 2 Neo 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.16mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.16mm Standard @Anycubic Kobra Neo 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.16mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.16mm Standard @Anycubic Kobra X 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.18mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.18mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm High Quality @Anycubic Kobra S1 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm High Quality @Anycubic Kobra X 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 2 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 2 Neo 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 2 Plus ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 2 Pro 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 3 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra Neo 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra S1 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra X 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic Kobra2.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic KobraMax.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.20mm Standard @Anycubic KobraPlus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.24mm Draft @Anycubic Kobra 3 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.24mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.24mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.24mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.24mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.24mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.24mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.24mm Standard @Anycubic Kobra X 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.28mm Draft @Anycubic Kobra 2 Pro 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.28mm Standard @Anycubic Kobra 2 Neo 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.28mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.28mm Standard @Anycubic Kobra Neo 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.28mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.28mm Standard @Anycubic Kobra X 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.28mm SuperDraft @Anycubic Kobra 3 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.30mm Draft @Anycubic Kobra.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.30mm Draft @Anycubic Kobra2.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.30mm Draft @Anycubic KobraMax.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.30mm Draft @Anycubic KobraPlus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.30mm Standard @Anycubic Kobra 3 0.6 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.30mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.30mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.32mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.32mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.36mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.36mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.40mm Standard @Anycubic Kobra 3 0.8 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.40mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.40mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.42mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.42mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.48mm Standard @Anycubic Kobra 3 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.48mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\system\Anycubic\process\0.56mm Standard @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\user\f0d2be5e-5b78-471d-a1cf-19f524554917\machine\Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\user\f0d2be5e-5b78-471d-a1cf-19f524554917\machine\Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\user\f0d2be5e-5b78-471d-a1cf-19f524554917\process\0.20mm Standa...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\user\f0d2be5e-5b78-471d-a1cf-19f524554917\process\0.20mm Standa...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer — копия\user_backup-v2.4.2-kx1\f0d2be5e-5b78-471d-a1cf-19f524554917\mac...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\cache\wizard_profile_data.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra 3 Max 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra 3 Max 0.6 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra 3 Max 0.8 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 Max 0.2...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra S1 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ABS @Anycubic Kobra X 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra 3 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra 3 Max 0.6 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra 3 Max 0.8 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 Max 0.2...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra S1 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic ASA @Anycubic Kobra X 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic ABS.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic ASA.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic PA-CF.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic PA.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic PC.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic PETG.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic PLA-CF.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic PLA.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic PVA.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic Generic TPU.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PA @Anycubic Kobra S1 Max 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PA @Anycubic Kobra S1 Max 0.6 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PA @Anycubic Kobra S1 Max 0.8 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PA6-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PA6-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PA6-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PAHT-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PAHT-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PAHT-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PC @Anycubic Kobra S1 Max 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PC @Anycubic Kobra S1 Max 0.6 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PC @Anycubic Kobra S1 Max 0.8 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PC-CF @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PC-CF @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PC-CF @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PC-GF @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PC-GF @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PC-GF @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PEBA 95A @Anycubic Kobra 3 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PEBA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PEBA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PEBA @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PET-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PET-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PET-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra 3 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra 3 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra 3 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra 3 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG @Anycubic Kobra X 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PETG-CF @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 2 Max 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 2 Neo 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 2 Plus 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 2 Pro 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 0.2 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 0.6 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 0.8 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 Max 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 Max 0.6 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra 3 Max 0.8 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra Neo 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 Max 0.2...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra S1 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA @Anycubic Kobra X 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra 3 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Glow @Anycubic Kobra X 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA High Speed @Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Luminous @Anycubic Kobra 3...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra 3 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra 3 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Matte @Anycubic Kobra X 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA SE @Anycubic Kobra 3 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra 3 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra S1 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra S1 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Silk @Anycubic Kobra X 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Slik @Anycubic Kobra 3 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA Translucent @Anycubic Kobr...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra 3 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra 3 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra S1 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra S1 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA+ @Anycubic Kobra X 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PLA-CF @Anycubic Kobra S1 Max ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PVA @Anycubic Kobra S1 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PVA @Anycubic Kobra S1 Max 0.6...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PVA @Anycubic Kobra S1 Max 0.8...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic PVA @Anycubic Kobra X 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU 95A @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU 95A @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU 95A @Anycubic Kobra S1 Max...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU 95A @Anycubic Kobra X 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU @Anycubic Kobra 3 Max 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU @Anycubic Kobra 3 Max 0.6 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU @Anycubic Kobra 3 Max 0.8 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU @Anycubic Kobra S1 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU for ACE @Anycubic Kobra S1...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU for ACE @Anycubic Kobra S1...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU for ACE @Anycubic Kobra S1...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Anycubic TPU for ACE @Anycubic Kobra X ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Generic ABS @Anycubic Kobra 3 0.4 nozzl...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Generic PETG @Anycubic Kobra S1 Max 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Generic PETG @Anycubic Kobra X 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Generic PETG Basic @Anycubic Kobra 3 Ma...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Generic TPU @Anycubic Kobra 3 0.4 nozzl...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Polymaker\Fiberon PA6-CF20 @Anycubic Ko...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Polymaker\Panchroma PLA @Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Polymaker\Polymaker PLA Pro @Anycubic K...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\filament\Polymaker\Polymaker PLA Pro Metallic @A...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2 Max 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2 Max.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2 Neo 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2 Neo.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2 Plus 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2 Plus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2 Pro 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2 Pro.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 2.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 3 0.2 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 3 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 3 0.6 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 3 0.8 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 3 Max 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 3 Max 0.6 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 3 Max 0.8 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 3 Max.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra 3.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra Max 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra Max.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra Neo 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra Neo.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra Plus 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra Plus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra S1 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra S1 Max 0.25 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra S1 Max 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra S1 Max 0.6 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra S1 Max 0.8 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra S1 Max.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra S1.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra X 0.4 nozzle.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra X.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\machine\Anycubic Kobra.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.06mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.08mm HighDetail @Anycubic Kobra 3 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.08mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.08mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.08mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.08mm Standard @Anycubic Kobra X 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.10mm Detail @Anycubic Kobra 3 0.2 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.10mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.12mm Detail @Anycubic Kobra 2 Neo 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.12mm Detail @Anycubic Kobra 3 0.4 nozz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.12mm Detail @Anycubic Kobra Neo 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.12mm High Quality @Anycubic Kobra X 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.12mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.12mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.12mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.12mm Standard @Anycubic Kobra X 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.14mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.15mm Optimal @Anycubic Kobra.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.15mm Optimal @Anycubic Kobra2.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.15mm Optimal @Anycubic KobraMax.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.15mm Optimal @Anycubic KobraPlus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.16mm High Quality @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.16mm High Quality @Anycubic Kobra X 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.16mm Optimal @Anycubic Kobra 2 Pro 0.4...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.16mm Optimal @Anycubic Kobra 3 0.4 noz...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.16mm Standard @Anycubic Kobra 2 Neo 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.16mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.16mm Standard @Anycubic Kobra Neo 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.16mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.16mm Standard @Anycubic Kobra X 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.18mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.18mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm High Quality @Anycubic Kobra S1 M...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm High Quality @Anycubic Kobra X 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 2 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 2 Neo 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 2 Plus 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 2 Pro 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 3 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra Neo 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra S1 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra X 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic Kobra2.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic KobraMax.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.20mm Standard @Anycubic KobraPlus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.24mm Draft @Anycubic Kobra 3 0.4 nozzl...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.24mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.24mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.24mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.24mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.24mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.24mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.24mm Standard @Anycubic Kobra X 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.28mm Draft @Anycubic Kobra 2 Pro 0.4 n...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.28mm Standard @Anycubic Kobra 2 Neo 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.28mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.28mm Standard @Anycubic Kobra Neo 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.28mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.28mm Standard @Anycubic Kobra X 0.4 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.28mm SuperDraft @Anycubic Kobra 3 0.4 ...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.30mm Draft @Anycubic Kobra.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.30mm Draft @Anycubic Kobra2.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.30mm Draft @Anycubic KobraMax.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.30mm Draft @Anycubic KobraPlus.json
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.30mm Standard @Anycubic Kobra 3 0.6 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.30mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.30mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.32mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.32mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.36mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.36mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.40mm Standard @Anycubic Kobra 3 0.8 no...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.40mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.40mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.42mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.42mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.48mm Standard @Anycubic Kobra 3 Max 0....
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.48mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\system\Anycubic\process\0.56mm Standard @Anycubic Kobra S1 Max 0...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\user\f0d2be5e-5b78-471d-a1cf-19f524554917\machine\Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\user\f0d2be5e-5b78-471d-a1cf-19f524554917\machine\Anycubic Kobra...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\user\f0d2be5e-5b78-471d-a1cf-19f524554917\process\0.20mm Standar...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\user\f0d2be5e-5b78-471d-a1cf-19f524554917\process\0.20mm Standar...
+C:\Users\Tentakle\AppData\Roaming\OrcaSlicer_backup\user_backup-v2.4.2-kx1\f0d2be5e-5b78-471d-a1cf-19f524554917\mach...
+
+
+PS C:\WINDOWS\system32>		
 	
 	</per>
   </body>
